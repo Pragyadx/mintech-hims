@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CureLink HIMS Enterprise</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --bg: #f1f5f9;
+      --sidebar-bg: #0f172a;
+      --sidebar-hover: #1e293b;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #f59e0b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
+
+    /* AUTH MODAL OVERLAY */
+    #auth-screen {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: radial-gradient(circle at top right, #1e293b, #0f172a);
+      display: flex; justify-content: center; align-items: center; z-index: 9999;
+    }
+    .login-box {
+      background: #ffffff; width: 440px; padding: 36px; border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+    }
+    .login-header { text-align: center; margin-bottom: 24px; }
+    .login-header h2 { color: var(--sidebar-bg); font-size: 1.6rem; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .login-header p { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; }
+
+    .quick-roles {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 18px 0;
+    }
+    .role-chip {
+      background: #f8fafc; border: 1px solid var(--border); padding: 8px 4px; border-radius: 6px;
+      font-size: 0.76rem; text-align: center; font-weight: 600; cursor: pointer; color: var(--text-muted); transition: all 0.2s;
+    }
+    .role-chip:hover { border-color: var(--primary); color: var(--primary); background: #e0f2fe; }
+
+    /* DASHBOARD WRAPPER */
+    #app-container { display: none; width: 100vw; height: 100vh; }
+    aside { width: 250px; background: var(--sidebar-bg); color: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
+    .brand { padding: 20px; font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #1e293b; color: #38bdf8; }
+    nav { flex: 1; padding: 15px 0; overflow-y: auto; }
+    .nav-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 20px; background: transparent; border: none; color: #94a3b8; font-size: 0.92rem; font-weight: 500; cursor: pointer; text-align: left; transition: all 0.2s; }
+    .nav-btn:hover { background: var(--sidebar-hover); color: #fff; }
+    .nav-btn.active { background: var(--primary); color: #fff; font-weight: 600; }
+    .nav-btn i { font-size: 1.05rem; width: 20px; }
+
+    .user-footer { padding: 16px; border-top: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; }
+    .user-info { font-size: 0.8rem; overflow: hidden; }
+    .user-info .user-name { font-weight: 700; color: #fff; white-space: nowrap; text-overflow: ellipsis; }
+    .user-info .user-role { color: #38bdf8; text-transform: uppercase; font-size: 0.72rem; }
+
+    main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+    header { background: #fff; padding: 16px 28px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .hospital-tag { background: #e0f2fe; color: var(--primary-dark); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+
+    .content-area { padding: 28px; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .card { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border); padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+    .form-group input, .form-group select { padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; outline: none; }
+    .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+
+    .btn { background: var(--primary); color: #fff; padding: 10px 18px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.92rem; }
+    .btn:hover { background: var(--primary-dark); }
+    .btn-secondary { background: #64748b; }
+    .btn-secondary:hover { background: #475569; }
+    .btn-danger { background: var(--danger); }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+    th { background: #f8fafc; font-weight: 600; color: var(--text-muted); }
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 600; display: inline-block; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-blue { background: #e0f2fe; color: #0369a1; }
+    .badge-yellow { background: #fef3c7; color: #b45309; }
+
+    #toast { position: fixed; bottom: 20px; right: 20px; padding: 14px 20px; border-radius: 8px; color: #fff; font-weight: 600; display: none; z-index: 10000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .toast-success { background: var(--success); }
+    .toast-error { background: var(--danger); }
+    pre { background: #0f172a; color: #38bdf8; padding: 16px; border-radius: 8px; font-size: 0.85rem; overflow-x: auto; max-height: 400px; }
+  </style>
+</head>
+<body>
+
+  <!-- 1. LOGIN SCREEN -->
+  <div id="auth-screen">
+    <div class="login-box">
+      <div class="login-header">
+        <h2><i class="fa-solid fa-hospital-user" style="color:var(--primary)"></i> CureLink HIMS</h2>
+        <p>Enterprise Departmental Access Portal</p>
+      </div>
+
+      <div style="font-size: 0.78rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Demo One-Click Logins:</div>
+      <div class="quick-roles">
+        <div class="role-chip" onclick="fillCreds('doctor@hospital.com', 'doc123')"><i class="fa-solid fa-stethoscope"></i> Doctor</div>
+        <div class="role-chip" onclick="fillCreds('reception@hospital.com', 'recep123')"><i class="fa-solid fa-address-card"></i> Reception</div>
+        <div class="role-chip" onclick="fillCreds('cashier@hospital.com', 'cash123')"><i class="fa-solid fa-receipt"></i> Cashier</div>
+        <div class="role-chip" onclick="fillCreds('lab@hospital.com', 'lab123')"><i class="fa-solid fa-flask"></i> Lab Tech</div>
+        <div class="role-chip" onclick="fillCreds('pharmacy@hospital.com', 'pharma123')"><i class="fa-solid fa-pills"></i> Pharmacy</div>
+        <div class="role-chip" onclick="fillCreds('admin@hospital.com', 'admin123')"><i class="fa-solid fa-shield"></i> Admin</div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label>Staff Email</label>
+        <input type="email" id="login-email" placeholder="staff@hospital.com" />
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••" />
+      </div>
+
+      <button class="btn" style="width:100%; justify-content:center; padding:12px;" onclick="handleLogin()">
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In to Department
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. MAIN APPLICATION -->
+  <div id="app-container">
+    <aside>
+      <div class="brand"><i class="fa-solid fa-hospital-user"></i> CureLink HIMS</div>
+      <nav id="sidebar-nav">
+        <!-- Dynamic based on logged in role -->
+      </nav>
+      <div class="user-footer">
+        <div class="user-info">
+          <div class="user-name" id="current-user-name">Staff User</div>
+          <div class="user-role" id="current-user-role">Role</div>
+        </div>
+        <button onclick="handleLogout()" style="background:transparent; border:none; color:#f87171; cursor:pointer;" title="Logout">
+          <i class="fa-solid fa-power-off"></i>
+        </button>
+      </div>
+    </aside>
+
+    <main>
+      <header>
+        <h2 id="view-title">Department Dashboard</h2>
+        <span class="hospital-tag"><i class="fa-solid fa-hospital"></i> Node: HOSP01</span>
+      </header>
+
+      <div class="content-area">
+
+        <!-- REGISTRATION SECTION -->
+        <section id="tab-registration" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-user-plus"></i> New Patient Intake (UHID Assignment)</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="Ramesh Patel" /></div>
+              <div class="form-group"><label>Age</label><input type="number" id="reg-age" placeholder="35" /></div>
+              <div class="form-group"><label>Gender</label>
+                <select id="reg-gender"><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select>
+              </div>
+              <div class="form-group"><label>Phone Number</label><input type="text" id="reg-phone" placeholder="10-digit mobile" /></div>
+              <div class="form-group"><label>Blood Group</label><input type="text" id="reg-blood" placeholder="B+" /></div>
+            </div>
+            <button class="btn" onclick="registerPatient()"><i class="fa-solid fa-id-card"></i> Register & Issue UHID</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-magnifying-glass"></i> Master Patient Lookup</div>
+            <div style="display:flex; gap:12px;">
+              <input type="text" id="lookup-uhid" placeholder="Enter UHID (e.g. UHID-HOSP01-000001)" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
+              <button class="btn btn-secondary" onclick="fetchPatientProfile()"><i class="fa-solid fa-search"></i> Search Profile</button>
+            </div>
+            <div id="patient-lookup-result" style="margin-top:16px;"></div>
+          </div>
+        </section>
+
+        <!-- OPD SECTION -->
+        <section id="tab-opd" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-ticket"></i> OPD Token Check-In</div>
+            <div class="form-grid">
+              <div class="form-group"><label>UHID</label><input type="text" id="opd-uhid" placeholder="UHID-HOSP01-000001" /></div>
+              <div class="form-group"><label>Doctor ID</label><input type="text" id="opd-doctor" value="DOC01" /></div>
+              <div class="form-group"><label>Blood Pressure</label><input type="text" id="opd-bp" placeholder="120/80 mmHg" /></div>
+              <div class="form-group"><label>Pulse</label><input type="number" id="opd-pulse" placeholder="72" /></div>
+              <div class="form-group"><label>Temperature</label><input type="text" id="opd-temp" placeholder="98.6 F" /></div>
+              <div class="form-group" style="grid-column: 1 / -1;"><label>Chief Complaints</label><input type="text" id="opd-complaints" placeholder="Acute fever and body ache" /></div>
+            </div>
+            <button class="btn" onclick="checkinOpd()"><i class="fa-solid fa-user-clock"></i> Issue OPD Token</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-user-doctor"></i> Live Doctor Waiting Queue</div>
+            <div style="display:flex; gap:12px; margin-bottom:12px;">
+              <input type="text" id="opd-queue-doc" value="DOC01" placeholder="Doctor ID" style="padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
+              <button class="btn btn-secondary" onclick="loadDoctorQueue()"><i class="fa-solid fa-rotate"></i> Refresh Queue</button>
+            </div>
+            <div id="opd-queue-list"></div>
+          </div>
+        </section>
+
+        <!-- BILLING SECTION -->
+        <section id="tab-billing" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-file-invoice-dollar"></i> Cashier Billing & Payments</div>
+            <div class="form-grid">
+              <div class="form-group"><label>UHID</label><input type="text" id="bill-uhid" placeholder="UHID-HOSP01-000001" /></div>
+              <div class="form-group"><label>Service / Item</label><input type="text" id="bill-desc" placeholder="Consultation + Basic Panel" /></div>
+              <div class="form-group"><label>Amount (₹)</label><input type="number" id="bill-amount" placeholder="600" /></div>
+              <div class="form-group"><label>Payment Mode</label>
+                <select id="bill-mode"><option value="UPI">UPI</option><option value="Cash">Cash</option><option value="Card">Card</option></select>
+              </div>
+            </div>
+            <button class="btn" onclick="createBill()"><i class="fa-solid fa-print"></i> Generate & Settle Invoice</button>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-book"></i> Ledger Invoices</div>
+            <div style="display:flex; gap:12px;">
+              <input type="text" id="bill-lookup-uhid" placeholder="UHID-HOSP01-000001" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
+              <button class="btn btn-secondary" onclick="fetchBills()"><i class="fa-solid fa-magnifying-glass"></i> View Invoices</button>
+            </div>
+            <div id="bill-results" style="margin-top:16px;"></div>
+          </div>
+        </section>
+
+        <!-- LAB SECTION -->
+        <section id="tab-lab" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-vial"></i> Order Diagnostic Investigation</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Visit ID</label><input type="text" id="lab-visit" placeholder="MongoDB Visit ID" /></div>
+              <div class="form-group"><label>Doctor Name</label><input type="text" id="lab-doc" value="Dr. Sharma" /></div>
+              <div class="form-group"><label>Test</label><input type="text" id="lab-test" value="Complete Blood Count (CBC)" /></div>
+            </div>
+            <button class="btn" onclick="orderLabTest()"><i class="fa-solid fa-plus"></i> Submit Lab Order</button>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-clipboard-check"></i> Lab Reports by UHID</div>
+            <div style="display:flex; gap:12px;">
+              <input type="text" id="lab-uhid" placeholder="UHID-HOSP01-000001" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
+              <button class="btn btn-secondary" onclick="fetchLabReports()"><i class="fa-solid fa-magnifying-glass"></i> View Reports</button>
+            </div>
+            <div id="lab-results" style="margin-top:16px;"></div>
+          </div>
+        </section>
+
+        <!-- IPD SECTION -->
+        <section id="tab-ipd" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-bed-pulse"></i> Admit Patient to Ward (IPD)</div>
+            <div class="form-grid">
+              <div class="form-group"><label>UHID</label><input type="text" id="ipd-uhid" placeholder="UHID-HOSP01-000001" /></div>
+              <div class="form-group"><label>Admitting Doctor</label><input type="text" id="ipd-doc" value="Dr. Sharma" /></div>
+              <div class="form-group"><label>Ward Type</label>
+                <select id="ipd-ward">
+                  <option value="General Ward">General Ward</option>
+                  <option value="Semi-Private">Semi-Private</option>
+                  <option value="Private">Private</option>
+                  <option value="ICU">ICU</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Bed Number</label><input type="text" id="ipd-bed" placeholder="GW-101" /></div>
+              <div class="form-group" style="grid-column: 1 / -1;"><label>Reason for Admission</label><input type="text" id="ipd-reason" placeholder="Observation" /></div>
+            </div>
+            <button class="btn" onclick="admitIpd()"><i class="fa-solid fa-door-open"></i> Admit Patient</button>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-procedures"></i> Active Occupied Beds</div>
+            <button class="btn btn-secondary" onclick="loadActiveBeds()"><i class="fa-solid fa-rotate"></i> Refresh Ward List</button>
+            <div id="ipd-active-list" style="margin-top:16px;"></div>
+          </div>
+        </section>
+
+        <!-- PHARMACY SECTION -->
+        <section id="tab-pharmacy" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-box-open"></i> Add Medicine Batch</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Medicine Name</label><input type="text" id="ph-name" placeholder="Paracetamol 650mg" /></div>
+              <div class="form-group"><label>Batch #</label><input type="text" id="ph-batch" placeholder="B-2026-X" /></div>
+              <div class="form-group"><label>Quantity</label><input type="number" id="ph-qty" placeholder="100" /></div>
+              <div class="form-group"><label>Unit Price (₹)</label><input type="number" step="0.1" id="ph-price" placeholder="2.5" /></div>
+              <div class="form-group"><label>Expiry Date</label><input type="date" id="ph-expiry" /></div>
+            </div>
+            <button class="btn" onclick="addPharmacyStock()"><i class="fa-solid fa-plus-circle"></i> Add Batch</button>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-prescription-bottle"></i> Dispensary Inventory</div>
+            <button class="btn btn-secondary" onclick="loadPharmacyStock()"><i class="fa-solid fa-warehouse"></i> Refresh Stock</button>
+            <div id="ph-inventory-list" style="margin-top:16px;"></div>
+          </div>
+        </section>
+
+        <!-- ABDM SECTION -->
+        <section id="tab-abdm" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-shield-halved"></i> ABDM M1: Verify & Link ABHA Address</div>
+            <div class="form-grid">
+              <div class="form-group"><label>UHID</label><input type="text" id="abdm-uhid" value="UHID-HOSP01-000001" /></div>
+              <div class="form-group"><label>ABHA Address</label><input type="text" id="abdm-address" placeholder="user@abdm" /></div>
+            </div>
+            <div style="display:flex; gap:12px;">
+              <button class="btn" onclick="verifyAbha()"><i class="fa-solid fa-circle-check"></i> Verify ABHA</button>
+              <button class="btn btn-secondary" onclick="linkAbha()"><i class="fa-solid fa-link"></i> Link to UHID</button>
+            </div>
+            <div id="abdm-verify-result" style="margin-top:12px;"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-file-code"></i> ABDM M2: Standard FHIR R4 Bundle Viewer</div>
+            <div style="display:flex; gap:12px; margin-bottom:12px;">
+              <input type="text" id="fhir-visit-id" placeholder="MongoDB Visit ID" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
+              <button class="btn" onclick="fetchFhirBundle()"><i class="fa-solid fa-code"></i> Generate FHIR</button>
+            </div>
+            <pre id="fhir-output">Output will appear here...</pre>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const API = "http://localhost:5000/api";
+    let currentUser = null;
+    let authToken = localStorage.getItem("token") || null;
+
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById("toast");
+      toast.className = isError ? "toast-error" : "toast-success";
+      toast.innerText = msg;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 3500);
+    }
+
+    function fillCreds(email, pass) {
+      document.getElementById("login-email").value = email;
+      document.getElementById("login-pass").value = pass;
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-pass").value.trim();
+      if (!email || !password) return showToast("Enter credentials", true);
+
+      try {
+        const res = await fetch(`${API}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        authToken = data.token;
+        currentUser = data.user;
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        launchDashboard();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    function handleLogout() {
+      localStorage.clear();
+      authToken = null;
+      currentUser = null;
+      document.getElementById("app-container").style.display = "none";
+      document.getElementById("auth-screen").style.display = "flex";
+    }
+
+    // Role-Based Access Control Navigation Definition
+    const roleRoutes = {
+      Admin: ["registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
+      Doctor: ["opd", "lab", "abdm"],
+      Receptionist: ["registration", "opd", "ipd"],
+      Cashier: ["billing"],
+      LabTech: ["lab"],
+      Pharmacist: ["pharmacy"]
+    };
+
+    const tabMeta = {
+      registration: { label: "Reception & Intake", icon: "fa-address-card", title: "Patient Registration & MPI" },
+      opd: { label: "OPD Consultation", icon: "fa-stethoscope", title: "OPD Consultation & Queue" },
+      billing: { label: "Cashier Billing", icon: "fa-receipt", title: "Cashier Invoicing & Payments" },
+      lab: { label: "Diagnostic Lab", icon: "fa-flask-vial", title: "Diagnostic Laboratory & LIS" },
+      ipd: { label: "Inpatient (IPD)", icon: "fa-bed", title: "Inpatient Wards & Beds" },
+      pharmacy: { label: "Pharmacy Store", icon: "fa-pills", title: "Pharmacy Inventory" },
+      abdm: { label: "ABDM & FHIR", icon: "fa-shield-halved", title: "ABDM / ABHA Standards" },
+    };
+
+    function launchDashboard() {
+      document.getElementById("auth-screen").style.display = "none";
+      document.getElementById("app-container").style.display = "flex";
+
+      document.getElementById("current-user-name").innerText = currentUser.name;
+      document.getElementById("current-user-role").innerText = `${currentUser.role} (${currentUser.department})`;
+
+      const allowedTabs = roleRoutes[currentUser.role] || [];
+      const navContainer = document.getElementById("sidebar-nav");
+      navContainer.innerHTML = "";
+
+      allowedTabs.forEach((tabId, idx) => {
+        const meta = tabMeta[tabId];
+        const btn = document.createElement("button");
+        btn.className = `nav-btn ${idx === 0 ? "active" : ""}`;
+        btn.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${meta.label}`;
+        btn.onclick = (e) => switchTab(tabId, e.currentTarget);
+        navContainer.appendChild(btn);
+      });
+
+      if (allowedTabs.length > 0) {
+        switchTab(allowedTabs[0], navContainer.children[0]);
+      }
+    }
+
+    function switchTab(tabId, targetBtn) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
+
+      const target = document.getElementById(`tab-${tabId}`);
+      if (target) target.classList.add("active");
+      if (targetBtn) targetBtn.classList.add("active");
+
+      document.getElementById("view-title").innerText = tabMeta[tabId].title;
+    }
+
+    /* CRUD MODULE METHODS */
+    async function registerPatient() {
+      const payload = {
+        hospitalId: currentUser.hospitalId,
+        name: document.getElementById("reg-name").value,
+        age: Number(document.getElementById("reg-age").value),
+        gender: document.getElementById("reg-gender").value,
+        phone: document.getElementById("reg-phone").value,
+        bloodGroup: document.getElementById("reg-blood").value || "Not Specified"
+      };
+      try {
+        const res = await fetch(`${API}/patients`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || data.error);
+        showToast(`Patient Registered: ${data.patient.uhid}`);
+        document.getElementById("lookup-uhid").value = data.patient.uhid;
+        fetchPatientProfile();
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function fetchPatientProfile() {
+      const uhid = document.getElementById("lookup-uhid").value.trim();
+      if (!uhid) return;
+      try {
+        const res = await fetch(`${API}/patients/${uhid}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        const p = data.patient;
+        document.getElementById("patient-lookup-result").innerHTML = `
+          <table>
+            <tr><th>UHID</th><td><strong>${p.uhid}</strong></td><th>ABHA</th><td>${p.isAbhaLinked ? '<span class="badge badge-green">Linked ('+p.abhaAddress+')</span>' : '<span class="badge badge-yellow">Not Linked</span>'}</td></tr>
+            <tr><th>Name</th><td>${p.name}</td><th>Age / Sex</th><td>${p.age} / ${p.gender}</td></tr>
+            <tr><th>Phone</th><td>${p.phone}</td><th>Blood Group</th><td>${p.bloodGroup}</td></tr>
+          </table>
+        `;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function checkinOpd() {
+      const payload = {
+        uhid: document.getElementById("opd-uhid").value,
+        hospitalId: currentUser.hospitalId,
+        doctorId: document.getElementById("opd-doctor").value,
+        chiefComplaints: document.getElementById("opd-complaints").value,
+        vitals: {
+          bloodPressure: document.getElementById("opd-bp").value,
+          pulse: Number(document.getElementById("opd-pulse").value),
+          temperature: document.getElementById("opd-temp").value
+        }
+      };
+      try {
+        const res = await fetch(`${API}/opd/checkin`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast(`Token Issued: #${data.visit.tokenNumber}`);
+        loadDoctorQueue();
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function loadDoctorQueue() {
+      const doc = document.getElementById("opd-queue-doc").value;
+      try {
+        const res = await fetch(`${API}/opd/queue/${doc}`);
+        const data = await res.json();
+        const list = document.getElementById("opd-queue-list");
+        if (data.queue.length === 0) {
+          list.innerHTML = `<p style="color:var(--text-muted); padding:10px 0;">No patients waiting.</p>`;
+          return;
+        }
+        let html = `<table><tr><th>Token</th><th>UHID</th><th>Complaints</th><th>Status</th></tr>`;
+        data.queue.forEach(v => {
+          html += `<tr><td><strong>#${v.tokenNumber}</strong></td><td>${v.uhid}</td><td>${v.chiefComplaints}</td><td><span class="badge badge-yellow">${v.status}</span></td></tr>`;
+        });
+        html += `</table>`;
+        list.innerHTML = html;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function createBill() {
+      const payload = {
+        uhid: document.getElementById("bill-uhid").value,
+        hospitalId: currentUser.hospitalId,
+        items: [{ description: document.getElementById("bill-desc").value, cost: Number(document.getElementById("bill-amount").value) }],
+        paymentMode: document.getElementById("bill-mode").value
+      };
+      try {
+        const res = await fetch(`${API}/billing/invoice`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast(`Invoice: ${data.invoice.invoiceNumber}`);
+        document.getElementById("bill-lookup-uhid").value = payload.uhid;
+        fetchBills();
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function fetchBills() {
+      const uhid = document.getElementById("bill-lookup-uhid").value;
+      try {
+        const res = await fetch(`${API}/billing/${uhid}`);
+        const data = await res.json();
+        const container = document.getElementById("bill-results");
+        if (data.invoices.length === 0) {
+          container.innerHTML = `<p style="color:var(--text-muted);">No invoices found.</p>`;
+          return;
+        }
+        let html = `<table><tr><th>Invoice #</th><th>Total</th><th>Status</th><th>Mode</th></tr>`;
+        data.invoices.forEach(b => {
+          html += `<tr><td><strong>${b.invoiceNumber}</strong></td><td>₹${b.totalAmount}</td><td><span class="badge badge-green">${b.paymentStatus}</span></td><td>${b.paymentMode}</td></tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function orderLabTest() {
+      const payload = {
+        visitId: document.getElementById("lab-visit").value,
+        doctorName: document.getElementById("lab-doc").value,
+        tests: [{ testName: document.getElementById("lab-test").value, category: "Pathology" }]
+      };
+      try {
+        const res = await fetch(`${API}/lab/order`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast(`Order: ${data.labOrder.orderId}`);
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function fetchLabReports() {
+      const uhid = document.getElementById("lab-uhid").value;
+      try {
+        const res = await fetch(`${API}/lab/reports/${uhid}`);
+        const data = await res.json();
+        const container = document.getElementById("lab-results");
+        if (data.reports.length === 0) {
+          container.innerHTML = `<p style="color:var(--text-muted);">No lab records found.</p>`;
+          return;
+        }
+        let html = `<table><tr><th>Order ID</th><th>Status</th><th>Tests</th></tr>`;
+        data.reports.forEach(r => {
+          html += `<tr><td><strong>${r.orderId}</strong></td><td><span class="badge badge-blue">${r.status}</span></td><td>${r.tests.map(t => t.testName).join(", ")}</td></tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function admitIpd() {
+      const payload = {
+        uhid: document.getElementById("ipd-uhid").value,
+        hospitalId: currentUser.hospitalId,
+        admittingDoctor: document.getElementById("ipd-doc").value,
+        wardType: document.getElementById("ipd-ward").value,
+        bedNumber: document.getElementById("ipd-bed").value,
+        admissionReason: document.getElementById("ipd-reason").value
+      };
+      try {
+        const res = await fetch(`${API}/ipd/admit`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast(`Admitted to Bed: ${data.admission.bedNumber}`);
+        loadActiveBeds();
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function loadActiveBeds() {
+      try {
+        const res = await fetch(`${API}/ipd/active/HOSP01`);
+        const data = await res.json();
+        const list = document.getElementById("ipd-active-list");
+        if (data.admissions.length === 0) {
+          list.innerHTML = `<p style="color:var(--text-muted);">All beds available.</p>`;
+          return;
+        }
+        let html = `<table><tr><th>IPD #</th><th>UHID</th><th>Ward</th><th>Bed</th></tr>`;
+        data.admissions.forEach(a => {
+          html += `<tr><td><strong>${a.ipdNumber}</strong></td><td>${a.uhid}</td><td>${a.wardType}</td><td><span class="badge badge-green">${a.bedNumber}</span></td></tr>`;
+        });
+        html += `</table>`;
+        list.innerHTML = html;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function addPharmacyStock() {
+      const payload = {
+        hospitalId: currentUser.hospitalId,
+        medicineName: document.getElementById("ph-name").value,
+        batchNumber: document.getElementById("ph-batch").value,
+        quantityInStock: Number(document.getElementById("ph-qty").value),
+        unitPrice: Number(document.getElementById("ph-price").value),
+        expiryDate: document.getElementById("ph-expiry").value
+      };
+      try {
+        const res = await fetch(`${API}/pharmacy/stock`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast("Stock Updated");
+        loadPharmacyStock();
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function loadPharmacyStock() {
+      try {
+        const res = await fetch(`${API}/pharmacy/inventory/HOSP01`);
+        const data = await res.json();
+        const list = document.getElementById("ph-inventory-list");
+        if (data.inventory.length === 0) {
+          list.innerHTML = `<p style="color:var(--text-muted);">No stock recorded.</p>`;
+          return;
+        }
+        let html = `<table><tr><th>Medicine</th><th>Batch</th><th>Stock</th><th>Unit Price</th></tr>`;
+        data.inventory.forEach(i => {
+          html += `<tr><td><strong>${i.medicineName}</strong></td><td>${i.batchNumber}</td><td>${i.quantityInStock} units</td><td>₹${i.unitPrice}</td></tr>`;
+        });
+        html += `</table>`;
+        list.innerHTML = html;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function verifyAbha() {
+      const addr = document.getElementById("abdm-address").value;
+      try {
+        const res = await fetch(`${API}/abdm/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ abhaAddress: addr })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast("ABHA Verified");
+        document.getElementById("abdm-verify-result").innerHTML = `
+          <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:6px; color:#15803d; font-size:0.88rem;">
+            <strong>Verified Active:</strong> ${data.profile.name} (${data.profile.abhaNumber})
+          </div>
+        `;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function linkAbha() {
+      const payload = {
+        uhid: document.getElementById("abdm-uhid").value,
+        abhaAddress: document.getElementById("abdm-address").value,
+        abhaNumber: "14-8765-4321-9012"
+      };
+      try {
+        const res = await fetch(`${API}/abdm/link`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast("ABHA Profile Linked!");
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function fetchFhirBundle() {
+      const visitId = document.getElementById("fhir-visit-id").value.trim();
+      if (!visitId) return showToast("Enter Visit ID", true);
+      try {
+        const res = await fetch(`${API}/abdm/fhir/${visitId}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        document.getElementById("fhir-output").innerText = JSON.stringify(data.fhirBundle, null, 2);
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    // Auto-login if session exists
+    window.onload = () => {
+      const savedUser = localStorage.getItem("user");
+      if (authToken && savedUser) {
+        currentUser = JSON.parse(savedUser);
+        launchDashboard();
+      }
+    };
+  </script>
+</body>
+</html>

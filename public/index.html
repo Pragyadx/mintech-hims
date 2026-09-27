@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mintech Solutions Pvt. Ltd. | ABDM & Hospital Management Suite</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --primary-light: #f0fdfa;
+      --accent: #134e4a;
+      --bg: #faf9f6;
+      --card-bg: #ffffff;
+      --text-main: #1c2826;
+      --text-muted: #576561;
+      --border: #e8e6df;
+      --success: #15803d;
+      --danger: #b91c1c;
+      --warning: #b45309;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background: var(--bg); color: var(--text-main); }
+
+    /* TOP COMMERCIAL NAVBAR */
+    .top-nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: #ffffff; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .brand-logo { font-size: 1.35rem; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+    .brand-logo span { color: var(--primary); }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.92rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .nav-links a:hover { color: var(--primary); }
+    .btn-portal-launch { background: var(--primary); color: #fff; padding: 9px 18px; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .btn-portal-launch:hover { background: var(--primary-dark); }
+
+    /* COMMERCIAL HERO */
+    .hero-section {
+      text-align: center;
+      padding: 72px 20px 48px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f4efe6;
+      color: #0f766e;
+      border: 1px solid #dfd7c8;
+      padding: 7px 18px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+    }
+    .hero-badge i { color: #0f766e; font-size: 0.75rem; }
+    .hero-title { 
+  font-size: 2.5rem; 
+  font-weight: 900; 
+  color: #0f766e; 
+  margin-bottom: 12px; 
+}
+    .hero-subtitle { color: var(--text-muted); font-size: 1.1rem; max-width: 720px; margin: 0 auto 28px; line-height: 1.6; }
+    .hero-actions { display: flex; justify-content: center; gap: 14px; }
+
+    /* MODULES GRID */
+    .modules-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+    .section-header { text-align: center; margin-bottom: 36px; }
+    .section-header h3 { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+    .section-header p { color: var(--text-muted); font-size: 0.95rem; margin-top: 6px; }
+
+    .module-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+    .module-card {
+      background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 28px 24px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .module-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.06); border-color: var(--primary); }
+    .module-icon-wrap {
+      width: 52px; height: 52px; border-radius: 10px; background: var(--primary-light);
+      color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 20px;
+    }
+    .module-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--accent); }
+    .module-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px; }
+    .feature-checklist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .feature-checklist li { font-size: 0.85rem; color: #475569; display: flex; align-items: center; gap: 8px; }
+    .feature-checklist li i { color: var(--success); font-size: 0.75rem; }
+
+    /* AUTH MODAL */
+    #auth-screen {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px);
+      display: none; justify-content: center; align-items: center; z-index: 9999;
+    }
+    .login-box {
+      background: #ffffff; width: 440px; padding: 36px; border-radius: 12px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); position: relative;
+    }
+    .close-login { position: absolute; top: 16px; right: 16px; background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+    .quick-roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; }
+    .role-chip {
+      background: #f8fafc; border: 1px solid var(--border); padding: 8px 4px; border-radius: 6px;
+      font-size: 0.75rem; text-align: center; font-weight: 600; cursor: pointer; color: var(--text-muted);
+    }
+    .role-chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+    /* APP WORKSPACE */
+    #app-workspace { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: var(--bg); z-index: 10000; }
+    aside { width: 250px; background: var(--accent); color: #fff; display: flex; flex-direction: column; flex-shrink: 0; }
+    .workspace-brand { padding: 20px; font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #1e293b; color: #5eead4; }
+    nav { flex: 1; padding: 15px 0; overflow-y: auto; }
+    .nav-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 20px; background: transparent; border: none; color: #94a3b8; font-size: 0.92rem; font-weight: 500; cursor: pointer; text-align: left; }
+    .nav-btn:hover { background: #1e293b; color: #fff; }
+    .nav-btn.active { background: var(--primary); color: #fff; font-weight: 600; }
+    .nav-btn i { font-size: 1.05rem; width: 20px; }
+    .user-footer { padding: 16px; border-top: 1px solid #1e293b; display: flex; align-items: center; justify-content: space-between; }
+    .user-name { font-weight: 700; color: #fff; font-size: 0.85rem; }
+    .user-role { color: #5eead4; font-size: 0.72rem; text-transform: uppercase; }
+
+    main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+    header { background: #fff; padding: 16px 28px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .content-area { padding: 28px; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .card { background: #fff; border-radius: 10px; border: 1px solid var(--border); padding: 24px; margin-bottom: 24px; }
+    .card-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+    .form-group input, .form-group select { padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; outline: none; }
+    .btn { background: var(--primary); color: #fff; padding: 10px 18px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .btn:hover { background: var(--primary-dark); }
+    .btn-secondary { background: #e7e3da; color: #1c2826; border: 1px solid #d8d3c5; }
+    .btn-secondary:hover { background: #ddd8cd; color: #115e59; }
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: 600; }
+    .badge-green { background: #dcfce7; color: #15803d; }
+    .badge-blue { background: #e0f2fe; color: #0369a1; }
+    .badge-yellow { background: #fef3c7; color: #b45309; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+    th { background: #f8fafc; font-weight: 600; color: var(--text-muted); }
+    #toast { position: fixed; bottom: 20px; right: 20px; padding: 14px 20px; border-radius: 8px; color: #fff; font-weight: 600; display: none; z-index: 100000; }
+    .toast-success { background: var(--success); }
+    .toast-error { background: var(--danger); }
+    pre { background: #0f172a; color: #5eead4; padding: 16px; border-radius: 8px; font-size: 0.85rem; overflow-x: auto; max-height: 400px; }
+    /* PROFESSIONAL PRINTABLE SLIP / INVOICE */
+    #print-modal {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);
+      display: none; justify-content: center; align-items: center; z-index: 99999;
+    }
+    .print-sheet {
+      background: #ffffff; width: 680px; max-height: 90vh; overflow-y: auto;
+      border-radius: 8px; padding: 40px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+      color: #1e293b;
+    }
+    .hospital-letterhead {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      border-bottom: 2px solid #0f766e; padding-bottom: 16px; margin-bottom: 20px;
+    }
+    .letterhead-title { font-size: 1.4rem; font-weight: 800; color: #0f766e; }
+    .letterhead-sub { font-size: 0.8rem; color: #64748b; line-height: 1.4; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #print-modal, #print-modal * { visibility: visible; }
+      #print-modal { position: absolute; left: 0; top: 0; width: 100%; background: none; }
+      .print-sheet { box-shadow: none; padding: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PUBLIC WEBSITE TOP NAV -->
+  <div class="top-nav">
+    <div class="brand-logo">
+      <i class="fa-solid fa-hospital-user" style="color:var(--primary)"></i> Mintech <span>HIMS</span>
+    </div>
+    <div class="nav-links">
+      <a href="#modules">Clinical Modules</a>
+      <a href="#abdm">ABDM M1 & M2</a>
+      <button class="btn-portal-launch" onclick="openLoginModal()">
+        <i class="fa-solid fa-right-to-bracket"></i> Staff Portal Login
+      </button>
+    </div>
+  </div>
+
+  <!-- COMMERCIAL HERO -->
+  <section class="hero-section">
+    <div class="hero-badge"><i class="fa-solid fa-circle"></i> Mintech Solutions Private Limited</div>
+<h1 class="hero-title">Unified Hospital Information & ABDM Digital Suite</h1>
+    <p class="hero-subtitle">
+      Enterprise clinic & hospital operating software. Eliminate revenue leakage, automate multi-departmental workflows, and achieve 100% ABDM M1/M2 compliance with zero infrastructure friction.
+    </p>
+    <div class="hero-actions">
+      <button class="btn" style="padding:12px 24px; font-size:1rem;" onclick="openLoginModal()">
+        <i class="fa-solid fa-play"></i> Launch Live Product Demo
+      </button>
+      <button class="btn btn-secondary" style="padding:12px 24px; font-size:1rem;" onclick="document.getElementById('modules').scrollIntoView({behavior: 'smooth'})">
+        <i class="fa-solid fa-layer-group"></i> Explore Modules
+      </button>
+    </div>
+  </section>
+
+  <!-- COMMERCIAL MODULE CARDS -->
+  <div class="modules-container" id="modules">
+    <div class="section-header">
+      <h3>Enterprise Clinical & Administrative Modules</h3>
+      <p>Designed for multi-specialty clinics, nursing homes, and 100+ bed hospitals.</p>
+    </div>
+
+    <div class="module-grid">
+      <!-- 1. Reception & MPI -->
+      <div class="module-card">
+        <div class="module-icon-wrap"><i class="fa-solid fa-address-card"></i></div>
+        <div class="module-title">Intake & Master MPI</div>
+        <div class="module-desc">Centralized patient registration with automated UHID generation and multi-visit tracking.</div>
+        <ul class="feature-checklist">
+          <li><i class="fa-solid fa-check"></i> Standard UHID Sequence Generation</li>
+          <li><i class="fa-solid fa-check"></i> Demographic & Blood Group Profiling</li>
+          <li><i class="fa-solid fa-check"></i> Instant Historical Record Lookup</li>
+        </ul>
+      </div>
+
+      <!-- 2. OPD Consultation -->
+      <div class="module-card">
+        <div class="module-icon-wrap"><i class="fa-solid fa-stethoscope"></i></div>
+        <div class="module-title">OPD Queue & Vitals</div>
+        <div class="module-desc">Real-time doctor token queuing system with live vitals intake and consultation records.</div>
+        <ul class="feature-checklist">
+          <li><i class="fa-solid fa-check"></i> Live Waiting Room Token Dispenser</li>
+          <li><i class="fa-solid fa-check"></i> BP, Pulse & Temperature Tracking</li>
+          <li><i class="fa-solid fa-check"></i> Chief Complaints Documentation</li>
+        </ul>
+      </div>
+
+      <!-- 3. Cashier Billing -->
+      <div class="module-card">
+        <div class="module-icon-wrap"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+        <div class="module-title">Cashier Billing & Ledger</div>
+        <div class="module-desc">Complete revenue settlement engine supporting UPI, Cash, and Card with automated ledgers.</div>
+        <ul class="feature-checklist">
+          <li><i class="fa-solid fa-check"></i> Multi-item Invoicing & Line Receipts</li>
+          <li><i class="fa-solid fa-check"></i> Payment Status Settlement Reconciliation</li>
+          <li><i class="fa-solid fa-check"></i> Financial Patient Audit Ledgers</li>
+        </ul>
+      </div>
+
+      <!-- 4. IPD Bed Management -->
+      <div class="module-card">
+        <div class="module-icon-wrap"><i class="fa-solid fa-bed"></i></div>
+        <div class="module-title">Inpatient (IPD) Wards</div>
+        <div class="module-desc">Real-time bed availability tracking across General Wards, Private Suites, and ICU units.</div>
+        <ul class="feature-checklist">
+          <li><i class="fa-solid fa-check"></i> Live Bed Occupancy Status</li>
+          <li><i class="fa-solid fa-check"></i> Admission Date & Reason Tracking</li>
+          <li><i class="fa-solid fa-check"></i> Admitting Doctor Ward Allocation</li>
+        </ul>
+      </div>
+
+      <!-- 5. Diagnostic LIS -->
+      <div class="module-card">
+        <div class="module-icon-wrap"><i class="fa-solid fa-flask-vial"></i></div>
+        <div class="module-title">Diagnostic Laboratory</div>
+        <div class="module-desc">Pathology test ordering, doctor requisition workflows, and specimen reporting.</div>
+        <ul class="feature-checklist">
+          <li><i class="fa-solid fa-check"></i> Complete Blood Count (CBC) Panels</li>
+          <li><i class="fa-solid fa-check"></i> Order Status Reconciliation</li>
+          <li><i class="fa-solid fa-check"></i> UHID Patient Diagnostic History</li>
+        </ul>
+      </div>
+
+      <!-- 6. ABDM M1 & M2 Suite -->
+      <div class="module-card" id="abdm" style="border: 2px solid var(--primary);">
+        <div class="module-icon-wrap"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="module-title">ABDM & FHIR Compliance</div>
+        <div class="module-desc">Ayushman Bharat Digital Mission (ABDM) M1 verification and M2 FHIR R4 Bundle generation.</div>
+        <ul class="feature-checklist">
+          <li><i class="fa-solid fa-check"></i> ABHA Address Live Verification (M1)</li>
+          <li><i class="fa-solid fa-check"></i> UHID-to-ABHA Identity Binding</li>
+          <li><i class="fa-solid fa-check"></i> HL7 FHIR R4 JSON Health Bundles (M2)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- COMPLIANCE & TRUST BAR -->
+  <section id="enterprise" style="background: #f4efe6; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 40px 20px;">
+    <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; gap: 24px; text-align: center;">
+      <div>
+        <i class="fa-solid fa-shield-halved" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
+        <h4 style="font-size: 1rem; font-weight: 700;">ABDM M1 & M2 Certified</h4>
+        <p style="font-size: 0.82rem; color: var(--text-muted);">ABHA & FHIR R4 Compliant</p>
+      </div>
+      <div>
+        <i class="fa-solid fa-lock" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
+        <h4 style="font-size: 1rem; font-weight: 700;">Role-Based Data Privacy</h4>
+        <p style="font-size: 0.82rem; color: var(--text-muted);">Strict Departmental RBAC</p>
+      </div>
+      <div>
+        <i class="fa-solid fa-database" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
+        <h4 style="font-size: 1rem; font-weight: 700;">Multi-Tenant Cloud</h4>
+        <p style="font-size: 0.82rem; color: var(--text-muted);">Automated Redundant Backups</p>
+      </div>
+      <div>
+        <i class="fa-solid fa-file-invoice" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
+        <h4 style="font-size: 1rem; font-weight: 700;">NABH Ready Audits</h4>
+        <p style="font-size: 0.82rem; color: var(--text-muted);">Full Clinical Event Tracking</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMERCIAL TIERS / PRICING SECTION -->
+  <section style="max-width: 1200px; margin: 60px auto 40px; padding: 0 20px;">
+    <div class="section-header">
+      <h3>Tailored Healthcare Deployments</h3>
+      <p>Transparent licensing tailored for individual clinics, diagnostic centers, and corporate hospitals.</p>
+    </div>
+
+    <div class="module-grid">
+      <!-- Clinic Edition -->
+      <div class="module-card" style="border-top: 4px solid #0d9488;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase;">Single Specialist</div>
+        <div class="module-title" style="margin-top: 6px;">Clinic Essential</div>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">Best for OPD polyclinics and consulting doctors.</p>
+        <ul class="feature-checklist" style="margin-bottom: 24px;">
+          <li><i class="fa-solid fa-check"></i> OPD Queuing & Live Token Engine</li>
+          <li><i class="fa-solid fa-check"></i> Chief Complaints & Vitals Recording</li>
+          <li><i class="fa-solid fa-check"></i> Standard Billing Invoicing & Receipts</li>
+          <li><i class="fa-solid fa-check"></i> Up to 3 Staff Accounts</li>
+        </ul>
+        <button class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="document.getElementById('contact-form').scrollIntoView({behavior: 'smooth'})">Get Quotation</button>
+      </div>
+
+      <!-- Hospital Edition (Featured) -->
+      <div class="module-card" style="border: 2px solid var(--primary); transform: scale(1.02); box-shadow: 0 8px 24px rgba(15,118,110,0.12); position: relative;">
+        <div style="position: absolute; top: -12px; right: 20px; background: var(--primary); color: #fff; padding: 2px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 700;">POPULAR</div>
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase;">10 to 100 Beds</div>
+        <div class="module-title" style="margin-top: 6px;">Hospital Enterprise</div>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">Complete clinical, bed management, and departmental automation suite.</p>
+        <ul class="feature-checklist" style="margin-bottom: 24px;">
+          <li><i class="fa-solid fa-check"></i> OPD + IPD Bed Occupancy Management</li>
+          <li><i class="fa-solid fa-check"></i> Diagnostic Lab Orders & Specimen Flow</li>
+          <li><i class="fa-solid fa-check"></i> In-house Pharmacy Batch & Expiry Control</li>
+          <li><i class="fa-solid fa-check"></i> ABDM M1 ABHA Linking + FHIR Exporters</li>
+          <li><i class="fa-solid fa-check"></i> Unlimited Departmental Staff Logins</li>
+        </ul>
+        <button class="btn" style="width: 100%; justify-content: center;" onclick="openLoginModal()">Test Live Demo</button>
+      </div>
+
+      <!-- Diagnostic Lab Edition -->
+      <div class="module-card" style="border-top: 4px solid var(--accent);">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--accent); text-transform: uppercase;">Stand-alone LIS</div>
+        <div class="module-title" style="margin-top: 6px;">Diagnostic Suite</div>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">Designed for independent pathology and radiodiagnostic centers.</p>
+        <ul class="feature-checklist" style="margin-bottom: 24px;">
+          <li><i class="fa-solid fa-check"></i> Pathology & Sample Processing Workflow</li>
+          <li><i class="fa-solid fa-check"></i> Doctor Requisition Tracking</li>
+          <li><i class="fa-solid fa-check"></i> Direct Cashier Invoice Settlement</li>
+          <li><i class="fa-solid fa-check"></i> Master Patient Index (UHID Historical Reports)</li>
+        </ul>
+        <button class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="document.getElementById('contact-form').scrollIntoView({behavior: 'smooth'})">Get Quotation</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT & LEAD GENERATION FORM -->
+  <section id="contact-form" style="background: #ffffff; border-top: 1px solid var(--border); padding: 60px 20px;">
+    <div style="max-width: 640px; margin: 0 auto; text-align: center;">
+      <h3 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">Schedule an On-Premise or Cloud Demo</h3>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 28px;">Connect with the Mintech Solutions engineering team for a personalized walkthrough.</p>
+      
+      <div class="card" style="text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Doctor / Administrator Name</label>
+            <input type="text" id="lead-name" placeholder="Dr. A. K. Sharma" />
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" id="lead-phone" placeholder="98XXXXXXXX" />
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Hospital / Clinic Name & Location</label>
+            <input type="text" id="lead-facility" placeholder="City Care Hospital, Ghaziabad" />
+          </div>
+        </div>
+        <button class="btn" style="width: 100%; justify-content: center; padding: 12px;" onclick="handleLeadSubmit()">
+          <i class="fa-solid fa-paper-plane"></i> Request Priority Callback
+        </button>
+        <div id="lead-feedback" style="margin-top: 12px; font-size: 0.85rem; text-align: center; color: var(--success); font-weight: 600; display: none;"></div>
+      </div>
+
+      <div style="margin-top: 24px; font-size: 0.85rem; color: var(--text-muted);">
+        <strong>Mintech Solutions Private Limited</strong> • Hospital Information Systems & ABDM Middleware
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTH SCREEN POPUP -->
+  <div id="auth-screen">
+    <div class="login-box">
+      <button class="close-login" onclick="closeLoginModal()"><i class="fa-solid fa-xmark"></i></button>
+      <div style="text-align:center; margin-bottom: 20px;">
+        <h2 style="font-size: 1.5rem; font-weight:800; color:var(--accent);"><i class="fa-solid fa-hospital-user" style="color:var(--primary)"></i> Mintech HIMS</h2>
+        <p style="color:var(--text-muted); font-size:0.85rem;">Select a staff role or enter credentials</p>
+      </div>
+
+      <div style="font-size: 0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">One-Click Sales Demo Accounts:</div>
+      <div class="quick-roles">
+        <div class="role-chip" onclick="fillCreds('doctor@hospital.com', 'doc123')"><i class="fa-solid fa-stethoscope"></i> Doctor</div>
+        <div class="role-chip" onclick="fillCreds('reception@hospital.com', 'recep123')"><i class="fa-solid fa-address-card"></i> Reception</div>
+        <div class="role-chip" onclick="fillCreds('cashier@hospital.com', 'cash123')"><i class="fa-solid fa-receipt"></i> Cashier</div>
+        <div class="role-chip" onclick="fillCreds('lab@hospital.com', 'lab123')"><i class="fa-solid fa-flask"></i> Lab Tech</div>
+        <div class="role-chip" onclick="fillCreds('pharmacy@hospital.com', 'pharma123')"><i class="fa-solid fa-pills"></i> Pharmacy</div>
+        <div class="role-chip" onclick="fillCreds('admin@hospital.com', 'admin123')"><i class="fa-solid fa-shield"></i> Admin</div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label>Staff Email</label>
+        <input type="email" id="login-email" placeholder="staff@hospital.com" />
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••" />
+      </div>
+
+      <button class="btn" style="width:100%; justify-content:center; padding:12px;" onclick="handleLogin()">
+        <i class="fa-solid fa-right-to-bracket"></i> Enter Department Workspace
+      </button>
+    </div>
+  </div>
+
+  <!-- RUNNING APP WORKSPACE -->
+  <div id="app-workspace">
+    <aside>
+      <div class="workspace-brand"><i class="fa-solid fa-hospital-user"></i> Mintech HIMS</div>
+      <nav id="sidebar-nav"></nav>
+      <div class="user-footer">
+        <div class="user-info">
+          <div class="user-name" id="current-user-name">Staff User</div>
+          <div class="user-role" id="current-user-role">Role</div>
+        </div>
+        <button onclick="handleLogout()" style="background:transparent; border:none; color:#f87171; cursor:pointer;" title="Exit Workspace">
+          <i class="fa-solid fa-power-off"></i>
+        </button>
+      </div>
+    </aside>
+
+    <main>
+      <header>
+        <h2 id="view-title">Department Dashboard</h2>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.8rem;" onclick="handleLogout()">
+          <i class="fa-solid fa-arrow-left"></i> Exit to Website
+        </button>
+      </header>
+
+      <div class="content-area">
+
+        <!-- REGISTRATION SECTION -->
+        <section id="tab-registration" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-user-plus"></i> Patient Intake & UHID Assignment</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="Ramesh Patel" /></div>
+              <div class="form-group"><label>Age</label><input type="number" id="reg-age" placeholder="35" /></div>
+              <div class="form-group"><label>Gender</label>
+                <select id="reg-gender"><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select>
+              </div>
+              <div class="form-group"><label>Phone</label><input type="text" id="reg-phone" placeholder="10-digit mobile" /></div>
+              <div class="form-group"><label>Blood Group</label><input type="text" id="reg-blood" placeholder="B+" /></div>
+            </div>
+            <button class="btn" onclick="registerPatient()"><i class="fa-solid fa-id-card"></i> Issue UHID & Register</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-magnifying-glass"></i> Master Patient Index (MPI) Lookup</div>
+            <div style="display:flex; gap:12px;">
+              <input type="text" id="lookup-uhid" placeholder="Enter UHID (e.g. UHID-HOSP01-000001)" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
+              <button class="btn btn-secondary" onclick="fetchPatientProfile()"><i class="fa-solid fa-search"></i> Search Profile</button>
+            </div>
+            <div id="patient-lookup-result" style="margin-top:16px;"></div>
+          </div>
+        </section>
+
+        <!-- OPD SECTION -->
+        <section id="tab-opd" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-ticket"></i> OPD Token Check-In</div>
+            <div class="form-grid">
+              <div class="form-group"><label>UHID</label><input type="text" id="opd-uhid" placeholder="UHID-HOSP01-000001" /></div>
+              <div class="form-group"><label>Doctor ID</label><input type="text" id="opd-doctor" value="DOC01" /></div>
+              <div class="form-group"><label>Blood Pressure</label><input type="text" id="opd-bp" placeholder="120/80 mmHg" /></div>
+              <div class="form-group"><label>Pulse</label><input type="number" id="opd-pulse" placeholder="72" /></div>
+              <div class="form-group"><label>Temperature</label><input type="text" id="opd-temp" placeholder="98.6 F" /></div>
+              <div class="form-group" style="grid-column: 1 / -1;"><label>Chief Complaints</label><input type="text" id="opd-complaints" placeholder="Acute fever and body ache" /></div>
+            </div>
+            <button class="btn" onclick="checkinOpd()"><i class="fa-solid fa-user-clock"></i> Issue OPD Token</button>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-user-doctor"></i> Live Doctor Consultation Queue</div>
+            <div style="display:flex; gap:12px; margin-bottom:12px;">
+              <input type="text" id="opd-queue-doc" value="DOC01" placeholder="Doctor ID" style="padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
+              <button class="btn btn-secondary" onclick="loadDoctorQueue()"><i class="fa-solid fa-rotate"></i> Refresh Queue</button>
+            </div>
+            <div id="opd-queue-list"></div>
+          </div>
+          <!-- DOCTOR CONSULTATION & PRESCRIPTION PAD -->
+          <div class="card" style="border-top: 3px solid var(--primary); margin-top: 24px;">
+            <div class="card-title"><i class="fa-solid fa-file-prescription"></i> Doctor Clinical Consultation & Rx Pad</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Patient UHID</label>
+                <input type="text" id="rx-uhid" placeholder="UHID-HOSP01-000001" />
+              </div>
+              <div class="form-group">
+                <label>Clinical Diagnosis</label>
+                <input type="text" id="rx-diagnosis" placeholder="Acute Upper Respiratory Tract Infection (URTI)" />
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Prescribed Medicines (Drug Name • Dosage • Frequency • Duration)</label>
+                <textarea id="rx-medicines" rows="3" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:6px; font-size:0.92rem; font-family:inherit;" placeholder="1. Tab Paracetamol 650mg — 1-0-1 (After Food) — 3 Days&#10;2. Tab Cetirizine 10mg — 0-0-1 (Night) — 5 Days"></textarea>
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Doctor Advice & Follow-Up</label>
+                <input type="text" id="rx-advice" placeholder="Adequate hydration, warm saline gargles. Review in 5 days if fever persists." />
+              </div>
+            </div>
+            <button class="btn" onclick="issuePrescription()"><i class="fa-solid fa-print"></i> Save & Print Prescription Slip</button>
+          </div>
+        </section>
+
+        <!-- BILLING SECTION -->
+        <section id="tab-billing" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-file-invoice-dollar"></i> Cashier Billing & Payments</div>
+            <div class="form-grid">
+              <div class="form-group"><label>UHID</label><input type="text" id="bill-uhid" placeholder="UHID-HOSP01-000001" /></div>
+              <div class="form-group"><label>Service / Item</label><input type="text" id="bill-desc" placeholder="Consultation + Panel" /></div>
+              <div class="form-group"><label>Amount (₹)</label><input type="number" id="bill-amount" placeholder="600" /></div>
+              <div class="form-group"><label>Payment Mode</label>
+                <select id="bill-mode"><option value="UPI">UPI</option><option value="Cash">Cash</option><option value="Card">Card</option></select>
+              </div>
+            </div>
+            <button class="btn" onclick="createBill()"><i class="fa-solid fa-print"></i> Generate & Settle Invoice</button>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-book"></i> Ledger Invoices</div>
+            <div style="display:flex; gap:12px;">
+              <input type="text" id="bill-lookup-uhid" placeholder="UHID-HOSP01-000001" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
+              <button class="btn btn-secondary" onclick="fetchBills()"><i class="fa-solid fa-magnifying-glass"></i> View Invoices</button>
+            </div>
+            <div id="bill-results" style="margin-top:16px;"></div>
+          </div>
+        </section>
+
+        <!-- LAB SECTION -->
+        <section id="tab-lab" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-vial"></i> Diagnostic Investigation Requisition</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Visit ID</label><input type="text" id="lab-visit" placeholder="MongoDB Visit ID" /></div>
+              <div class="form-group"><label>Doctor Name</label><input type="text" id="lab-doc" value="Dr. Sharma" /></div>
+              <div class="form-group"><label>Investigation</label><input type="text" id="lab-test" value="Complete Blood Count (CBC)" /></div>
+            </div>
+            <button class="btn" onclick="orderLabTest()"><i class="fa-solid fa-plus"></i> Submit Lab Order</button>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-clipboard-check"></i> Lab Reports by UHID</div>
+            <div style="display:flex; gap:12px;">
+              <input type="text" id="lab-uhid" placeholder="UHID-HOSP01-000001" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
+              <button class="btn btn-secondary" onclick="fetchLabReports()"><i class="fa-solid fa-magnifying-glass"></i> View Reports</button>
+            </div>
+            <div id="lab-results" style="margin-top:16px;"></div>
+          </div>
+        </section>
+
+        <!-- IPD SECTION -->
+        <section id="tab-ipd" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-bed-pulse"></i> Inpatient (IPD) Ward Bed Allocation</div>
+            <div class="form-grid">
+              <div class="form-group"><label>UHID</label><input type="text" id="ipd-uhid" placeholder="UHID-HOSP01-000001" /></div>
+              <div class="form-group"><label>Admitting Doctor</label><input type="text" id="ipd-doc" value="Dr. Sharma" /></div>
+              <div class="form-group"><label>Ward Type</label>
+                <select id="ipd-ward">
+                  <option value="General Ward">General Ward</option>
+                  <option value="Semi-Private">Semi-Private</option>
+                  <option value="Private">Private</option>
+                  <option value="ICU">ICU</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Bed Number</label><input type="text" id="ipd-bed" placeholder="GW-101" /></div>
+              <div class="form-group" style="grid-column: 1 / -1;"><label>Reason for Admission</label><input type="text" id="ipd-reason" placeholder="Observation" /></div>
+            </div>
+            <button class="btn" onclick="admitIpd()"><i class="fa-solid fa-door-open"></i> Admit Patient to Bed</button>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-procedures"></i> Active Occupied Bed Register</div>
+            <button class="btn btn-secondary" onclick="loadActiveBeds()"><i class="fa-solid fa-rotate"></i> Refresh Ward List</button>
+            <div id="ipd-active-list" style="margin-top:16px;"></div>
+          </div>
+        </section>
+
+        <!-- PHARMACY SECTION -->
+        <section id="tab-pharmacy" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-box-open"></i> Add Medicine Batch</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Medicine Name</label><input type="text" id="ph-name" placeholder="Paracetamol 650mg" /></div>
+              <div class="form-group"><label>Batch #</label><input type="text" id="ph-batch" placeholder="B-2026-X" /></div>
+              <div class="form-group"><label>Quantity</label><input type="number" id="ph-qty" placeholder="100" /></div>
+              <div class="form-group"><label>Unit Price (₹)</label><input type="number" step="0.1" id="ph-price" placeholder="2.5" /></div>
+              <div class="form-group"><label>Expiry Date</label><input type="date" id="ph-expiry" /></div>
+            </div>
+            <button class="btn" onclick="addPharmacyStock()"><i class="fa-solid fa-plus-circle"></i> Update Stock</button>
+          </div>
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-prescription-bottle"></i> Dispensary Inventory Ledger</div>
+            <button class="btn btn-secondary" onclick="loadPharmacyStock()"><i class="fa-solid fa-warehouse"></i> Refresh Stock</button>
+            <div id="ph-inventory-list" style="margin-top:16px;"></div>
+          </div>
+        </section>
+
+        <!-- ABDM SECTION -->
+        <section id="tab-abdm" class="tab-content">
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-shield-halved"></i> ABDM Milestone 1 (M1): Verify & Link ABHA</div>
+            <div class="form-grid">
+              <div class="form-group"><label>UHID</label><input type="text" id="abdm-uhid" value="UHID-HOSP01-000001" /></div>
+              <div class="form-group"><label>ABHA Address</label><input type="text" id="abdm-address" placeholder="user@abdm" /></div>
+            </div>
+            <div style="display:flex; gap:12px;">
+              <button class="btn" onclick="verifyAbha()"><i class="fa-solid fa-circle-check"></i> Verify ABHA</button>
+              <button class="btn btn-secondary" onclick="linkAbha()"><i class="fa-solid fa-link"></i> Link to UHID</button>
+            </div>
+            <div id="abdm-verify-result" style="margin-top:12px;"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-file-code"></i> ABDM Milestone 2 (M2): Standard FHIR R4 Bundle Viewer</div>
+            <div style="display:flex; gap:12px; margin-bottom:12px;">
+              <input type="text" id="fhir-visit-id" placeholder="MongoDB Visit ID" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
+              <button class="btn" onclick="fetchFhirBundle()"><i class="fa-solid fa-code"></i> Generate FHIR Bundle</button>
+            </div>
+            <pre id="fhir-output">Output will appear here...</pre>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+  <!-- PRINT PREVIEW MODAL -->
+  <div id="print-modal">
+    <div class="print-sheet">
+      <div class="hospital-letterhead">
+        <div>
+          <div class="letterhead-title"><i class="fa-solid fa-hospital-user"></i> MINTECH MULTI-SPECIALTY HOSPITAL</div>
+          <div class="letterhead-sub">
+            Managed by Mintech Solutions Private Limited<br>
+            Plot 42, Health City, NH-24 • Phone: +91 98765-43210<br>
+            ABDM Facility ID: IN-UP-000421 • GSTIN: 09AAACM1234F1Z5
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge badge-green" id="slip-type">OFFICIAL INVOICE</span>
+          <div style="font-size: 0.8rem; margin-top: 6px; color: #64748b;" id="slip-date">Date: 27-Sep-2026</div>
+        </div>
+      </div>
+
+      <div id="slip-content">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="no-print" style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn btn-secondary" onclick="closePrintModal()">Close</button>
+        <button class="btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Document</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const API = "http://localhost:5000/api";
+    let currentUser = null;
+    let authToken = localStorage.getItem("token") || null;
+
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById("toast");
+      toast.className = isError ? "toast-error" : "toast-success";
+      toast.innerText = msg;
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 3500);
+    }
+
+    function openLoginModal() { document.getElementById("auth-screen").style.display = "flex"; }
+    function closeLoginModal() { document.getElementById("auth-screen").style.display = "none"; }
+
+    function fillCreds(email, pass) {
+      document.getElementById("login-email").value = email;
+      document.getElementById("login-pass").value = pass;
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-pass").value.trim();
+      if (!email || !password) return showToast("Enter credentials", true);
+
+      try {
+        const res = await fetch(`${API}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        authToken = data.token;
+        currentUser = data.user;
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        closeLoginModal();
+        launchDashboard();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    function handleLogout() {
+      localStorage.clear();
+      authToken = null;
+      currentUser = null;
+      document.getElementById("app-workspace").style.display = "none";
+    }
+
+    const roleRoutes = {
+      Admin: ["registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
+      Doctor: ["opd", "lab", "abdm"],
+      Receptionist: ["registration", "opd", "ipd"],
+      Cashier: ["billing"],
+      LabTech: ["lab"],
+      Pharmacist: ["pharmacy"]
+    };
+
+    const tabMeta = {
+      registration: { label: "Reception & Intake", icon: "fa-address-card", title: "Patient Registration & MPI" },
+      opd: { label: "OPD Consultation", icon: "fa-stethoscope", title: "OPD Consultation & Queue" },
+      billing: { label: "Cashier Billing", icon: "fa-receipt", title: "Cashier Invoicing & Payments" },
+      lab: { label: "Diagnostic Lab", icon: "fa-flask-vial", title: "Diagnostic Laboratory & LIS" },
+      ipd: { label: "Inpatient (IPD)", icon: "fa-bed", title: "Inpatient Wards & Beds" },
+      pharmacy: { label: "Pharmacy Store", icon: "fa-pills", title: "Pharmacy Inventory" },
+      abdm: { label: "ABDM & FHIR", icon: "fa-shield-halved", title: "ABDM / ABHA Standards" },
+    };
+
+    function launchDashboard() {
+      document.getElementById("app-workspace").style.display = "flex";
+      document.getElementById("current-user-name").innerText = currentUser.name;
+      document.getElementById("current-user-role").innerText = `${currentUser.role} (${currentUser.department})`;
+
+      const allowedTabs = roleRoutes[currentUser.role] || [];
+      const navContainer = document.getElementById("sidebar-nav");
+      navContainer.innerHTML = "";
+
+      allowedTabs.forEach((tabId, idx) => {
+        const meta = tabMeta[tabId];
+        const btn = document.createElement("button");
+        btn.className = `nav-btn ${idx === 0 ? "active" : ""}`;
+        btn.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${meta.label}`;
+        btn.onclick = (e) => switchTab(tabId, e.currentTarget);
+        navContainer.appendChild(btn);
+      });
+
+      if (allowedTabs.length > 0) {
+        switchTab(allowedTabs[0], navContainer.children[0]);
+      }
+    }
+
+    function switchTab(tabId, targetBtn) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
+
+      const target = document.getElementById(`tab-${tabId}`);
+      if (target) target.classList.add("active");
+      if (targetBtn) targetBtn.classList.add("active");
+
+      document.getElementById("view-title").innerText = tabMeta[tabId].title;
+    }
+
+    async function registerPatient() {
+      const payload = {
+        hospitalId: currentUser.hospitalId,
+        name: document.getElementById("reg-name").value,
+        age: Number(document.getElementById("reg-age").value),
+        gender: document.getElementById("reg-gender").value,
+        phone: document.getElementById("reg-phone").value,
+        bloodGroup: document.getElementById("reg-blood").value || "Not Specified"
+      };
+      try {
+        const res = await fetch(`${API}/patients`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || data.error);
+        showToast(`Registered: ${data.patient.uhid}`);
+        document.getElementById("lookup-uhid").value = data.patient.uhid;
+        fetchPatientProfile();
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function fetchPatientProfile() {
+      const uhid = document.getElementById("lookup-uhid").value.trim();
+      if (!uhid) return;
+      try {
+        const res = await fetch(`${API}/patients/${uhid}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        const p = data.patient;
+        document.getElementById("patient-lookup-result").innerHTML = `
+          <table>
+            <tr><th>UHID</th><td><strong>${p.uhid}</strong></td><th>ABHA</th><td>${p.isAbhaLinked ? '<span class="badge badge-green">Linked ('+p.abhaAddress+')</span>' : '<span class="badge badge-yellow">Not Linked</span>'}</td></tr>
+            <tr><th>Name</th><td>${p.name}</td><th>Age / Sex</th><td>${p.age} / ${p.gender}</td></tr>
+            <tr><th>Phone</th><td>${p.phone}</td><th>Blood Group</th><td>${p.bloodGroup}</td></tr>
+          </table>
+        `;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function checkinOpd() {
+      const payload = {
+        uhid: document.getElementById("opd-uhid").value,
+        hospitalId: currentUser.hospitalId,
+        doctorId: document.getElementById("opd-doctor").value,
+        chiefComplaints: document.getElementById("opd-complaints").value,
+        vitals: {
+          bloodPressure: document.getElementById("opd-bp").value,
+          pulse: Number(document.getElementById("opd-pulse").value),
+          temperature: document.getElementById("opd-temp").value
+        }
+      };
+      try {
+        const res = await fetch(`${API}/opd/checkin`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast(`Token Issued: #${data.visit.tokenNumber}`);
+        loadDoctorQueue();
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function loadDoctorQueue() {
+      const doc = document.getElementById("opd-queue-doc").value;
+      try {
+        const res = await fetch(`${API}/opd/queue/${doc}`);
+        const data = await res.json();
+        const list = document.getElementById("opd-queue-list");
+        if (data.queue.length === 0) {
+          list.innerHTML = `<p style="color:var(--text-muted); padding:10px 0;">No patients waiting.</p>`;
+          return;
+        }
+        let html = `<table><tr><th>Token</th><th>UHID</th><th>Complaints</th><th>Status</th></tr>`;
+        data.queue.forEach(v => {
+          html += `<tr><td><strong>#${v.tokenNumber}</strong></td><td>${v.uhid}</td><td>${v.chiefComplaints}</td><td><span class="badge badge-yellow">${v.status}</span></td></tr>`;
+        });
+        html += `</table>`;
+        list.innerHTML = html;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function createBill() {
+      const uhid = document.getElementById("bill-uhid").value.trim() || "WALK-IN";
+      const desc = document.getElementById("bill-desc").value.trim() || "General Consultation";
+      const amount = Number(document.getElementById("bill-amount").value) || 500;
+      const mode = document.getElementById("bill-mode").value;
+
+      const payload = {
+        uhid,
+        hospitalId: (currentUser && currentUser.hospitalId) ? currentUser.hospitalId : "HOSP01",
+        items: [{ description: desc, amount: amount }],
+        paymentMode: mode
+      };
+
+      try {
+        const res = await fetch(`${API}/billing/invoice`, {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            ...(authToken ? { "Authorization": `Bearer ${authToken}` } : {})
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Billing failed");
+
+        showToast(`Invoice: ${data.invoice.invoiceNumber}`);
+        document.getElementById("bill-lookup-uhid").value = uhid;
+        
+        // Render formal printable slip with actual values
+        printInvoiceReceipt(data.invoice.invoiceNumber, uhid, desc, amount, mode);
+
+        // Fetch refreshed invoice list
+        fetchBills();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function fetchBills() {
+      const uhid = document.getElementById("bill-lookup-uhid").value.trim();
+      if (!uhid) return;
+
+      try {
+        const res = await fetch(`${API}/billing/${encodeURIComponent(uhid)}`, {
+          headers: {
+            ...(authToken ? { "Authorization": `Bearer ${authToken}` } : {})
+          }
+        });
+
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          // If a non-JSON route response comes back, ignore silently
+          return;
+        }
+
+        if (!res.ok) throw new Error(data.error || "Failed to load invoices");
+
+        const container = document.getElementById("bill-results");
+        if (!data.invoices || data.invoices.length === 0) {
+          container.innerHTML = `<p style="color:var(--text-muted); padding:10px 0;">No previous invoices found for this UHID.</p>`;
+          return;
+        }
+
+        let html = `<table><tr><th>Invoice #</th><th>Total</th><th>Status</th><th>Mode</th></tr>`;
+        data.invoices.forEach(b => {
+          html += `<tr><td><strong>${b.invoiceNumber}</strong></td><td>₹${b.totalAmount}</td><td><span class="badge badge-green">${b.paymentStatus}</span></td><td>${b.paymentMode}</td></tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function orderLabTest() {
+      const payload = {
+        visitId: document.getElementById("lab-visit").value,
+        doctorName: document.getElementById("lab-doc").value,
+        tests: [{ testName: document.getElementById("lab-test").value, category: "Pathology" }]
+      };
+      try {
+        const res = await fetch(`${API}/lab/order`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast(`Order: ${data.labOrder.orderId}`);
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function fetchLabReports() {
+      const uhid = document.getElementById("lab-uhid").value;
+      try {
+        const res = await fetch(`${API}/lab/reports/${uhid}`);
+        const data = await res.json();
+        const container = document.getElementById("lab-results");
+        if (data.reports.length === 0) {
+          container.innerHTML = `<p style="color:var(--text-muted);">No lab records found.</p>`;
+          return;
+        }
+        let html = `<table><tr><th>Order ID</th><th>Status</th><th>Tests</th></tr>`;
+        data.reports.forEach(r => {
+          html += `<tr><td><strong>${r.orderId}</strong></td><td><span class="badge badge-blue">${r.status}</span></td><td>${r.tests.map(t => t.testName).join(", ")}</td></tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = html;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function admitIpd() {
+      const payload = {
+        uhid: document.getElementById("ipd-uhid").value,
+        hospitalId: currentUser.hospitalId,
+        admittingDoctor: document.getElementById("ipd-doc").value,
+        wardType: document.getElementById("ipd-ward").value,
+        bedNumber: document.getElementById("ipd-bed").value,
+        admissionReason: document.getElementById("ipd-reason").value
+      };
+      try {
+        const res = await fetch(`${API}/ipd/admit`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast(`Admitted to Bed: ${data.admission.bedNumber}`);
+        loadActiveBeds();
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function loadActiveBeds() {
+      try {
+        const res = await fetch(`${API}/ipd/active/HOSP01`);
+        const data = await res.json();
+        const list = document.getElementById("ipd-active-list");
+        if (data.admissions.length === 0) {
+          list.innerHTML = `<p style="color:var(--text-muted);">All beds available.</p>`;
+          return;
+        }
+        let html = `<table><tr><th>IPD #</th><th>UHID</th><th>Ward</th><th>Bed</th></tr>`;
+        data.admissions.forEach(a => {
+          html += `<tr><td><strong>${a.ipdNumber}</strong></td><td>${a.uhid}</td><td>${a.wardType}</td><td><span class="badge badge-green">${a.bedNumber}</span></td></tr>`;
+        });
+        html += `</table>`;
+        list.innerHTML = html;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function addPharmacyStock() {
+      const payload = {
+        hospitalId: currentUser.hospitalId,
+        medicineName: document.getElementById("ph-name").value,
+        batchNumber: document.getElementById("ph-batch").value,
+        quantityInStock: Number(document.getElementById("ph-qty").value),
+        unitPrice: Number(document.getElementById("ph-price").value),
+        expiryDate: document.getElementById("ph-expiry").value
+      };
+      try {
+        const res = await fetch(`${API}/pharmacy/stock`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast("Stock Updated");
+        loadPharmacyStock();
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function loadPharmacyStock() {
+      try {
+        const res = await fetch(`${API}/pharmacy/inventory/HOSP01`);
+        const data = await res.json();
+        const list = document.getElementById("ph-inventory-list");
+        if (data.inventory.length === 0) {
+          list.innerHTML = `<p style="color:var(--text-muted);">No stock recorded.</p>`;
+          return;
+        }
+        let html = `<table><tr><th>Medicine</th><th>Batch</th><th>Stock</th><th>Unit Price</th></tr>`;
+        data.inventory.forEach(i => {
+          html += `<tr><td><strong>${i.medicineName}</strong></td><td>${i.batchNumber}</td><td>${i.quantityInStock} units</td><td>₹${i.unitPrice}</td></tr>`;
+        });
+        html += `</table>`;
+        list.innerHTML = html;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function verifyAbha() {
+      const addr = document.getElementById("abdm-address").value;
+      try {
+        const res = await fetch(`${API}/abdm/verify`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ abhaAddress: addr })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast("ABHA Verified");
+        document.getElementById("abdm-verify-result").innerHTML = `
+          <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:10px; border-radius:6px; color:#15803d; font-size:0.88rem;">
+            <strong>Verified Active:</strong> ${data.profile.name} (${data.profile.abhaNumber})
+          </div>
+        `;
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function linkAbha() {
+      const payload = {
+        uhid: document.getElementById("abdm-uhid").value,
+        abhaAddress: document.getElementById("abdm-address").value,
+        abhaNumber: "14-8765-4321-9012"
+      };
+      try {
+        const res = await fetch(`${API}/abdm/link`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        showToast("ABHA Profile Linked!");
+      } catch (err) { showToast(err.message, true); }
+    }
+
+    async function fetchFhirBundle() {
+      const visitId = document.getElementById("fhir-visit-id").value.trim();
+      if (!visitId) return showToast("Enter Visit ID", true);
+      try {
+        const res = await fetch(`${API}/abdm/fhir/${visitId}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        document.getElementById("fhir-output").innerText = JSON.stringify(data.fhirBundle, null, 2);
+      } catch (err) { showToast(err.message, true); }
+    }
+    function handleLeadSubmit() {
+      const name = document.getElementById("lead-name").value.trim();
+      const phone = document.getElementById("lead-phone").value.trim();
+      const facility = document.getElementById("lead-facility").value.trim();
+
+      if (!name || !phone || !facility) {
+        showToast("Please fill in your name, phone, and facility.", true);
+        return;
+      }
+
+      const feedback = document.getElementById("lead-feedback");
+      feedback.innerText = `Thank you, ${name}. A Mintech representative will contact you shortly!`;
+      feedback.style.display = "block";
+
+      showToast("Demo request recorded successfully!");
+      document.getElementById("lead-name").value = "";
+      document.getElementById("lead-phone").value = "";
+      document.getElementById("lead-facility").value = "";
+    }
+    function openPrintModal() { document.getElementById("print-modal").style.display = "flex"; }
+    function closePrintModal() { document.getElementById("print-modal").style.display = "none"; }
+
+    function printInvoiceReceipt(invoiceNumber, uhid, item, amount, mode) {
+      document.getElementById("slip-type").innerText = "TAX INVOICE / RECEIPT";
+      document.getElementById("slip-date").innerText = `Date: ${new Date().toLocaleDateString('en-IN')}`;
+      
+      document.getElementById("slip-content").innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom: 16px; font-size: 0.9rem;">
+          <div><strong>Patient UHID:</strong> ${uhid}</div>
+          <div><strong>Invoice #:</strong> ${invoiceNumber}</div>
+        </div>
+        <table style="width:100%; margin-bottom: 20px;">
+          <thead>
+            <tr><th>Description</th><th>Qty</th><th style="text-align:right;">Amount (₹)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>${item}</td><td>1</td><td style="text-align:right;">₹${amount}</td></tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th colspan="2" style="text-align:right;">Total Paid (${mode}):</th>
+              <th style="text-align:right; color:#0f766e; font-size:1.1rem;">₹${amount}</th>
+            </tr>
+          </tfoot>
+        </table>
+        <div style="margin-top: 40px; display:flex; justify-content:space-between; align-items:flex-end;">
+          <div style="font-size: 0.78rem; color: #64748b;">Computer generated tax invoice • Valid without physical signature.</div>
+          <div style="text-align:center; font-size:0.85rem; border-top: 1px dashed #cbd5e1; padding-top: 6px; width: 160px;">Authorized Cashier</div>
+        </div>
+      `;
+      openPrintModal();
+    }
+    function issuePrescription() {
+      const uhid = document.getElementById("rx-uhid").value.trim() || "UHID-HOSP01-000001";
+      const diagnosis = document.getElementById("rx-diagnosis").value.trim() || "Clinical Observation";
+      const meds = document.getElementById("rx-medicines").value.trim() || "No medications prescribed.";
+      const advice = document.getElementById("rx-advice").value.trim() || "Routine care.";
+
+      document.getElementById("slip-type").innerText = "OUTPATIENT PRESCRIPTION";
+      document.getElementById("slip-date").innerText = `Date: ${new Date().toLocaleDateString('en-IN')}`;
+
+      const medListHtml = meds.split('\n').map(m => `<li style="margin-bottom:6px;">${m}</li>`).join('');
+
+      document.getElementById("slip-content").innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom: 16px; font-size: 0.9rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+          <div><strong>Patient UHID:</strong> ${uhid}</div>
+          <div><strong>Consulting Doctor:</strong> Dr. Sharma (MD, Gen Med)</div>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <strong style="color:#0f766e; font-size:0.85rem; text-transform:uppercase;">Diagnosis:</strong>
+          <p style="font-size:0.95rem; margin-top:4px;">${diagnosis}</p>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <strong style="color:#0f766e; font-size:0.85rem; text-transform:uppercase;">Rx / Prescribed Medication:</strong>
+          <ul style="margin: 8px 0 0 20px; font-size:0.92rem; line-height: 1.5;">
+            ${medListHtml}
+          </ul>
+        </div>
+        <div style="margin-bottom: 30px; background:#f8fafc; padding:12px; border-radius:6px;">
+          <strong style="font-size:0.82rem; color:#64748b; text-transform:uppercase;">Doctor Advice & Instructions:</strong>
+          <p style="font-size:0.88rem; margin-top:4px;">${advice}</p>
+        </div>
+        <div style="margin-top: 50px; display:flex; justify-content:space-between; align-items:flex-end;">
+          <div style="font-size: 0.78rem; color: #64748b;">Mintech HIMS Validated Electronic Medical Record (EMR).</div>
+          <div style="text-align:center; font-size:0.85rem; border-top: 1px dashed #cbd5e1; padding-top: 6px; width: 180px;">Doctor's Signature / Seal</div>
+        </div>
+      `;
+
+      openPrintModal();
+    }
+  </script>
+
+</body>
+</html>
