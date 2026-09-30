@@ -492,6 +492,9 @@
               <div class="form-group" style="grid-column: 1 / -1;"><label>Chief Complaints</label><input type="text" id="opd-complaints" placeholder="Acute fever and body ache" /></div>
             </div>
             <button class="btn" onclick="checkinOpd()"><i class="fa-solid fa-user-clock"></i> Issue OPD Token</button>
+            <button type="button" onclick="openPrintPrescription()" class="btn" style="background: #0f766e; color: #fff; padding: 10px 16px; border-radius: 6px; border: none; margin-left: 8px; cursor: pointer;">
+  <i class="fa-solid fa-print"></i> Print Rx / Prescription
+</button>
           </div>
 
           <div class="card">
@@ -739,6 +742,25 @@
     currentUser = null;
     window.location.reload();
   }
+}
+function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
+  document.getElementById("print-date").innerText = new Date().toLocaleDateString('en-IN');
+  document.getElementById("print-uhid").innerText = uhid || "UHID-HOSP01-000001";
+  document.getElementById("print-patient-name").innerText = name || "OPD Patient";
+  document.getElementById("print-doctor").innerText = doctor || "Dr. Sharma (MD)";
+
+  const content = `
+    <div style="margin-bottom: 10px;"><strong>Vitals:</strong> ${vitals || 'BP: 120/80 mmHg | Pulse: 72 bpm | Temp: 98.6°F'}</div>
+    <div style="margin-bottom: 14px;"><strong>Chief Complaints:</strong> ${complaints || 'Acute fever and body ache'}</div>
+    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 12px 0;">
+    <h3 style="color: #0f766e; font-size: 15px; margin-bottom: 8px;">Rx (Prescribed Medications)</h3>
+    <div style="background: #f8fafc; padding: 12px; border-radius: 6px; font-family: monospace; white-space: pre-line; line-height: 1.6;">
+      ${rx || '1. Tab Paracetamol 650mg — 1-0-1 (After Food) — 3 Days\n2. Tab Cetirizine 10mg — 0-0-1 (Night) — 3 Days\n3. ORS Electrolyte Drink — 1L daily'}
+    </div>
+  `;
+
+  document.getElementById("print-content-body").innerHTML = content;
+  document.getElementById("print-modal").style.display = "block";
 }
     const roleRoutes = {
       Admin: ["registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
@@ -1211,6 +1233,52 @@
       openPrintModal();
     }
   </script>
+  <!-- PRINT / EXPORT CONTAINER -->
+<div id="print-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; overflow-y: auto;">
+  <div style="background: white; width: 90%; max-width: 650px; border-radius: 8px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: 40px auto;" class="print-sheet">
+    <div id="print-container">
+      <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #0f766e; padding-bottom: 12px; margin-bottom: 16px;">
+        <div>
+          <h2 style="margin: 0; color: #0f766e; font-size: 20px;">MINTECH MULTISPECIALTY HOSPITAL</h2>
+          <p style="margin: 2px 0; font-size: 12px; color: #555;">ABDM Integrated Healthcare Campus | OPD & Diagnostic Center</p>
+        </div>
+        <div style="text-align: right; font-size: 12px;">
+          <strong>Date:</strong> <span id="print-date"></span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 16px;">
+        <div>
+          <strong>UHID:</strong> <span id="print-uhid">--</span><br>
+          <strong>Patient:</strong> <span id="print-patient-name">OPD Patient</span>
+        </div>
+        <div>
+          <strong>Doctor:</strong> <span id="print-doctor">Dr. Sharma (MD)</span><br>
+          <strong>Department:</strong> General Medicine
+        </div>
+      </div>
+
+      <div id="print-content-body" style="font-size: 14px; min-height: 180px;"></div>
+
+      <div style="margin-top: 36px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #ccc; padding-top: 16px;">
+        <div style="font-size: 11px; color: #777;">
+          Generated electronically via Mintech HIMS.<br>Valid without physical stamp if digitally signed.
+        </div>
+        <div style="text-align: center; font-size: 13px;">
+          <div style="height: 35px;"></div>
+          <strong>Authorized Signatory / Doctor</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-print" style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+      <button type="button" onclick="document.getElementById('print-modal').style.display='none'" class="btn" style="padding: 8px 16px; background: #e2e8f0; border: none; border-radius: 4px; cursor: pointer;">Close</button>
+      <button type="button" onclick="window.print()" class="btn btn-primary" style="padding: 8px 18px; background: #0f766e; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        <i class="fa-solid fa-print"></i> Print / Save PDF
+      </button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
