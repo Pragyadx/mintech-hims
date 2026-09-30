@@ -29,10 +29,10 @@ app.use("/api/auth", authRoutes);
 const PORT = 5000;
 
 // Connect to MongoDB Atlas
+const mongoURI = process.env.MONGO_URI || "mongodb+srv://mintech_user2026:director_hain_daddy@cluster0.00gf3n8.mongodb.net/?retryWrites=true&w=majority";
+
 mongoose
-  .connect(
-    "mongodb+srv://mintech_user2026:director_hain_daddy@cluster0.00gf3n8.mongodb.net/hims_portal?retryWrites=true&w=majority&appName=Cluster0"
-  )
+  .connect(mongoURI)
   .then(() => {
     console.log("Connected to MongoDB Atlas successfully!");
   })
