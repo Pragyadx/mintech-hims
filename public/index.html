@@ -446,7 +446,7 @@
     <main>
       <header>
         <h2 id="view-title">Department Dashboard</h2>
-        <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.8rem;" onclick="handleLogout()">
+        <button onclick="handleLogout()" class="btn btn-secondary" style="padding:6px 12px; font-size:0.85rem;"></button>
           <i class="fa-solid fa-arrow-left"></i> Exit to Website
         </button>
       </header>
@@ -725,13 +725,21 @@
       }
     }
 
-    function handleLogout() {
-      localStorage.clear();
-      authToken = null;
-      currentUser = null;
-      document.getElementById("app-workspace").style.display = "none";
-    }
-
+    async function handleLogout() {
+  try {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (err) {
+    console.error("Logout request failed:", err);
+  } finally {
+    localStorage.clear();
+    authToken = null;
+    currentUser = null;
+    window.location.reload();
+  }
+}
     const roleRoutes = {
       Admin: ["registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
       Doctor: ["opd", "lab", "abdm"],
