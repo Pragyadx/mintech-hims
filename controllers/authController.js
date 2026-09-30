@@ -36,6 +36,14 @@ exports.login = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    // Set secure clinical HttpOnly session cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 8 * 60 * 60 * 1000 // 8-hour hospital shift
+    });
+
     res.status(200).json({
       success: true,
       message: "Logged in successfully",
@@ -88,4 +96,12 @@ exports.seedUsers = async (req, res) => {
       error: error.message || "Server Error",
     });
   }
+};
+exports.logout = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax"
+  });
+  res.status(200).json({ success: true, message: "Logged out successfully" });
 };

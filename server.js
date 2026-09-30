@@ -10,9 +10,11 @@ const ipdRoutes = require("./routes/ipdRoutes");
 const pharmacyRoutes = require("./routes/pharmacyRoutes");
 const abdmRoutes = require("./routes/abdmRoutes");
 const authRoutes = require("./routes/authRoutes");
+const cookieParser = require("cookie-parser");
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 // Middlewares
 const path = require("path");
 app.use(express.static(path.join(__dirname, "public")));

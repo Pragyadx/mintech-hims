@@ -1,13 +1,18 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-
-const JWT_SECRET = "HIMS_SECURE_KEY_2026_PRODUCTION_HEALTH";
+const JWT_SECRET = process.env.JWT_SECRET || "HIMS_SECURE_KEY_2026_PRODUCTION_HEALTH";
 
 // 1. Verify User is Logged In
 exports.protect = async (req, res, next) => {
-  let token;
+let token;
 
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+  // 1. Check HttpOnly cookie first, then fallback to Bearer header
+  if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
+  } else if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
     token = req.headers.authorization.split(" ")[1];
   }
 
