@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const { login, seedUsers } = require("../controllers/authController");
 const { login, seedUsers, logout } = require("../controllers/authController");
 
 // Login endpoint: POST /api/auth/login
