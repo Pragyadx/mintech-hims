@@ -867,7 +867,9 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     admin: ["registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
     doctor: ["opd", "pharmacy", "lab"],
     receptionist: ["registration", "billing"],
-    pharmacist: ["pharmacy", "billing"], // Gives pharmacist access to both the drug ledger and counter billing!
+    pharmacist: ["pharmacy", "billing"],
+    pharmacy: ["pharmacy", "billing"],
+    PHARMACIST: ["pharmacy", "billing"],
     cashier: ["billing", "pharmacy"],
     labtech: ["lab"]
   };
@@ -883,16 +885,20 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     };
 
     function launchDashboard() {
-      document.getElementById("app-workspace").style.display = "flex";
-      document.getElementById("current-user-name").innerText = currentUser.name;
-      document.getElementById("current-user-role").innerText = `${currentUser.role} (${currentUser.department})`;
+    document.getElementById("app-workspace").style.display = "flex";
+    document.getElementById("current-user-name").innerText = currentUser.name;
+    document.getElementById("current-user-role").innerText = `${currentUser.role} (${currentUser.department || ''})`;
 
-      const allowedTabs = roleRoutes[currentUser.role] || [];
-      const navContainer = document.getElementById("sidebar-nav");
+    const userRoleKey = (currentUser && currentUser.role) ? currentUser.role.toLowerCase().trim() : 'pharmacist';
+    const allowedTabs = roleRoutes[userRoleKey] || roleRoutes[currentUser?.role] || ["pharmacy", "billing"];
+    
+    const navContainer = document.getElementById("sidebar-nav") || document.querySelector(".nav-links") || document.querySelector("nav");
+    if (navContainer) {
       navContainer.innerHTML = "";
 
-      allowedTabs.forEach((tabId, idx) => {
+      (allowedTabs || []).forEach((tabId, idx) => {
         const meta = tabMeta[tabId];
+        if (!meta) return;
         const btn = document.createElement("button");
         btn.className = `nav-btn ${idx === 0 ? "active" : ""}`;
         btn.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${meta.label}`;
@@ -900,32 +906,34 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
         navContainer.appendChild(btn);
       });
 
-      if (allowedTabs.length > 0) {
+      if (allowedTabs && allowedTabs.length > 0 && navContainer.children.length > 0) {
         switchTab(allowedTabs[0], navContainer.children[0]);
       }
-      // --- Populate Pharmacy Operations Menu in Sidebar ---
-    if (currentUser.role === 'pharmacist' || currentUser.role === 'admin') {
-      const toolsDiv = document.createElement("div");
-      toolsDiv.id = "pharma-quick-tools";
-      toolsDiv.style.cssText = "margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 10px;";
-      toolsDiv.innerHTML = `
-        <div style="font-size: 10px; text-transform: uppercase; color: #94a3b8; padding: 4px 16px; font-weight: 700; letter-spacing: 0.5px;">Pharma Actions</div>
-        <button type="button" onclick="switchTab('pharmacy'); switchPharmaView('ledger');" class="nav-btn" style="width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #e2e8f0; background: none; border: none; font-size: 13px; cursor: pointer;">
-          <i class="fa-solid fa-table-list" style="width: 18px;"></i> Stock Ledger
-        </button>
-        <button type="button" onclick="switchTab('pharmacy'); switchPharmaView('purchase');" class="nav-btn" style="width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #e2e8f0; background: none; border: none; font-size: 13px; cursor: pointer;">
-          <i class="fa-solid fa-cart-flatbed" style="width: 18px;"></i> Inward Stock Entry
-        </button>
-        <button type="button" onclick="switchTab('billing');" class="nav-btn" style="width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #e2e8f0; background: none; border: none; font-size: 13px; cursor: pointer;">
-          <i class="fa-solid fa-cash-register" style="width: 18px;"></i> POS Counter Sale
-        </button>
-      `;
-      navContainer.appendChild(toolsDiv);
+
+      if (userRoleKey.includes('pharma') || userRoleKey === 'admin') {
+        const toolsDiv = document.createElement("div");
+        toolsDiv.id = "pharma-quick-tools";
+        toolsDiv.style.cssText = "margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 10px;";
+        toolsDiv.innerHTML = `
+          <div style="font-size: 10px; text-transform: uppercase; color: #94a3b8; padding: 4px 16px; font-weight: 700; letter-spacing: 0.5px;">Pharma Actions</div>
+          <button type="button" onclick="switchTab('pharmacy'); switchPharmaView('ledger');" class="nav-btn" style="width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #e2e8f0; background: none; border: none; font-size: 13px; cursor: pointer;">
+            <i class="fa-solid fa-table-list" style="width: 18px;"></i> Stock Ledger
+          </button>
+          <button type="button" onclick="switchTab('pharmacy'); switchPharmaView('purchase');" class="nav-btn" style="width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #e2e8f0; background: none; border: none; font-size: 13px; cursor: pointer;">
+            <i class="fa-solid fa-cart-flatbed" style="width: 18px;"></i> Inward Stock Entry
+          </button>
+          <button type="button" onclick="switchTab('billing');" class="nav-btn" style="width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #e2e8f0; background: none; border: none; font-size: 13px; cursor: pointer;">
+            <i class="fa-solid fa-cash-register" style="width: 18px;"></i> POS Counter Sale
+          </button>
+        `;
+        navContainer.appendChild(toolsDiv);
+      }
     }
 
-    // Auto-fetch stock so it never gets stuck on "Loading pharmacy ledger..."
-    loadPharmacyStock();
+    if (typeof loadPharmacyStock === 'function') {
+      loadPharmacyStock();
     }
+  }
 
     function switchTab(tabId, targetBtn) {
       document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
