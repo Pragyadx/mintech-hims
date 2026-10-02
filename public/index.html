@@ -864,13 +864,13 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
   document.getElementById("print-modal").style.display = "block";
 }
     const roleRoutes = {
-      Admin: ["registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
-      Doctor: ["opd", "lab", "abdm"],
-      Receptionist: ["registration", "opd", "ipd"],
-      Cashier: ["billing"],
-      LabTech: ["lab"],
-      Pharmacist: ["pharmacy"]
-    };
+    admin: ["registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
+    doctor: ["opd", "pharmacy", "lab"],
+    receptionist: ["registration", "billing"],
+    pharmacist: ["pharmacy", "billing"], // Gives pharmacist access to both the drug ledger and counter billing!
+    cashier: ["billing", "pharmacy"],
+    labtech: ["lab"]
+  };
 
     const tabMeta = {
       registration: { label: "Reception & Intake", icon: "fa-address-card", title: "Patient Registration & MPI" },
@@ -903,6 +903,28 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       if (allowedTabs.length > 0) {
         switchTab(allowedTabs[0], navContainer.children[0]);
       }
+      // --- Populate Pharmacy Operations Menu in Sidebar ---
+    if (currentUser.role === 'pharmacist' || currentUser.role === 'admin') {
+      const toolsDiv = document.createElement("div");
+      toolsDiv.id = "pharma-quick-tools";
+      toolsDiv.style.cssText = "margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 10px;";
+      toolsDiv.innerHTML = `
+        <div style="font-size: 10px; text-transform: uppercase; color: #94a3b8; padding: 4px 16px; font-weight: 700; letter-spacing: 0.5px;">Pharma Actions</div>
+        <button type="button" onclick="switchTab('pharmacy'); switchPharmaView('ledger');" class="nav-btn" style="width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #e2e8f0; background: none; border: none; font-size: 13px; cursor: pointer;">
+          <i class="fa-solid fa-table-list" style="width: 18px;"></i> Stock Ledger
+        </button>
+        <button type="button" onclick="switchTab('pharmacy'); switchPharmaView('purchase');" class="nav-btn" style="width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #e2e8f0; background: none; border: none; font-size: 13px; cursor: pointer;">
+          <i class="fa-solid fa-cart-flatbed" style="width: 18px;"></i> Inward Stock Entry
+        </button>
+        <button type="button" onclick="switchTab('billing');" class="nav-btn" style="width: 100%; text-align: left; display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #e2e8f0; background: none; border: none; font-size: 13px; cursor: pointer;">
+          <i class="fa-solid fa-cash-register" style="width: 18px;"></i> POS Counter Sale
+        </button>
+      `;
+      navContainer.appendChild(toolsDiv);
+    }
+
+    // Auto-fetch stock so it never gets stuck on "Loading pharmacy ledger..."
+    loadPharmacyStock();
     }
 
     function switchTab(tabId, targetBtn) {
