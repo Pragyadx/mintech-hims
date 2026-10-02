@@ -1466,35 +1466,35 @@ async function loadPharmacyStock() {
 }
 
 function renderPharmacyTable(items) {
-  const tbody = document.getElementById("pharma-stock-table-body");
+  const tbody = document.getElementById("pharma-table-body") || document.querySelector("table tbody");
   if (!tbody) return;
 
-  if (!items || items.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 24px; color: #64748b;">No stock registered. Click "+ Inward Purchase Entry" to add medicine.</td></tr>`;
+  const stockList = Array.isArray(items) ? items : [];
+
+  if (stockList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 20px; color:#64748b;">No active pharmacy stock found. Use Inward Purchase Entry to add batches.</td></tr>`;
     return;
   }
 
-  tbody.innerHTML = items.map(item => {
-    const qty = Number(item.stockQuantity) || 0;
-    const isLow = qty < 20;
-    const statusBadge = isLow 
-      ? `<span style="background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Low Stock</span>`
-      : `<span style="background: #dcfce7; color: #15803d; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">In Stock</span>`;
-
-    return `
-      <tr style="border-bottom: 1px solid #f1f5f9;">
-        <td style="padding: 10px 12px; font-weight: 600; color: #0f172a;">${item.name || '--'}</td>
-        <td style="padding: 10px 12px; color: #475569;">${item.company || 'Generic'}</td>
-        <td style="padding: 10px 12px; font-family: monospace; font-weight: 600; color: #0f766e;">${item.batchNumber || '--'}</td>
-        <td style="padding: 10px 12px; color: #475569;">${item.expiryDate || '--'}</td>
-        <td style="padding: 10px 12px; text-align: center; font-weight: 700;">${qty}</td>
-        <td style="padding: 10px 12px; text-align: right; color: #64748b;">₹${Number(item.purchaseRate || 0).toFixed(2)}</td>
-        <td style="padding: 10px 12px; text-align: right; color: #94a3b8; text-decoration: line-through;">₹${Number(item.mrp || 0).toFixed(2)}</td>
-        <td style="padding: 10px 12px; text-align: right; font-weight: 700; color: #0f766e;">₹${Number(item.saleRate || 0).toFixed(2)}</td>
-        <td style="padding: 10px 12px; text-align: center;">${statusBadge}</td>
-      </tr>
-    `;
-  }).join('');
+  tbody.innerHTML = stockList.map(item => `
+    <tr style="border-bottom: 1px solid #f1f5f9;">
+      <td style="padding: 10px; font-weight: 600; color: #0f172a;">${item.name || 'N/A'}</td>
+      <td style="padding: 10px; color: #475569;">${item.company || 'Standard Pharma'}</td>
+      <td style="padding: 10px; font-family: monospace; font-weight: bold; color: #0f766e;">${item.batchNumber || '—'}</td>
+      <td style="padding: 10px; color: #475569;">${item.expiryDate || '—'}</td>
+      <td style="padding: 10px; text-align: center; font-weight: 700; color: ${(Number(item.stockQuantity) || 0) < 20 ? '#ef4444' : '#059669'};">
+        ${item.stockQuantity || 0}
+      </td>
+      <td style="padding: 10px; text-align: right; color: #64748b;">₹${(Number(item.purchaseRate) || 0).toFixed(2)}</td>
+      <td style="padding: 10px; text-align: right; color: #64748b;">₹${(Number(item.mrp) || 0).toFixed(2)}</td>
+      <td style="padding: 10px; text-align: right; font-weight: 600; color: #0f172a;">₹${(Number(item.saleRate) || 0).toFixed(2)}</td>
+      <td style="padding: 10px; text-align: center;">
+        <span style="background: ${(Number(item.stockQuantity) || 0) < 20 ? '#fee2e2' : '#dcfce7'}; color: ${(Number(item.stockQuantity) || 0) < 20 ? '#991b1b' : '#166534'}; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">
+          ${(Number(item.stockQuantity) || 0) < 20 ? 'LOW STOCK' : 'IN STOCK'}
+        </span>
+      </td>
+    </tr>
+  `).join('');
 }
 
 function filterPharmacyLedger() {
@@ -1530,7 +1530,29 @@ async function handleSaveMedicine(e) {
       body: JSON.stringify(payload)
     });
     const result = await res.json();
-    if (result.success) {
+    if (result.success) {<script>
+// --- VIEW TOGGLE FOR MARG ERP PHARMACY ---
+function switchPharmaView(viewName) {
+  const ledgerView = document.getElementById("pharma-ledger-view");
+  const purchaseView = document.getElementById("pharma-purchase-view");
+  const tabPharma = document.getElementById("tab-pharmacy");
+
+  if (tabPharma && !tabPharma.classList.contains("active")) {
+    switchTab("pharmacy");
+  }
+
+  if (viewName === "purchase") {
+    if (ledgerView) ledgerView.style.display = "none";
+    if (purchaseView) purchaseView.style.display = "block";
+  } else {
+    if (ledgerView) ledgerView.style.display = "block";
+    if (purchaseView) purchaseView.style.display = "none";
+    if (typeof loadPharmacyStock === "function") {
+      loadPharmacyStock();
+    }
+  }
+}
+</script>
       alert("✅ Medicine batch successfully registered in inventory!");
       document.getElementById("form-add-medicine").reset();
       switchPharmaView('ledger');
@@ -1541,5 +1563,6 @@ async function handleSaveMedicine(e) {
     alert("❌ Network Error: Could not save medicine batch");
   }
 }
+
 </body>
 </html>
