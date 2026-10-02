@@ -1435,7 +1435,15 @@ function switchPharmaView(view) {
 async function loadPharmacyStock() {
   try {
     const res = await fetch('/api/pharmacy');
-    const result = await res.json();
+    const text = await res.text();
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch (parseErr) {
+      console.warn("Pharmacy endpoint returned non-JSON response:", text.substring(0, 80));
+      return;
+    }
+
     const data = result.data || [];
     allPharmacyStock = data;
     renderPharmacyTable(data);
