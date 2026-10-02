@@ -1,105 +1,68 @@
 const PharmacyItem = require("../models/PharmacyItem");
 
-// 1. Add new stock / medicine batch to pharmacy inventory
-exports.addStock = async (req, res) => {
+// @desc Add new medicine / batch (Inward Purchase Entry)
+exports.addMedicine = async (req, res) => {
   try {
-    const { hospitalId, medicineName, batchNumber, quantityInStock, unitPrice, expiryDate } = req.body;
+    const {
+      name,
+      company,
+      batchNumber,
+      expiryDate,
+      stockQuantity,
+      purchaseRate,
+      mrp,
+      saleRate,
+      gstPercent,
+      hospitalId,
+    } = req.body;
 
-    // Check if batch already exists for this hospital
-    let item = await PharmacyItem.findOne({ hospitalId, medicineName, batchNumber });
-
-    if (item) {
-      // If batch exists, increment quantity
-      item.quantityInStock += quantityInStock;
-      await item.save();
-    } else {
-      // Create new stock record
-      item = await PharmacyItem.create({
-        hospitalId,
-        medicineName,
-        batchNumber,
-        quantityInStock,
-        unitPrice,
-        expiryDate,
+    if (!name || !batchNumber || !expiryDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Medicine name, batch number, and expiry date are required",
       });
     }
 
-    res.status(201).json({
-      success: true,
-      message: "Pharmacy stock updated successfully",
-      item,
+    const item = await PharmacyItem.create({
+      hospitalId: hospitalId || "HOSP01",
+      medicineName: name,
+      company: company || "Standard Pharma",
+      batchNumber: batchNumber.toUpperCase(),
+      expiryDate,
+      quantityInStock: Number(stockQuantity) || 0,
+      purchaseRate: Number(purchaseRate) || 0,
+      mrp: Number(mrp) || 0,
+      saleRate: Number(saleRate) || 0,
+      gstPercent: Number(gstPercent) || 12,
     });
+
+    res.status(201).json({ success: true, data: item });
   } catch (error) {
-    console.error("Add pharmacy stock error:", error);
-    res.status(500).json({
-      success: false,
-      error: error.message || "Server Error",
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// 2. Dispense medicine and deduct from inventory
-exports.dispenseMedicine = async (req, res) => {
-  try {
-    const { hospitalId, medicineName, quantityToDispense } = req.body;
-
-    const item = await PharmacyItem.findOne({ hospitalId, medicineName });
-    if (!item) {
-      return res.status(404).json({
-        success: false,
-        error: `Medicine "${medicineName}" not found in inventory`,
-      });
-    }
-
-    if (new Date(item.expiryDate) < new Date()) {
-      return res.status(400).json({
-        success: false,
-        error: `Cannot dispense "${medicineName}". Batch ${item.batchNumber} has expired`,
-      });
-    }
-
-    if (item.quantityInStock < quantityToDispense) {
-      return res.status(400).json({
-        success: false,
-        error: `Insufficient stock for "${medicineName}". Available: ${item.quantityInStock}, Requested: ${quantityToDispense}`,
-      });
-    }
-
-    // Deduct stock
-    item.quantityInStock -= quantityToDispense;
-    await item.save();
-
-    res.status(200).json({
-      success: true,
-      message: `${quantityToDispense} units of "${medicineName}" dispensed successfully`,
-      remainingStock: item.quantityInStock,
-      totalCost: quantityToDispense * item.unitPrice,
-    });
-  } catch (error) {
-    console.error("Dispense medicine error:", error);
-    res.status(500).json({
-      success: false,
-      error: error.message || "Server Error",
-    });
-  }
-};
-
-// 3. Get all stock items for a hospital
+// @desc Get all pharmacy stock ledger items
 exports.getInventory = async (req, res) => {
   try {
-    const { hospitalId } = req.params;
-    const inventory = await PharmacyItem.find({ hospitalId }).sort({ medicineName: 1 });
+    const items = await PharmacyItem.find().sort({ createdAt: -1 });
 
-    res.status(200).json({
-      success: true,
-      count: inventory.length,
-      inventory,
-    });
+    // Format fields so the frontend table displays them cleanly
+    const formatted = items.map((item) => ({
+      _id: item._id,
+      name: item.medicineName,
+      company: item.company,
+      batchNumber: item.batchNumber,
+      expiryDate: item.expiryDate,
+      stockQuantity: item.quantityInStock,
+      purchaseRate: item.purchaseRate,
+      mrp: item.mrp,
+      saleRate: item.saleRate,
+      gstPercent: item.gstPercent,
+    }));
+
+    res.status(200).json({ success: true, count: formatted.length, data: formatted });
   } catch (error) {
-    console.error("Fetch inventory error:", error);
-    res.status(500).json({
-      success: false,
-      error: error.message || "Server Error",
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
