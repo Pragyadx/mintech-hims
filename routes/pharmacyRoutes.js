@@ -2,11 +2,15 @@ const express = require('express');
 const router = express.Router();
 const pharmacyController = require('../controllers/pharmacyController');
 
-// Inward stock (add) and Inventory ledger (get)
+// Support both the root endpoint and the hospitalId route
 router.get('/', pharmacyController.getInventory);
-router.post('/', pharmacyController.addMedicine);
+router.get('/inventory/:hospitalId', pharmacyController.getInventory);
 
-// Dispense route with fallback guard
+// Inward stock addition
+router.post('/', pharmacyController.addMedicine);
+router.post('/add', pharmacyController.addMedicine);
+
+// Dispense route
 if (typeof pharmacyController.dispenseMedicine === 'function') {
   router.post('/dispense', pharmacyController.dispenseMedicine);
 }

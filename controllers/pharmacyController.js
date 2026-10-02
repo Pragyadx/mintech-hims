@@ -1,5 +1,39 @@
 const PharmacyItem = require("../models/PharmacyItem");
 
+// @desc Get all pharmacy stock ledger items (supports / and /inventory/:hospitalId)
+exports.getInventory = async (req, res) => {
+  try {
+    const filter = {};
+    if (req.params && req.params.hospitalId) {
+      filter.hospitalId = req.params.hospitalId;
+    }
+
+    let items = await PharmacyItem.find(filter).sort({ createdAt: -1 });
+
+    // Fallback if no tenant items exist yet
+    if (items.length === 0 && filter.hospitalId) {
+      items = await PharmacyItem.find().sort({ createdAt: -1 });
+    }
+
+    const formatted = items.map((item) => ({
+      _id: item._id,
+      name: item.medicineName,
+      company: item.company || "Cipla",
+      batchNumber: item.batchNumber,
+      expiryDate: item.expiryDate,
+      stockQuantity: item.quantityInStock,
+      purchaseRate: item.purchaseRate,
+      mrp: item.mrp,
+      saleRate: item.saleRate,
+      gstPercent: item.gstPercent,
+    }));
+
+    res.status(200).json({ success: true, count: formatted.length, data: formatted });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // @desc Add new medicine / batch (Inward Purchase Entry)
 exports.addMedicine = async (req, res) => {
   try {
@@ -24,7 +58,7 @@ exports.addMedicine = async (req, res) => {
     }
 
     const item = await PharmacyItem.create({
-      hospitalId: hospitalId || "HOSP01",
+      hospitalId: hospitalId || req.params.hospitalId || "HOSP01",
       medicineName: name,
       company: company || "Standard Pharma",
       batchNumber: (batchNumber || "").toUpperCase(),
@@ -37,30 +71,6 @@ exports.addMedicine = async (req, res) => {
     });
 
     res.status(201).json({ success: true, data: item });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// @desc Get all pharmacy stock ledger items
-exports.getInventory = async (req, res) => {
-  try {
-    const items = await PharmacyItem.find().sort({ createdAt: -1 });
-
-    const formatted = items.map((item) => ({
-      _id: item._id,
-      name: item.medicineName,
-      company: item.company,
-      batchNumber: item.batchNumber,
-      expiryDate: item.expiryDate,
-      stockQuantity: item.quantityInStock,
-      purchaseRate: item.purchaseRate,
-      mrp: item.mrp,
-      saleRate: item.saleRate,
-      gstPercent: item.gstPercent,
-    }));
-
-    res.status(200).json({ success: true, count: formatted.length, data: formatted });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
