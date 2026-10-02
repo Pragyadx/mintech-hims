@@ -27,7 +27,7 @@ exports.addMedicine = async (req, res) => {
       hospitalId: hospitalId || "HOSP01",
       medicineName: name,
       company: company || "Standard Pharma",
-      batchNumber: batchNumber.toUpperCase(),
+      batchNumber: (batchNumber || "").toUpperCase(),
       expiryDate,
       quantityInStock: Number(stockQuantity) || 0,
       purchaseRate: Number(purchaseRate) || 0,
@@ -47,7 +47,6 @@ exports.getInventory = async (req, res) => {
   try {
     const items = await PharmacyItem.find().sort({ createdAt: -1 });
 
-    // Format fields so the frontend table displays them cleanly
     const formatted = items.map((item) => ({
       _id: item._id,
       name: item.medicineName,
@@ -62,6 +61,31 @@ exports.getInventory = async (req, res) => {
     }));
 
     res.status(200).json({ success: true, count: formatted.length, data: formatted });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc Dispense medicine (reduce stock)
+exports.dispenseMedicine = async (req, res) => {
+  try {
+    const { itemId, quantity } = req.body;
+    const item = await PharmacyItem.findById(itemId);
+    if (!item) {
+      return res.status(404).json({ success: false, message: "Medicine batch not found" });
+    }
+
+    if (item.quantityInStock < Number(quantity)) {
+      return res.status(400).json({
+        success: false,
+        message: `Insufficient stock! Only ${item.quantityInStock} available.`,
+      });
+    }
+
+    item.quantityInStock -= Number(quantity);
+    await item.save();
+
+    res.status(200).json({ success: true, message: "Medicine dispensed", data: item });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

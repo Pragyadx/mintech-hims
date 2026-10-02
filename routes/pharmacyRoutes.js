@@ -1,18 +1,14 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const {
-  addStock,
-  dispenseMedicine,
-  getInventory,
-} = require("../controllers/pharmacyController");
+const pharmacyController = require('../controllers/pharmacyController');
 
-// Add stock: POST /api/pharmacy/stock
-router.post("/stock", addStock);
+// Inward stock (add) and Inventory ledger (get)
+router.get('/', pharmacyController.getInventory);
+router.post('/', pharmacyController.addMedicine);
 
-// Dispense medicine: POST /api/pharmacy/dispense
-router.post("/dispense", dispenseMedicine);
-
-// View full inventory: GET /api/pharmacy/inventory/:hospitalId
-router.get("/inventory/:hospitalId", getInventory);
+// Dispense route with fallback guard
+if (typeof pharmacyController.dispenseMedicine === 'function') {
+  router.post('/dispense', pharmacyController.dispenseMedicine);
+}
 
 module.exports = router;
