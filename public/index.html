@@ -525,11 +525,11 @@
 </button>
 
     <!-- 5. Revisit -->
-    <button type="button" class="opd-ribbon-btn" 
-      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
-      <i class="fa-solid fa-arrows-rotate" style="font-size: 13px;"></i>
-      <span>Revisit</span>
-    </button>
+<button type="button" id="btn-sub-revisit" class="opd-ribbon-btn" onclick="switchOpdSubView('revisit')"
+  style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
+  <i class="fa-solid fa-arrows-rotate" style="font-size: 13px;"></i>
+  <span>Revisit</span>
+</button>
 
     <!-- 6. Clinical Notes -->
     <button type="button" class="opd-ribbon-btn" 
@@ -1109,6 +1109,59 @@
             </thead>
             <tbody id="mintech-nb-table-body">
               <tr><td colspan="8" style="text-align: center; color: #a8a29e; padding: 25px;">No newborn records found.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+    <!-- CARD: MINTECH REVISIT / FOLLOW-UP SUB-VIEW -->
+    <div id="opd-subview-revisit" style="display: none; background: #ffffff; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 118, 110, 0.05);">
+      
+      <!-- Top Title Bar -->
+      <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; border-radius: 6px 6px 0 0; margin: -14px -14px 14px -14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span>Patient Details & Revisit Search</span>
+        </div>
+        <span style="font-size: 11px; background: #ccfbf1; padding: 3px 8px; border-radius: 4px; font-weight: 600;">Follow-Up OPD Desk</span>
+      </div>
+
+      <!-- Search Bar Ribbon -->
+      <div style="display: flex; gap: 10px; align-items: center; background: #fafaf9; border: 1px solid #e7e5e4; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px;">
+        <span style="font-weight: 700; color: #0f766e; font-size: 12px; white-space: nowrap;">UHID / Name / Mobile No. :</span>
+        <input type="text" id="revisit-search-input" placeholder="Enter UHID, Patient Name, or Mobile Number..." 
+          onkeydown="if(event.key==='Enter') searchRevisitPatient()" 
+          style="flex: 1; padding: 6px 12px; border: 1px solid #99f6e4; border-radius: 4px; font-size: 12px; outline: none;">
+        <button type="button" onclick="searchRevisitPatient()" 
+          style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-magnifying-glass"></i> Search
+        </button>
+      </div>
+
+      <!-- Search Results / Revisit Action Table -->
+      <div style="border: 1px solid #99f6e4; border-radius: 6px; overflow: hidden; background: #ffffff;">
+        <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 8px 12px; font-size: 12px; font-weight: 700;">
+          <i class="fa-solid fa-user-check"></i> Matching Registered Patients
+        </div>
+        <div style="max-height: 280px; overflow-y: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            <thead>
+              <tr style="background: #fafaf9; color: #78716c; border-bottom: 1px solid #f0fdfa; font-size: 11px; text-transform: uppercase;">
+                <th style="padding: 8px 10px; text-align: left;">UHID</th>
+                <th style="padding: 8px 10px; text-align: left;">Patient Name</th>
+                <th style="padding: 8px 8px; text-align: center;">Age / Sex</th>
+                <th style="padding: 8px 10px; text-align: left;">Mobile</th>
+                <th style="padding: 8px 10px; text-align: left;">Last Dept / Doctor</th>
+                <th style="padding: 8px 10px; text-align: center;">Revisit Action</th>
+              </tr>
+            </thead>
+            <tbody id="revisit-results-body">
+              <tr>
+                <td colspan="6" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">
+                  Enter UHID, Name, or Mobile above and click Search to look up patient history.
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -2596,11 +2649,13 @@ function switchOpdSubView(view) {
   const dcPanel = document.getElementById("opd-subview-daycare");
   const nbPanel = document.getElementById("opd-subview-birthreg");
   const btnBirth = document.getElementById("btn-sub-birthreg");
+  const revisitPanel = document.getElementById("opd-subview-revisit");
 
   // Grab ribbon buttons safely
   const btnOpd = document.getElementById("btn-sub-opd");
   const btnInv = document.getElementById("btn-sub-inv");
   const btnDc = document.getElementById("btn-sub-daycare");
+  
 
   const setPill = (btn, active) => {
     if (!btn) return;
@@ -2617,11 +2672,14 @@ function switchOpdSubView(view) {
   if (invPanel) invPanel.style.display = 'none';
   if (dcPanel) dcPanel.style.display = 'none';
   if (nbPanel) nbPanel.style.display = 'none';
+  if (revisitPanel) revisitPanel.style.display = 'none';
+  
 
   setPill(btnOpd, false);
   setPill(btnInv, false);
   setPill(btnDc, false);
   setPill(btnBirth, false);
+  setPill(btnRevisit, false);
 
   if (view === 'investigations') {
     if (invPanel) invPanel.style.display = 'block';
@@ -2634,7 +2692,11 @@ function switchOpdSubView(view) {
   } else if (view === 'birthreg') {
     if (nbPanel) nbPanel.style.display = 'block';
     setPill(btnBirth, true);
-    loadBirthRegistry();
+    if (typeof loadBirthRegistry === 'function') loadBirthRegistry();
+  } else if (view === 'revisit') {
+    if (revisitPanel) revisitPanel.style.display = 'block';
+    setPill(btnRevisit, true);
+    setTimeout(() => document.getElementById("revisit-search-input")?.focus(), 50);
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
@@ -2670,6 +2732,74 @@ async function loadBirthRegistry() {
   } catch (err) {
     tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #ef4444; padding: 20px;">Error loading registry.</td></tr>';
   }
+}
+// ==========================================
+// REVISIT SEARCH & RE-ISSUE TOKEN
+// ==========================================
+async function searchRevisitPatient() {
+  const query = document.getElementById("revisit-search-input")?.value.trim();
+  const tbody = document.getElementById("revisit-results-body");
+  if (!query) return alert("Please enter UHID, Name, or Mobile to search.");
+
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #0f766e; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Searching patient records...</td></tr>';
+
+  try {
+    // Look first in currentOpdQueue or database
+    let matches = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []).filter(p => 
+      (p.uhid && p.uhid.toLowerCase().includes(query.toLowerCase())) ||
+      (p.patientName && p.patientName.toLowerCase().includes(query.toLowerCase())) ||
+      (p.mobile && p.mobile.includes(query))
+    );
+
+    // Fallback: If not in memory cache, query API
+    if (matches.length === 0) {
+      const res = await fetch(`/api/opd/queue?search=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      if (data.success && data.data) {
+        matches = data.data;
+      }
+    }
+
+    if (matches.length > 0) {
+      tbody.innerHTML = matches.map(p => `
+        <tr style="border-bottom: 1px solid #f0fdfa;">
+          <td style="padding: 8px 10px; font-weight: 700; color: #0f766e;">${p.uhid}</td>
+          <td style="padding: 8px 10px; font-weight: 600; color: #1c1917;">${p.patientName}</td>
+          <td style="padding: 8px 8px; text-align: center; color: #57534e;">${p.ageYears || p.age || '--'} Y / ${p.gender}</td>
+          <td style="padding: 8px 10px; color: #57534e;">${p.mobile}</td>
+          <td style="padding: 8px 10px; color: #57534e;">${p.department || 'GENERAL'} - ${p.consultant || 'DR. CLINIC'}</td>
+          <td style="padding: 8px 10px; text-align: center;">
+            <button type="button" onclick="loadPatientForRevisit('${p.uhid}')" 
+              style="background: #0f766e; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">
+              <i class="fa-solid fa-ticket"></i> Re-Issue OPD
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #78716c; padding: 25px;">No matching patient found. Check the UHID or register as a new walk-in.</td></tr>';
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 25px;">Error searching records.</td></tr>';
+  }
+}
+
+// 1-Click: Autofill registration form and return to OPD Desk
+function loadPatientForRevisit(uhid) {
+  const patient = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []).find(p => p.uhid === uhid);
+  if (!patient) return alert("Patient data could not be retrieved.");
+
+  // Switch to standard registration form
+  switchOpdSubView('opd');
+
+  // Autofill patient details into the walk-in registration form
+  if (document.getElementById("patientName")) document.getElementById("patientName").value = patient.patientName || '';
+  if (document.getElementById("mobile")) document.getElementById("mobile").value = patient.mobile || '';
+  if (document.getElementById("ageYears")) document.getElementById("ageYears").value = patient.ageYears || patient.age || '';
+  if (document.getElementById("gender")) document.getElementById("gender").value = patient.gender || 'Male';
+  if (document.getElementById("department")) document.getElementById("department").value = patient.department || 'GENERAL';
+
+  alert(`✅ Loaded patient profile for ${patient.patientName} (${patient.uhid}). You can now re-issue the consultation token.`);
 }
 
 async function submitBirthRegistration() {
