@@ -532,11 +532,11 @@
 </button>
 
     <!-- 6. Clinical Notes -->
-    <button type="button" class="opd-ribbon-btn" 
-      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
-      <i class="fa-solid fa-stethoscope" style="font-size: 13px;"></i>
-      <span>Notes</span>
-    </button>
+    <button type="button" id="btn-sub-notes" class="opd-ribbon-btn" onclick="switchOpdSubView('notes')"
+  style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
+  <i class="fa-solid fa-file-lines" style="font-size: 13px;"></i>
+  <span>Notes</span>
+</button>
 
     <!-- 7. Live Token Queue -->
     <button type="button" class="opd-ribbon-btn" 
@@ -1165,6 +1165,87 @@
             </tbody>
           </table>
         </div>
+      </div>
+
+    </div>
+    <!-- CARD: MINTECH CLINICAL NOTES SUB-VIEW -->
+    <div id="opd-subview-notes" style="display: none; background: #ffffff; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 118, 110, 0.05);">
+      
+      <!-- Top Title Bar -->
+      <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; border-radius: 6px 6px 0 0; margin: -14px -14px 14px -14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-file-medical"></i>
+          <span>Patient Details & Doctor Notes</span>
+        </div>
+        <span style="font-size: 11px; background: #ccfbf1; padding: 3px 8px; border-radius: 4px; font-weight: 600;">Clinical Documentation</span>
+      </div>
+
+      <!-- Search Ribbon by OPD ID -->
+      <div style="display: flex; gap: 10px; align-items: center; background: #fafaf9; border: 1px solid #e7e5e4; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px;">
+        <span style="font-weight: 700; color: #0f766e; font-size: 12px; white-space: nowrap;">OPD ID :</span>
+        <input type="text" id="notes-search-opdid" placeholder="Enter OPD ID (e.g. OPD-1001)..." 
+          onkeydown="if(event.key==='Enter') searchNotesByOpdId()" 
+          style="width: 250px; padding: 6px 12px; border: 1px solid #99f6e4; border-radius: 4px; font-size: 12px; outline: none; background: #fff;">
+        <button type="button" onclick="searchNotesByOpdId()" 
+          style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-magnifying-glass"></i> Search
+        </button>
+      </div>
+
+      <!-- Patient Header Card (Auto-filled on search) -->
+      <div id="notes-patient-header" style="display: none; background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div><strong style="color: #0f766e;">Patient:</strong> <span id="np-name">--</span> (<span id="np-gender-age">--</span>)</div>
+          <div><strong style="color: #0f766e;">UHID:</strong> <span id="np-uhid">--</span></div>
+          <div><strong style="color: #0f766e;">OPD ID:</strong> <span id="np-opdid">--</span></div>
+          <div><strong style="color: #0f766e;">Doctor:</strong> <span id="np-doctor">--</span></div>
+        </div>
+      </div>
+
+      <!-- Notes Entry and Past History Split Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+        
+        <!-- Left: Add Clinical / SOAP Note -->
+        <div style="border: 1px solid #99f6e4; border-radius: 6px; padding: 12px; background: #ffffff;">
+          <div style="font-weight: 700; color: #0f766e; margin-bottom: 10px; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-pen-to-square"></i> Add Doctor / Progress Note
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+            <div>
+              <label style="font-weight: 600; color: #57534e;">Subjective (Symptoms / Chief Complaints):</label>
+              <textarea id="note-subjective" rows="2" placeholder="Patient complaints, symptoms..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;"></textarea>
+            </div>
+            <div>
+              <label style="font-weight: 600; color: #57534e;">Objective (Vitals & Physical Findings):</label>
+              <textarea id="note-objective" rows="2" placeholder="BP, Pulse, Temp, examination findings..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;"></textarea>
+            </div>
+            <div>
+              <label style="font-weight: 600; color: #57534e;">Assessment (Provisional Diagnosis):</label>
+              <input type="text" id="note-assessment" placeholder="e.g. Acute Bronchitis" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div>
+              <label style="font-weight: 600; color: #57534e;">Plan & Instructions:</label>
+              <textarea id="note-plan" rows="2" placeholder="Treatment plan, advice, follow-up..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;"></textarea>
+            </div>
+            <button type="button" onclick="saveClinicalNote()" style="margin-top: 4px; background: #0f766e; color: white; border: none; padding: 7px; border-radius: 4px; font-weight: 700; cursor: pointer;">
+              <i class="fa-solid fa-floppy-disk"></i> Save Clinical Note
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Past Doctor Notes Timeline -->
+        <div style="border: 1px solid #99f6e4; border-radius: 6px; overflow: hidden; background: #ffffff; display: flex; flex-direction: column;">
+          <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 8px 12px; font-size: 12px; font-weight: 700;">
+            <i class="fa-solid fa-clock-rotate-left"></i> Recorded Consultation Notes
+          </div>
+          <div id="notes-timeline-container" style="flex: 1; max-height: 380px; overflow-y: auto; padding: 10px; font-size: 12px; background: #fafaf9;">
+            <div style="text-align: center; color: #a8a29e; padding: 40px 10px;">
+              Search an OPD ID above to view clinical notes.
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
@@ -2639,7 +2720,6 @@ async function promptAddNewTest() {
     alert("❌ Error saving new test to hospital database.");
   }
 }
-
 function switchOpdSubView(view) {
   // Grab panels safely
   const regCard = document.getElementById("opd-subview-reg");
@@ -2649,6 +2729,7 @@ function switchOpdSubView(view) {
   const dcPanel = document.getElementById("opd-subview-daycare");
   const nbPanel = document.getElementById("opd-subview-birthreg");
   const revisitPanel = document.getElementById("opd-subview-revisit");
+  const notesPanel = document.getElementById("opd-subview-notes");
 
   // Grab ribbon buttons safely
   const btnOpd = document.getElementById("btn-sub-opd");
@@ -2656,6 +2737,7 @@ function switchOpdSubView(view) {
   const btnDc = document.getElementById("btn-sub-daycare");
   const btnBirth = document.getElementById("btn-sub-birthreg");
   const btnRevisit = document.getElementById("btn-sub-revisit");
+  const btnNotes = document.getElementById("btn-sub-notes");
 
   const setPill = (btn, active) => {
     if (!btn) return;
@@ -2673,6 +2755,7 @@ function switchOpdSubView(view) {
   if (dcPanel) dcPanel.style.display = 'none';
   if (nbPanel) nbPanel.style.display = 'none';
   if (revisitPanel) revisitPanel.style.display = 'none';
+  if (notesPanel) notesPanel.style.display = 'none';
 
   // Reset all buttons
   setPill(btnOpd, false);
@@ -2680,8 +2763,9 @@ function switchOpdSubView(view) {
   setPill(btnDc, false);
   setPill(btnBirth, false);
   setPill(btnRevisit, false);
+  setPill(btnNotes, false);
 
-  // Activate requested panel
+  // Activate requested view
   if (view === 'investigations') {
     if (invPanel) invPanel.style.display = 'block';
     setPill(btnInv, true);
@@ -2697,6 +2781,11 @@ function switchOpdSubView(view) {
   } else if (view === 'revisit') {
     if (revisitPanel) revisitPanel.style.display = 'block';
     setPill(btnRevisit, true);
+    setTimeout(() => document.getElementById("revisit-search-input")?.focus(), 50);
+  } else if (view === 'notes') {
+    if (notesPanel) notesPanel.style.display = 'block';
+    setPill(btnNotes, true);
+    setTimeout(() => document.getElementById("notes-search-opdid")?.focus(), 50);
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
@@ -3127,6 +3216,113 @@ async function submitDayCareOrder() {
   } catch (err) {
     alert("❌ Network Error booking day care order.");
   }
+}
+// ==========================================
+// CLINICAL NOTES HANDLERS
+// ==========================================
+let currentNotesPatient = null;
+const localClinicalNotes = {};
+
+function searchNotesByOpdId() {
+  const query = document.getElementById("notes-search-opdid")?.value.trim();
+  if (!query) return alert("Please enter an OPD ID or UHID.");
+
+  // Find patient in queue cache
+  const patient = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []).find(p => 
+    (p.token && String(p.token).toLowerCase() === query.toLowerCase()) ||
+    (p.uhid && p.uhid.toLowerCase() === query.toLowerCase()) ||
+    (p._id && p._id.toLowerCase() === query.toLowerCase())
+  );
+
+  const header = document.getElementById("notes-patient-header");
+  const container = document.getElementById("notes-timeline-container");
+
+  if (patient) {
+    currentNotesPatient = patient;
+    document.getElementById("np-name").innerText = patient.patientName || '--';
+    document.getElementById("np-gender-age").innerText = `${patient.gender || '--'}, ${patient.ageYears || patient.age || '--'} Y`;
+    document.getElementById("np-uhid").innerText = patient.uhid || '--';
+    document.getElementById("np-opdid").innerText = patient.token || patient._id || query;
+    document.getElementById("np-doctor").innerText = patient.consultant || 'DR. CLINIC';
+    if (header) header.style.display = 'block';
+
+    renderPatientNotes(patient.uhid || query);
+  } else {
+    // If not found in queue, permit entering notes directly against the query ID
+    currentNotesPatient = { uhid: query, patientName: "Walk-in Patient", token: query, consultant: "ATTENDING DOCTOR" };
+    document.getElementById("np-name").innerText = "Walk-in / Archive Patient";
+    document.getElementById("np-gender-age").innerText = "--";
+    document.getElementById("np-uhid").innerText = query;
+    document.getElementById("np-opdid").innerText = query;
+    document.getElementById("np-doctor").innerText = "ATTENDING DOCTOR";
+    if (header) header.style.display = 'block';
+
+    renderPatientNotes(query);
+  }
+}
+
+function renderPatientNotes(uhid) {
+  const container = document.getElementById("notes-timeline-container");
+  if (!container) return;
+  const notes = localClinicalNotes[uhid] || [];
+
+  if (notes.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; color: #78716c; padding: 40px 10px;">
+        <i class="fa-solid fa-notes-medical" style="font-size: 26px; color: #99f6e4; margin-bottom: 8px;"></i>
+        <p style="margin: 0; font-weight: 500;">No notes recorded yet for this visit.</p>
+        <small style="color: #a8a29e;">Fill the form on the left to add clinical observations.</small>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = notes.map((n, idx) => `
+    <div style="background: #ffffff; border: 1px solid #99f6e4; border-radius: 6px; padding: 10px; margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0fdfa; padding-bottom: 4px; margin-bottom: 6px; font-size: 11px;">
+        <span style="font-weight: 700; color: #0f766e;">Note #${notes.length - idx} &bull; ${n.timestamp}</span>
+        <span style="color: #57534e;">By: ${n.doctor}</span>
+      </div>
+      ${n.subjective ? `<div><strong style="color: #0f766e;">S:</strong> ${n.subjective}</div>` : ''}
+      ${n.objective ? `<div><strong style="color: #0f766e;">O:</strong> ${n.objective}</div>` : ''}
+      ${n.assessment ? `<div><strong style="color: #0f766e;">A:</strong> <span style="background: #fef3c7; color: #92400e; padding: 1px 4px; border-radius: 3px;">${n.assessment}</span></div>` : ''}
+      ${n.plan ? `<div><strong style="color: #0f766e;">P:</strong> ${n.plan}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function saveClinicalNote() {
+  if (!currentNotesPatient) return alert("Please search an OPD ID or UHID first.");
+  
+  const subj = document.getElementById("note-subjective")?.value.trim() || '';
+  const obj = document.getElementById("note-objective")?.value.trim() || '';
+  const assess = document.getElementById("note-assessment")?.value.trim() || '';
+  const plan = document.getElementById("note-plan")?.value.trim() || '';
+
+  if (!subj && !obj && !assess && !plan) {
+    return alert("Please enter at least one note field before saving.");
+  }
+
+  const key = currentNotesPatient.uhid || currentNotesPatient.token;
+  if (!localClinicalNotes[key]) localClinicalNotes[key] = [];
+
+  localClinicalNotes[key].unshift({
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }),
+    doctor: currentNotesPatient.consultant || 'DR. CLINIC',
+    subjective: subj,
+    objective: obj,
+    assessment: assess,
+    plan: plan
+  });
+
+  // Reset inputs
+  if (document.getElementById("note-subjective")) document.getElementById("note-subjective").value = '';
+  if (document.getElementById("note-objective")) document.getElementById("note-objective").value = '';
+  if (document.getElementById("note-assessment")) document.getElementById("note-assessment").value = '';
+  if (document.getElementById("note-plan")) document.getElementById("note-plan").value = '';
+
+  renderPatientNotes(key);
+  alert("✅ Clinical note saved successfully!");
 }
 </script>
 </body>
