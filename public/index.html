@@ -1601,6 +1601,8 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     </div>
   </div>
 </div>
+
+<script>
 // ==========================================
 // --- PHARMACY MANAGEMENT ENGINE (MARG STANDARD) ---
 // ==========================================
@@ -1778,36 +1780,54 @@ function renderOpdQueueTable(visits) {
   const tbody = document.getElementById("opd-queue-body");
   if (!tbody) return;
 
+  tbody.innerHTML = "";
+
   if (!visits || visits.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:#64748b; padding:15px;">No outpatients registered today.</td></tr>`;
+    const tr = document.createElement("tr");
+    tr.innerHTML = '<td colspan="11" style="text-align: center; color: #64748b; padding: 15px;">No outpatients registered today.</td>';
+    tbody.appendChild(tr);
     return;
   }
 
-  tbody.innerHTML = visits.map((v, i) => `
-    <tr style="border-bottom: 1px solid #e2e8f0; background: ${i % 2 === 0 ? '#ffffff' : '#f8fafc'};">
-      <td style="padding: 8px; font-weight: 600;">${i + 1}</td>
-      <td style="padding: 8px; font-weight: bold; color: #0f766e;">
-        <span style="background: #e6fffa; border: 1px solid #319795; padding: 2px 6px; border-radius: 3px;">${v.tokenNo}</span>
-      </td>
-      <td style="padding: 8px; font-family: monospace; font-weight: 600; color: #b91c1c;">${v.opdId || '—'}</td>
-      <td style="padding: 8px; font-family: monospace; color: #0f766e;">${v.uhid}</td>
-      <td style="padding: 8px; font-weight: 600;">${v.patientTitle || ''} ${v.patientName}</td>
-      <td style="padding: 8px;"><span style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${v.department}</span></td>
-      <td style="padding: 8px; color: #475569;">${v.doctorId || v.doctor || 'Dr. EMO'}</td>
-      <td style="padding: 8px;">${v.type || 'Gen'}</td>
-      <td style="padding: 8px; text-align: right; font-weight: 600;">₹${v.fee}/-</td>
-      <td style="padding: 8px; text-align: center;">
-        <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${v.paymentMode === 'Cash' ? '#fef3c7' : '#e0f2fe'}; color: ${v.paymentMode === 'Cash' ? '#92400e' : '#0369a1'};">
-          ${v.paymentMode}
-        </span>
-      </td>
-      <td style="padding: 8px; text-align: center;">
-        <button type="button" onclick="printOpdSlip('${v.opdId}')" style="background: #ef4444; color: white; border: none; padding: 3px 8px; border-radius: 3px; font-size: 11px; cursor: pointer;">
-          <i class="fa-solid fa-print"></i> Slip
-        </button>
-      </td>
-    </tr>
-  `).join('');
+  visits.forEach((v, i) => {
+    const tr = document.createElement("tr");
+    tr.style.borderBottom = "1px solid #e2e8f0";
+    tr.style.background = i % 2 === 0 ? "#ffffff" : "#f8fafc";
+
+    const isCash = v.paymentMode === "Cash";
+    const modeBg = isCash ? "#fef3c7" : "#e0f2fe";
+    const modeColor = isCash ? "#92400e" : "#0369a1";
+
+    tr.innerHTML = 
+      '<td style="padding: 8px; font-weight: 600;">' + (i + 1) + '</td>' +
+      '<td style="padding: 8px; font-weight: bold; color: #0f766e;">' +
+        '<span style="background: #e6fffa; border: 1px solid #319795; padding: 2px 6px; border-radius: 3px;">' + (v.tokenNo || '-') + '</span>' +
+      '</td>' +
+      '<td style="padding: 8px; font-family: monospace; font-weight: 600; color: #b91c1c;">' + (v.opdId || '—') + '</td>' +
+      '<td style="padding: 8px; font-family: monospace; color: #0f766e;">' + (v.uhid || '') + '</td>' +
+      '<td style="padding: 8px; font-weight: 600;">' + (v.patientTitle || '') + ' ' + (v.patientName || '') + '</td>' +
+      '<td style="padding: 8px;"><span style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 11px;">' + (v.department || '') + '</span></td>' +
+      '<td style="padding: 8px; color: #475569;">' + (v.doctorId || v.doctor || 'Dr. EMO') + '</td>' +
+      '<td style="padding: 8px;">' + (v.type || 'Gen') + '</td>' +
+      '<td style="padding: 8px; text-align: right; font-weight: 600;">₹' + (v.fee || 0) + '/-</td>' +
+      '<td style="padding: 8px; text-align: center;">' +
+        '<span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ' + modeBg + '; color: ' + modeColor + ';">' +
+          (v.paymentMode || 'Cash') +
+        '</span>' +
+      '</td>' +
+      '<td style="padding: 8px; text-align: center;">' +
+        '<button type="button" class="btn-opd-slip" style="background: #ef4444; color: white; border: none; padding: 3px 8px; border-radius: 3px; font-size: 11px; cursor: pointer;">' +
+          '<i class="fa-solid fa-print"></i> Slip' +
+        '</button>' +
+      '</td>';
+
+    const btn = tr.querySelector(".btn-opd-slip");
+    if (btn) {
+      btn.addEventListener("click", () => printOpdSlip(v.opdId));
+    }
+
+    tbody.appendChild(tr);
+  });
 }
 
 async function handleOpdRegister(e) {
@@ -1906,8 +1926,5 @@ function searchExistingUhid() {
   }
 }
 </script>
-</body>
-</html>
-
 </body>
 </html>
