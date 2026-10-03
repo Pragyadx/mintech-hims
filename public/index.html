@@ -717,34 +717,40 @@
       <!-- CARD: MINTECH INVESTIGATIONS SUB-VIEW -->
       <div id="opd-subview-investigations" style="display: none; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
         
-        <!-- Top Meta Bar matching Mintech Spec -->
-        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #f8fafc; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px; margin-bottom: 12px;">
-          <span style="font-weight: 700; color: #0f766e;">Enter UHID:</span>
-          <input type="text" id="inv-search-uhid" placeholder="UHID" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 100px;">
-          <button type="button" onclick="searchInvUhid()" style="background: #0f766e; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+        <!-- Top Meta Bar with Scheme & Panel Fields -->
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #f0fdfa; padding: 8px 12px; border: 1px solid #99f6e4; border-radius: 6px; font-size: 12px; margin-bottom: 12px;">
+  <span style="font-weight: 700; color: #0f766e;">Enter UHID:</span>
+  <input type="text" id="inv-search-uhid" placeholder="UHID" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 90px;">
+  <button type="button" onclick="searchInvUhid()" style="background: #0f766e; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
 
-          <div style="border-left: 1px solid #cbd5e1; height: 18px; margin: 0 4px;"></div>
+  <div style="border-left: 1px solid #cbd5e1; height: 18px; margin: 0 4px;"></div>
 
-          <span style="font-weight: 600;">Rate List:</span>
-          <select id="inv-ratelist" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
-            <option value="COMMON">COMMON</option>
-            <option value="CGHS">CGHS</option>
-            <option value="GIPSA">GIPSA</option>
-            <option value="PMJAY - GOVT">PMJAY - GOVT</option>
-          </select>
+  <span style="font-weight: 600;">Rate List:</span>
+  <select id="inv-ratelist" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+    <option value="COMMON">COMMON</option>
+    <option value="CGHS">CGHS</option>
+    <option value="PMJAY">PMJAY</option>
+    <option value="CORPORATE">CORPORATE</option>
+  </select>
 
-          <span style="font-weight: 600;">TPA / Panel:</span>
-          <select id="inv-panel" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
-            <option value="--NA--">--NA--</option>
-            <option value="Ayushman">Ayushman</option>
-            <option value="CGHS">CGHS</option>
-          </select>
+  <span style="font-weight: 600;">TPA / Panel:</span>
+  <select id="inv-panel" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+    <option value="--NA--">--NA--</option>
+    <option value="CGHS">CGHS</option>
+    <option value="ECHS Defence">ECHS / Defence</option>
+    <option value="Railways">Railways</option>
+    <option value="Ayushman Bharat">Ayushman Bharat</option>
+  </select>
 
-          <span style="font-weight: 600;">ABHA No:</span>
-          <input type="text" id="inv-abha" placeholder="12-1234-1234-1234" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 140px;">
-          <span style="font-weight: 600;">ABHA Address:</span>
-          <input type="text" id="inv-abha-addr" placeholder="user@abdm" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 120px;">
-        </div>
+  <span style="font-weight: 600;">Card No:</span>
+  <input type="text" id="inv-card-no" placeholder="Card No" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 100px;">
+
+  <span style="font-weight: 600;">Service / Dept:</span>
+  <input type="text" id="inv-service" placeholder="Service" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 90px;">
+
+  <span style="font-weight: 600;">Rank:</span>
+  <input type="text" id="inv-rank" placeholder="Rank / Desig" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 90px;">
+</div>
 
         <!-- Demographics Row -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 12px; margin-bottom: 14px; background: #fafafa; padding: 10px; border: 1px solid #e5e7eb; border-radius: 4px;">
@@ -2152,24 +2158,193 @@ function searchExistingUhid() {
   }
 }
 // ==========================================
-// INVESTIGATIONS SUB-PANEL LOGIC
+// DYNAMIC CLINICAL INVESTIGATIONS & LAB REQUISITIONS
 // ==========================================
-const masterInvCatalog = [
-  { id: 'T01', name: 'A1 AFP', rate: 800 },
-  { id: 'T02', name: 'AB AMMONIA - BLOOD', rate: 1200 },
-  { id: 'T03', name: 'ABC ABSOLUTE BLOOD COUNTS', rate: 100 },
-  { id: 'T04', name: 'ABC Automated Blood Culture', rate: 1000 },
-  { id: 'T05', name: 'ABG ARTERIAL BLOOD GASES (ABG)', rate: 800 },
-  { id: 'T06', name: 'ABS APLAS ABS', rate: 0 },
-  { id: 'T07', name: 'AC ACID PHOSPHATES', rate: 200 },
-  { id: 'T08', name: 'ACE ANGIOTENSIN CONVERTING ENZYME', rate: 1000 },
-  { id: 'T09', name: 'ADA ADENOSINE DEAMINASE ACTIVITY', rate: 500 },
-  { id: 'T10', name: 'CBC COMPLETE BLOOD COUNT', rate: 250 },
-  { id: 'T11', name: 'LFT LIVER FUNCTION TEST', rate: 650 },
-  { id: 'T12', name: 'KFT / RFT RENAL PROFILE', rate: 600 }
-];
-
+let hospitalTestCatalog = [];
 let selectedInvTests = [];
+
+async function loadHospitalTestCatalog() {
+  const container = document.getElementById("inv-catalog-list");
+  if (container) {
+    container.innerHTML = '<div style="text-align: center; color: #0f766e; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching hospital test catalog...</div>';
+  }
+
+  try {
+    const res = await fetch('/api/investigations/catalog');
+    const result = await res.json();
+    if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+      hospitalTestCatalog = result.data;
+      renderInvCatalog(hospitalTestCatalog);
+    } else {
+      hospitalTestCatalog = [];
+      showCatalogEmpty();
+    }
+  } catch (err) {
+    console.error("Error loading test catalog:", err);
+    hospitalTestCatalog = [];
+    showCatalogEmpty();
+  }
+}
+
+function showCatalogEmpty() {
+  const container = document.getElementById("inv-catalog-list");
+  if (!container) return;
+  container.innerHTML = `
+    <div style="text-align: center; padding: 30px 14px; color: #78716c; background: #fafaf9; border-radius: 6px;">
+      <i class="fa-solid fa-folder-open" style="font-size: 26px; color: #99f6e4; margin-bottom: 8px;"></i>
+      <p style="margin: 0; font-size: 12px; font-weight: 500;">No test master records found for this hospital.</p>
+      <button type="button" onclick="promptAddNewTest()" style="margin-top: 10px; background: #0f766e; color: white; border: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">
+        + Configure / Add New Test
+      </button>
+    </div>
+  `;
+}
+
+function renderInvCatalog(list) {
+  const container = document.getElementById("inv-catalog-list");
+  if (!container) return;
+
+  if (!list || list.length === 0) {
+    showCatalogEmpty();
+    return;
+  }
+
+  container.innerHTML = list.map(t => {
+    const testId = t._id || t.testCode;
+    const isChecked = selectedInvTests.some(x => x.id === testId);
+    const rowBg = isChecked ? '#f0fdfa' : '#ffffff';
+    const borderCol = isChecked ? '#99f6e4' : '#f5f5f4';
+
+    return `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; margin-bottom: 4px; background: ${rowBg}; border: 1px solid ${borderCol}; border-radius: 5px;">
+        <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500; color: #1c1917; flex: 1;">
+          <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleInvTest('${testId}')" style="accent-color: #0f766e; width: 14px; height: 14px; cursor: pointer;">
+          <span>${t.testName} <small style="color: #a8a29e; font-size: 10px;">[${t.testCode}]</small></span>
+        </label>
+        <span style="color: #0f766e; font-weight: 700; font-size: 11px; background: #ccfbf1; padding: 2px 7px; border-radius: 4px;">₹${t.rate}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterInvCatalog(term) {
+  const q = (term || '').toLowerCase().trim();
+  if (!q) {
+    renderInvCatalog(hospitalTestCatalog);
+    return;
+  }
+  const filtered = hospitalTestCatalog.filter(t => 
+    (t.testName && t.testName.toLowerCase().includes(q)) || 
+    (t.testCode && t.testCode.toLowerCase().includes(q))
+  );
+  renderInvCatalog(filtered);
+}
+
+function toggleInvTest(id) {
+  const existing = selectedInvTests.find(t => t.id === id);
+  if (existing) {
+    selectedInvTests = selectedInvTests.filter(t => t.id !== id);
+  } else {
+    const item = hospitalTestCatalog.find(t => (t._id || t.testCode) === id);
+    if (item) {
+      selectedInvTests.push({
+        id: item._id || item.testCode,
+        testCode: item.testCode,
+        name: item.testName,
+        rate: item.rate,
+        unit: 1,
+        amount: item.rate
+      });
+    }
+  }
+  renderSelectedInvTable();
+}
+
+function removeInvTest(id) {
+  selectedInvTests = selectedInvTests.filter(t => t.id !== id);
+  renderInvCatalog(hospitalTestCatalog);
+  renderSelectedInvTable();
+}
+
+function renderSelectedInvTable() {
+  const tbody = document.getElementById("mintech-inv-selected-body") || document.getElementById("inv-selected-body");
+  if (!tbody) return;
+
+  if (!selectedInvTests || selectedInvTests.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">No tests selected yet. Choose tests from the catalog.</td></tr>';
+    const totalDisp = document.getElementById("inv-total-disp");
+    if (totalDisp) totalDisp.innerText = "0";
+    calcInvSettlement();
+    return;
+  }
+
+  tbody.innerHTML = selectedInvTests.map((t, idx) => {
+    const rowBg = idx % 2 === 0 ? '#ffffff' : '#fafaf9';
+    return `
+      <tr style="border-bottom: 1px solid #f0fdfa; background: ${rowBg};">
+        <td style="padding: 7px 10px; font-weight: 600; color: #292524;">${t.name}</td>
+        <td style="padding: 7px 6px; text-align: right; color: #78716c;">₹${t.rate}</td>
+        <td style="padding: 7px 6px; text-align: center; color: #44403c;">${t.unit}</td>
+        <td style="padding: 7px 6px; text-align: right; font-weight: 700; color: #0f766e;">₹${t.amount}</td>
+        <td style="padding: 7px 10px; text-align: center;">
+          <button type="button" onclick="removeInvTest('${t.id}')" 
+            style="background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; border-radius: 4px; padding: 3px 6px; cursor: pointer; font-size: 11px;">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  calcInvSettlement();
+}
+
+function calcInvSettlement() {
+  const total = selectedInvTests.reduce((acc, curr) => acc + (curr.amount || 0), 0);
+  const totalDisp = document.getElementById("inv-total-disp");
+  if (totalDisp) totalDisp.innerText = total;
+
+  const discount = Number(document.getElementById("inv-discount")?.value || 0);
+  const waive = Number(document.getElementById("inv-waive")?.value || 0);
+  const deposit = Number(document.getElementById("inv-deposit")?.value || 0);
+
+  const netPayable = Math.max(0, total - discount - waive);
+  const due = Math.max(0, netPayable - deposit);
+
+  const dueDisp = document.getElementById("inv-due-disp");
+  if (dueDisp) dueDisp.innerText = due;
+}
+
+async function promptAddNewTest() {
+  const code = prompt("Enter Test Code (e.g., CBC01, USG02, LFT01):");
+  if (!code) return;
+  const name = prompt("Enter Test Name (e.g., Complete Blood Count):");
+  if (!name) return;
+  const rateStr = prompt("Enter Hospital Rate (₹):");
+  if (rateStr === null || isNaN(Number(rateStr))) return;
+
+  try {
+    const res = await fetch('/api/investigations/catalog/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        testCode: code.trim().toUpperCase(),
+        testName: name.trim(),
+        department: document.getElementById("inv-dept")?.value || 'PATHOLOGY',
+        rate: Number(rateStr)
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert("✅ Test added successfully to MongoDB!");
+      loadHospitalTestCatalog();
+    } else {
+      alert("❌ " + (result.error || "Could not save test"));
+    }
+  } catch (err) {
+    alert("❌ Error saving new test to hospital database.");
+  }
+}
 
 function switchOpdSubView(view) {
   const regCard = document.getElementById("opd-subview-reg");
@@ -2203,9 +2378,7 @@ function switchOpdSubView(view) {
     setPillStyle(btnOpd, false);
     setPillStyle(btnInv, true);
 
-    if (typeof renderInvCatalog === 'function' && typeof masterInvCatalog !== 'undefined') {
-      renderInvCatalog(masterInvCatalog);
-    }
+    loadHospitalTestCatalog();
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
@@ -2217,94 +2390,8 @@ function switchOpdSubView(view) {
   }
 }
 
-function renderInvCatalog(list) {
-  const container = document.getElementById("inv-catalog-list");
-  if (!container) return;
-  container.innerHTML = list.map(t => {
-    const isChecked = selectedInvTests.some(x => x.id === t.id);
-    return `
-      <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px 6px; border-bottom: 1px solid #f1f5f9;">
-        <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
-          <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleInvTest('${t.id}')">
-          <span>${t.name}</span>
-        </label>
-        <span style="color: #64748b; font-weight: 600;">/ Rs ${t.rate}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-function filterInvCatalog(term) {
-  const q = (term || '').toLowerCase();
-  renderInvCatalog(masterInvCatalog.filter(t => t.name.toLowerCase().includes(q)));
-}
-
-function toggleInvTest(id) {
-  const existing = selectedInvTests.find(t => t.id === id);
-  if (existing) {
-    selectedInvTests = selectedInvTests.filter(t => t.id !== id);
-  } else {
-    const item = masterInvCatalog.find(t => t.id === id);
-    if (item) selectedInvTests.push({ ...item, unit: 1, amount: item.rate });
-  }
-  renderSelectedInvTable();
-}
-
-function removeInvTest(id) {
-  selectedInvTests = selectedInvTests.filter(t => t.id !== id);
-  renderInvCatalog(masterInvCatalog);
-  renderSelectedInvTable();
-}
-
-function renderSelectedInvTable() {
-  const tbody = document.getElementById("mintech-inv-selected-body") || document.getElementById("inv-selected-body");
-  if (!tbody) return;
-
-  if (!selectedInvTests || selectedInvTests.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">No tests selected yet. Choose tests from the catalog.</td></tr>';
-    const totalElem = document.getElementById("inv-total-disp");
-    if (totalElem) totalElem.innerText = "0";
-    calcInvSettlement();
-    return;
-  }
-
-  tbody.innerHTML = selectedInvTests.map((t, idx) => {
-    const rowBg = idx % 2 === 0 ? '#ffffff' : '#fafaf9';
-    return `
-      <tr style="border-bottom: 1px solid #f0fdfa; background: ${rowBg};">
-        <td style="padding: 7px 10px; font-weight: 600; color: #292524;">${t.name}</td>
-        <td style="padding: 7px 6px; text-align: right; color: #78716c;">₹${t.rate}</td>
-        <td style="padding: 7px 6px; text-align: center; color: #44403c;">${t.unit}</td>
-        <td style="padding: 7px 6px; text-align: right; font-weight: 700; color: #0f766e;">₹${t.amount}</td>
-        <td style="padding: 7px 10px; text-align: center;">
-          <button type="button" onclick="removeInvTest('${t.id}')" 
-            style="background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; border-radius: 4px; padding: 3px 6px; cursor: pointer; font-size: 11px;">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
-        </td>
-      </tr>
-    `;
-  }).join('');
-
-  calcInvSettlement();
-}
-
-function calcInvSettlement() {
-  const total = selectedInvTests.reduce((acc, curr) => acc + (curr.amount || 0), 0);
-  document.getElementById("inv-total-disp").innerText = total;
-
-  const discount = Number(document.getElementById("inv-discount")?.value || 0);
-  const waive = Number(document.getElementById("inv-waive")?.value || 0);
-  const deposit = Number(document.getElementById("inv-deposit")?.value || 0);
-
-  const netPayable = Math.max(0, total - discount - waive);
-  const due = Math.max(0, netPayable - deposit);
-
-  document.getElementById("inv-due-disp").innerText = due;
-}
-
 function searchInvUhid() {
-  const val = document.getElementById("inv-search-uhid").value.trim();
+  const val = document.getElementById("inv-search-uhid")?.value.trim();
   if (!val) return alert("Please enter a UHID");
   const found = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []).find(v => (v.uhid || '').toLowerCase() === val.toLowerCase());
   if (found) {
@@ -2320,26 +2407,31 @@ function searchInvUhid() {
 
 async function submitInvestigationOrder() {
   if (selectedInvTests.length === 0) return alert("Please select at least one test.");
-  const name = document.getElementById("inv-name").value.trim();
-  const mobile = document.getElementById("inv-mobile").value.trim();
+  const name = document.getElementById("inv-name")?.value.trim();
+  const mobile = document.getElementById("inv-mobile")?.value.trim();
   if (!name || !mobile) return alert("Patient Name and Mobile are required.");
 
   const payload = {
-    uhid: document.getElementById("inv-search-uhid").value.trim() || `U-${Date.now().toString().slice(-5)}`,
+    uhid: document.getElementById("inv-search-uhid")?.value.trim() || `U-${Date.now().toString().slice(-5)}`,
     patientName: name,
-    gender: document.getElementById("inv-gender").value,
-    ageYears: Number(document.getElementById("inv-age").value || 0),
+    gender: document.getElementById("inv-gender")?.value || 'Male',
+    ageYears: Number(document.getElementById("inv-age")?.value || 0),
     mobile: mobile,
-    department: document.getElementById("inv-dept").value,
-    consultant: document.getElementById("inv-consultant").value,
-    rateList: document.getElementById("inv-ratelist").value,
+    department: document.getElementById("inv-dept")?.value || 'PATHOLOGY',
+    consultant: document.getElementById("inv-consultant")?.value || 'SELF',
+    rateList: document.getElementById("inv-ratelist")?.value || 'COMMON',
+    panel: document.getElementById("inv-panel")?.value || '--NA--',
+    cardNo: document.getElementById("inv-card-no")?.value.trim() || '',
+    service: document.getElementById("inv-service")?.value.trim() || '',
+    rank: document.getElementById("inv-rank")?.value.trim() || '',
+    abhaNo: document.getElementById("inv-abha")?.value.trim() || '',
     tests: selectedInvTests,
-    totalAmount: Number(document.getElementById("inv-total-disp").innerText),
-    discount: Number(document.getElementById("inv-discount").value),
-    waiveOff: Number(document.getElementById("inv-waive").value),
-    deposit: Number(document.getElementById("inv-deposit").value),
-    due: Number(document.getElementById("inv-due-disp").innerText),
-    paymentMode: document.getElementById("inv-mode").value
+    totalAmount: Number(document.getElementById("inv-total-disp")?.innerText || 0),
+    discount: Number(document.getElementById("inv-discount")?.value || 0),
+    waiveOff: Number(document.getElementById("inv-waive")?.value || 0),
+    deposit: Number(document.getElementById("inv-deposit")?.value || 0),
+    due: Number(document.getElementById("inv-due-disp")?.innerText || 0),
+    paymentMode: document.getElementById("inv-mode")?.value || 'Cash'
   };
 
   try {
@@ -2350,10 +2442,10 @@ async function submitInvestigationOrder() {
     });
     const result = await res.json();
     if (result.success) {
-      alert(`✅ Investigation Order Generated: ${result.data.orderId}\nTotal: Rs.${result.data.totalAmount}`);
+      alert(`✅ Investigation Order Generated: ${result.data.orderId}\nTotal: ₹${result.data.totalAmount}`);
       selectedInvTests = [];
       renderSelectedInvTable();
-      renderInvCatalog(masterInvCatalog);
+      renderInvCatalog(hospitalTestCatalog);
     } else {
       alert("❌ " + (result.error || "Failed to book investigation"));
     }

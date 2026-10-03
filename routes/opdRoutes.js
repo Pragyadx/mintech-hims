@@ -9,12 +9,12 @@ const {
   getOpdQueue,
 } = require("../controllers/opdController");
 
-// Softcure: Live OPD Queue (Today's Outpatient Registry)
+// Mintech: Live OPD Queue (Today's Outpatient Registry)
 router.get("/", getOpdQueue);
 router.get("/queue", getOpdQueue);
 router.get("/queue/hospital/:hospitalId", getOpdQueue);
 
-// Softcure: Walk-in OPD Registration & Token Generation
+// Mintech: Walk-in OPD Registration & Token Generation
 router.post("/register", registerOpdPatient);
 
 // Existing: Check in patient to OPD: POST /api/opd/check-in

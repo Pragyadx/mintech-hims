@@ -2,7 +2,7 @@ const OpdVisit = require("../models/OpdVisit");
 const Patient = require("../models/Patient");
 
 // -------------------------------------------------------------
-// 1. SOFTCURE: Direct OPD Registration (Front Desk Walk-in)
+// 1. Mintech: Direct OPD Registration (Front Desk Walk-in)
 // -------------------------------------------------------------
 exports.registerOpdPatient = async (req, res) => {
   try {
@@ -105,7 +105,7 @@ exports.registerOpdPatient = async (req, res) => {
       data: visit
     });
   } catch (error) {
-    console.error("Softcure OPD registration error:", error);
+    console.error("Mintech OPD registration error:", error);
     res.status(500).json({
       success: false,
       error: error.message || "Server Error"
@@ -114,7 +114,7 @@ exports.registerOpdPatient = async (req, res) => {
 };
 
 // -------------------------------------------------------------
-// 2. SOFTCURE: Live OPD Queue Table (Today's Outpatients)
+// 2. MINTECH: Live OPD Queue Table (Today's Outpatients)
 // -------------------------------------------------------------
 exports.getOpdQueue = async (req, res) => {
   try {
