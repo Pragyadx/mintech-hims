@@ -1,21 +1,161 @@
 const OpdVisit = require("../models/OpdVisit");
 const Patient = require("../models/Patient");
 
-// Check in a patient for an OPD consultation
+// -------------------------------------------------------------
+// 1. SOFTCURE: Direct OPD Registration (Front Desk Walk-in)
+// -------------------------------------------------------------
+exports.registerOpdPatient = async (req, res) => {
+  try {
+    const hospitalId = req.body.hospitalId || "HOSP01";
+    let {
+      uhid,
+      patientTitle,
+      patientName,
+      gender,
+      maritalStatus,
+      mobile,
+      email,
+      department,
+      doctorId,
+      doctor,
+      slot,
+      guardianRelation,
+      guardianName,
+      ageYears,
+      address,
+      referredBy,
+      panelTpa,
+      fee,
+      paymentMode,
+      abhaNo,
+      abhaAddress,
+      vitals,
+      chiefComplaints
+    } = req.body;
+
+    const assignedDoctor = doctorId || doctor || "Dr. EMO";
+
+    // 1. Calculate Daily Token Sequence
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const countToday = await OpdVisit.countDocuments({
+      hospitalId,
+      createdAt: { $gte: startOfDay }
+    });
+    const tokenNo = countToday + 1;
+
+    // 2. Generate OPD ID and UHID if not already present
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const opdId = `OP-${Date.now().toString().slice(-4)}${randomSuffix.toString().slice(-2)}`;
+    
+    if (!uhid || uhid.trim() === "") {
+      uhid = `U-${Math.floor(10000 + Math.random() * 90000)}`;
+    }
+
+    // 3. Upsert into Patient collection so UHID remains consistent for future visits
+    if (Patient) {
+      await Patient.findOneAndUpdate(
+        { uhid },
+        {
+          uhid,
+          hospitalId,
+          name: patientName ? `${patientTitle || ''} ${patientName}`.trim() : "Unknown",
+          gender: gender || "Male",
+          mobile: mobile || "",
+          age: ageYears || 0,
+          address: address || ""
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      ).catch(err => console.warn("Patient upsert non-critical warning:", err.message));
+    }
+
+    // 4. Create OPD Visit Entry
+    const visit = await OpdVisit.create({
+      uhid,
+      opdId,
+      tokenNo,
+      hospitalId,
+      patientTitle: patientTitle || "Mr.",
+      patientName: patientName || "",
+      gender: gender || "Male",
+      maritalStatus: maritalStatus || "Single",
+      mobile: mobile || "",
+      email: email || "",
+      department: department || "EMERGENCY",
+      doctorId: assignedDoctor,
+      slot: slot || "Slot I",
+      guardianRelation: guardianRelation || "S/o",
+      guardianName: guardianName || "",
+      ageYears: Number(ageYears) || 0,
+      address: address || "",
+      referredBy: referredBy || "SELF",
+      panelTpa: panelTpa || "--NA--",
+      fee: Number(fee) || 100,
+      paymentMode: paymentMode || "Cash",
+      abhaNo: abhaNo || "",
+      abhaAddress: abhaAddress || "",
+      vitals: vitals || {},
+      chiefComplaints: chiefComplaints || [],
+      status: "Waiting"
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Patient registered and token generated successfully",
+      data: visit
+    });
+  } catch (error) {
+    console.error("Softcure OPD registration error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Server Error"
+    });
+  }
+};
+
+// -------------------------------------------------------------
+// 2. SOFTCURE: Live OPD Queue Table (Today's Outpatients)
+// -------------------------------------------------------------
+exports.getOpdQueue = async (req, res) => {
+  try {
+    const hospitalId = req.params.hospitalId || "HOSP01";
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const visits = await OpdVisit.find({
+      hospitalId,
+      createdAt: { $gte: startOfDay }
+    }).sort({ tokenNo: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: visits.length,
+      data: visits
+    });
+  } catch (error) {
+    console.error("Fetch OPD queue error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message || "Server Error"
+    });
+  }
+};
+
+// -------------------------------------------------------------
+// 3. EXISTING: Check-in patient for an OPD consultation
+// -------------------------------------------------------------
 exports.checkInPatient = async (req, res) => {
   try {
     const { uhid, hospitalId, doctorId, department, vitals, chiefComplaints } = req.body;
 
-    // 1. Verify the patient exists using their UHID
     const patient = await Patient.findOne({ uhid });
     if (!patient) {
       return res.status(404).json({
         success: false,
-        error: `Invalid UHID: ${uhid}. Patient must be registered before OPD check-in.`,
+        error: `Invalid UHID: ${uhid}. Patient must be registered before OPD check-in.`
       });
     }
 
-    // 2. Create the OPD visit entry
     const visit = await OpdVisit.create({
       uhid,
       hospitalId,
@@ -23,24 +163,26 @@ exports.checkInPatient = async (req, res) => {
       department: department || "General Medicine",
       vitals: vitals || {},
       chiefComplaints: chiefComplaints || [],
-      status: "Waiting",
+      status: "Waiting"
     });
 
     res.status(201).json({
       success: true,
       message: "Patient checked into OPD queue successfully",
-      visit,
+      visit
     });
   } catch (error) {
     console.error("OPD check-in error:", error);
     res.status(500).json({
       success: false,
-      error: error.message || "Server Error",
+      error: error.message || "Server Error"
     });
   }
 };
 
-// Fetch current waiting queue for a specific doctor
+// -------------------------------------------------------------
+// 4. EXISTING: Fetch current waiting queue for a specific doctor
+// -------------------------------------------------------------
 exports.getDoctorQueue = async (req, res) => {
   try {
     const { doctorId } = req.params;
@@ -50,17 +192,20 @@ exports.getDoctorQueue = async (req, res) => {
     res.status(200).json({
       success: true,
       count: queue.length,
-      queue,
+      queue
     });
   } catch (error) {
     console.error("Fetch doctor queue error:", error);
     res.status(500).json({
       success: false,
-      error: error.message || "Server Error",
+      error: error.message || "Server Error"
     });
   }
 };
-// Complete consultation, attach diagnosis & prescription
+
+// -------------------------------------------------------------
+// 5. EXISTING: Complete consultation, attach diagnosis & prescription
+// -------------------------------------------------------------
 exports.completeConsultation = async (req, res) => {
   try {
     const { visitId } = req.params;
@@ -71,7 +216,7 @@ exports.completeConsultation = async (req, res) => {
       {
         diagnosis,
         prescriptions,
-        status: "Completed",
+        status: "Completed"
       },
       { new: true }
     );
@@ -79,41 +224,43 @@ exports.completeConsultation = async (req, res) => {
     if (!visit) {
       return res.status(404).json({
         success: false,
-        error: "OPD visit not found",
+        error: "OPD visit not found"
       });
     }
 
     res.status(200).json({
       success: true,
       message: "Consultation completed and prescription generated successfully",
-      visit,
+      visit
     });
   } catch (error) {
     console.error("Consultation update error:", error);
     res.status(500).json({
       success: false,
-      error: error.message || "Server Error",
+      error: error.message || "Server Error"
     });
   }
 };
-// Fetch complete visit history and EMR records for a patient
+
+// -------------------------------------------------------------
+// 6. EXISTING: Fetch complete visit history and EMR records
+// -------------------------------------------------------------
 exports.getPatientHistory = async (req, res) => {
   try {
     const { uhid } = req.params;
 
-    // Find all visits for this patient, sorted newest to oldest
     const visits = await OpdVisit.find({ uhid }).sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
       totalVisits: visits.length,
-      history: visits,
+      history: visits
     });
   } catch (error) {
     console.error("Fetch patient history error:", error);
     res.status(500).json({
       success: false,
-      error: error.message || "Server Error",
+      error: error.message || "Server Error"
     });
   }
 };

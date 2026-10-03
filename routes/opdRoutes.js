@@ -5,16 +5,28 @@ const {
   getDoctorQueue,
   completeConsultation,
   getPatientHistory,
+  registerOpdPatient,
+  getOpdQueue,
 } = require("../controllers/opdController");
 
-// Check in patient to OPD: POST /api/opd/check-in
+// Softcure: Live OPD Queue (Today's Outpatient Registry)
+router.get("/", getOpdQueue);
+router.get("/queue", getOpdQueue);
+router.get("/queue/hospital/:hospitalId", getOpdQueue);
+
+// Softcure: Walk-in OPD Registration & Token Generation
+router.post("/register", registerOpdPatient);
+
+// Existing: Check in patient to OPD: POST /api/opd/check-in
 router.post("/check-in", checkInPatient);
 
-// View queue for a doctor: GET /api/opd/queue/:doctorId
+// Existing: View queue for a doctor: GET /api/opd/queue/:doctorId
 router.get("/queue/:doctorId", getDoctorQueue);
-// Complete consultation: PUT /api/opd/consultation/:visitId
+
+// Existing: Complete consultation: PUT /api/opd/consultation/:visitId
 router.put("/consultation/:visitId", completeConsultation);
-// Get patient medical history: GET /api/opd/history/:uhid
+
+// Existing: Get patient medical history: GET /api/opd/history/:uhid
 router.get("/history/:uhid", getPatientHistory);
 
 module.exports = router;
