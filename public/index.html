@@ -545,12 +545,12 @@
   <span>Token TV</span>
 </button>
 
-    <!-- 8. Emergency Triage -->
-    <button type="button" class="opd-ribbon-btn" 
-      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #fecaca; background: #fef2f2; color: #b91c1c;">
-      <i class="fa-solid fa-triangle-exclamation" style="font-size: 13px;"></i>
-      <span>Emergency</span>
-    </button>
+    <!-- 8. Emergency -->
+<button type="button" id="btn-sub-emergency" class="opd-ribbon-btn" onclick="switchOpdSubView('emergency')"
+  style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #fca5a5; background: #fef2f2; color: #b91c1c;">
+  <i class="fa-solid fa-truck-medical" style="font-size: 13px;"></i>
+  <span>Emergency</span>
+</button>
 
     <!-- 9. Medical Certificate -->
     <button type="button" class="opd-ribbon-btn" 
@@ -1333,6 +1333,99 @@
           </div>
         </div>
 
+      </div>
+
+    </div>
+    <!-- CARD: MINTECH EMERGENCY CASUALTY SUB-VIEW -->
+    <div id="opd-subview-emergency" style="display: none; background: #ffffff; border: 1px solid #fca5a5; border-radius: 8px; padding: 14px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(220, 38, 38, 0.05);">
+      
+      <!-- Top Title Ribbon -->
+      <div style="background: #fef2f2; border-bottom: 1px solid #fca5a5; color: #b91c1c; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; border-radius: 6px 6px 0 0; margin: -14px -14px 14px -14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-truck-medical"></i>
+          <span>Emergency Assessment & Casualty Intake</span>
+        </div>
+        <span style="font-size: 11px; background: #fee2e2; color: #b91c1c; padding: 3px 8px; border-radius: 4px; font-weight: 700;">24x7 Trauma / Red Zone</span>
+      </div>
+
+      <!-- Quick Triage Search & Registration Bar -->
+      <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center; background: #fafaf9; border: 1px solid #e7e5e4; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; font-size: 12px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-weight: 700; color: #b91c1c;">UHID :</label>
+          <input type="text" id="em-search-uhid" placeholder="UHID" onkeydown="if(event.key==='Enter') searchEmergencyUhid()" style="width: 140px; padding: 5px 8px; border: 1px solid #fca5a5; border-radius: 4px; outline: none;">
+        </div>
+
+        <label style="display: flex; align-items: center; gap: 6px; font-weight: 600; cursor: pointer; color: #1c1917;">
+          <span>New Registration :</span>
+          <input type="checkbox" id="em-new-checkbox" onchange="toggleEmNewRegistration(this.checked)" style="accent-color: #b91c1c; width: 16px; height: 16px; cursor: pointer;">
+        </label>
+
+        <button type="button" onclick="searchEmergencyUhid()" style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-magnifying-glass"></i> Search
+        </button>
+
+        <div style="margin-left: auto;">
+          <button type="button" onclick="quickRegisterEmergencyPatient()" style="background: #dc2626; color: white; border: none; padding: 6px 18px; border-radius: 4px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-bolt"></i> Immediate Casualty Admission
+          </button>
+        </div>
+      </div>
+
+      <!-- Emergency Rapid Admission Inputs (Appears if New Registration is checked) -->
+      <div id="em-new-inputs-row" style="display: none; background: #fef2f2; border: 1px dashed #fca5a5; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+          <div>
+            <label style="font-weight: 600; color: #b91c1c;">Patient Name *:</label>
+            <input type="text" id="em-patient-name" placeholder="Name / Unknown Trauma" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="font-weight: 600; color: #b91c1c;">Age / Gender *:</label>
+            <div style="display: flex; gap: 4px;">
+              <input type="number" id="em-age" placeholder="Age" style="width: 60px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+              <select id="em-gender" style="flex: 1; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <option>Male</option><option>Female</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label style="font-weight: 600; color: #b91c1c;">Guardian / Relative:</label>
+            <input type="text" id="em-guardian" placeholder="S/D/W of Name" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="font-weight: 600; color: #b91c1c;">Contact No.:</label>
+            <input type="tel" id="em-mobile" placeholder="10-digit Phone" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="font-weight: 600; color: #b91c1c;">Address / Location:</label>
+            <input type="text" id="em-address" placeholder="Brought From / Address" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Active Assessment Queue Table -->
+      <div style="border: 1px solid #99f6e4; border-radius: 6px; overflow: hidden; background: #ffffff;">
+        <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 8px 12px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;">
+          <span><i class="fa-solid fa-bed-pulse"></i> Active Emergency & Casualty Queue</span>
+          <span style="font-size: 11px; background: #fee2e2; color: #dc2626; padding: 2px 8px; border-radius: 12px; font-weight: 600;">Priority 1</span>
+        </div>
+        <div style="max-height: 290px; overflow-y: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            <thead>
+              <tr style="background: #fafaf9; color: #78716c; border-bottom: 1px solid #f0fdfa; font-size: 11px; text-transform: uppercase;">
+                <th style="padding: 8px 10px; text-align: left; width: 120px;">UHID</th>
+                <th style="padding: 8px 10px; text-align: left;">Name</th>
+                <th style="padding: 8px 8px; text-align: center; width: 100px;">Age/Sex</th>
+                <th style="padding: 8px 10px; text-align: left;">S/D/W o</th>
+                <th style="padding: 8px 10px; text-align: left;">Contact No.</th>
+                <th style="padding: 8px 10px; text-align: left;">Address</th>
+                <th style="padding: 8px 10px; text-align: center; width: 90px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="em-queue-body">
+              <tr><td colspan="7" style="text-align: center; color: #a8a29e; padding: 30px; background: #fafaf9;">No active emergency cases.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>
@@ -2818,6 +2911,7 @@ function switchOpdSubView(view) {
   const revisitPanel = document.getElementById("opd-subview-revisit");
   const notesPanel = document.getElementById("opd-subview-notes");
   const tokenPanel = document.getElementById("opd-subview-token");
+  const emPanel = document.getElementById("opd-subview-emergency");
 
   // Grab ribbon buttons safely
   const btnOpd = document.getElementById("btn-sub-opd");
@@ -2827,16 +2921,23 @@ function switchOpdSubView(view) {
   const btnRevisit = document.getElementById("btn-sub-revisit");
   const btnNotes = document.getElementById("btn-sub-notes");
   const btnToken = document.getElementById("btn-sub-token");
+  const btnEm = document.getElementById("btn-sub-emergency");
 
-  const setPill = (btn, active) => {
+  const setPill = (btn, active, isDanger = false) => {
     if (!btn) return;
-    btn.style.background = active ? "#0f766e" : "#f0fdfa";
-    btn.style.color = active ? "#ffffff" : "#0f766e";
-    btn.style.borderColor = active ? "#0f766e" : "#99f6e4";
+    if (isDanger) {
+      btn.style.background = active ? "#dc2626" : "#fef2f2";
+      btn.style.color = active ? "#ffffff" : "#b91c1c";
+      btn.style.borderColor = active ? "#dc2626" : "#fca5a5";
+    } else {
+      btn.style.background = active ? "#0f766e" : "#f0fdfa";
+      btn.style.color = active ? "#ffffff" : "#0f766e";
+      btn.style.borderColor = active ? "#0f766e" : "#99f6e4";
+    }
     btn.style.fontWeight = active ? "700" : "600";
   };
 
-  // Hide all panels first
+  // Hide all panels
   if (regCard) regCard.style.display = 'none';
   if (queueCard) queueCard.style.display = 'none';
   if (consultCard) consultCard.style.display = 'none';
@@ -2846,6 +2947,7 @@ function switchOpdSubView(view) {
   if (revisitPanel) revisitPanel.style.display = 'none';
   if (notesPanel) notesPanel.style.display = 'none';
   if (tokenPanel) tokenPanel.style.display = 'none';
+  if (emPanel) emPanel.style.display = 'none';
 
   // Reset all buttons
   setPill(btnOpd, false);
@@ -2855,8 +2957,9 @@ function switchOpdSubView(view) {
   setPill(btnRevisit, false);
   setPill(btnNotes, false);
   setPill(btnToken, false);
+  setPill(btnEm, false, true);
 
-  // Activate requested view
+  // Activate requested panel
   if (view === 'investigations') {
     if (invPanel) invPanel.style.display = 'block';
     setPill(btnInv, true);
@@ -2880,7 +2983,12 @@ function switchOpdSubView(view) {
   } else if (view === 'token') {
     if (tokenPanel) tokenPanel.style.display = 'block';
     setPill(btnToken, true);
-    refreshTokensDisplay();
+    if (typeof refreshTokensDisplay === 'function') refreshTokensDisplay();
+  } else if (view === 'emergency') {
+    if (emPanel) emPanel.style.display = 'block';
+    setPill(btnEm, true, true);
+    renderEmergencyQueue();
+    setTimeout(() => document.getElementById("em-search-uhid")?.focus(), 50);
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
@@ -3476,6 +3584,109 @@ function refreshTokensDisplay() {
       pathBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 25px;">No active pathology tokens in queue.</td></tr>';
     }
   }
+}
+// ==========================================
+// EMERGENCY & CASUALTY HANDLERS
+// ==========================================
+let emergencyQueue = [];
+
+function toggleEmNewRegistration(isChecked) {
+  const row = document.getElementById("em-new-inputs-row");
+  if (row) row.style.display = isChecked ? 'block' : 'none';
+}
+
+function searchEmergencyUhid() {
+  const val = document.getElementById("em-search-uhid")?.value.trim();
+  if (!val) return alert("Please enter a UHID to lookup.");
+
+  const allPatients = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []);
+  const found = allPatients.find(p => (p.uhid || '').toLowerCase() === val.toLowerCase());
+
+  if (found) {
+    // Add existing patient immediately into Casualty queue
+    addPatientToEmergency({
+      uhid: found.uhid,
+      patientName: found.patientName,
+      ageYears: found.ageYears || found.age || '--',
+      gender: found.gender || 'Male',
+      guardian: found.guardian || 'SELF',
+      mobile: found.mobile || '--',
+      address: found.address || 'CASUALTY WALK-IN'
+    });
+    alert(`🚨 Patient ${found.patientName} (${found.uhid}) queued into Emergency!`);
+  } else {
+    alert("UHID not found in active records. Check 'New Registration' to triage a new emergency admission.");
+    document.getElementById("em-new-checkbox").checked = true;
+    toggleEmNewRegistration(true);
+  }
+}
+
+function quickRegisterEmergencyPatient() {
+  const nameInput = document.getElementById("em-patient-name");
+  let name = nameInput ? nameInput.value.trim() : '';
+  if (!name) name = `EMERGENCY-TRAUMA-${Date.now().toString().slice(-4)}`;
+
+  const age = document.getElementById("em-age")?.value || '40';
+  const gender = document.getElementById("em-gender")?.value || 'Male';
+  const guardian = document.getElementById("em-guardian")?.value.trim() || 'ACCOMPANIED';
+  const mobile = document.getElementById("em-mobile")?.value.trim() || '9999999999';
+  const address = document.getElementById("em-address")?.value.trim() || 'EMERGENCY CASUALTY';
+
+  const emUhid = `EM-${Date.now().toString().slice(-5)}`;
+
+  addPatientToEmergency({
+    uhid: emUhid,
+    patientName: name,
+    ageYears: age,
+    gender: gender,
+    guardian: guardian,
+    mobile: mobile,
+    address: address
+  });
+
+  // Clear inputs
+  if (nameInput) nameInput.value = '';
+  document.getElementById("em-new-checkbox").checked = false;
+  toggleEmNewRegistration(false);
+
+  alert(`🚨 Emergency Admission Booked!\nUHID: ${emUhid}\nPatient: ${name}`);
+}
+
+function addPatientToEmergency(patientObj) {
+  emergencyQueue.unshift(patientObj);
+  renderEmergencyQueue();
+}
+
+function renderEmergencyQueue() {
+  const tbody = document.getElementById("em-queue-body");
+  if (!tbody) return;
+
+  if (emergencyQueue.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #a8a29e; padding: 30px; background: #fafaf9;">No active emergency cases.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = emergencyQueue.map((em, idx) => `
+    <tr style="border-bottom: 1px solid #fecaca; background: ${idx === 0 ? '#fff1f2' : '#ffffff'};">
+      <td style="padding: 8px 10px; font-weight: 700; color: #dc2626;">${em.uhid}</td>
+      <td style="padding: 8px 10px; font-weight: 600; color: #1e293b;">${em.patientName}</td>
+      <td style="padding: 8px 8px; text-align: center; color: #475569;">${em.ageYears} / ${em.gender}</td>
+      <td style="padding: 8px 10px; color: #475569;">${em.guardian}</td>
+      <td style="padding: 8px 10px; color: #475569;">${em.mobile}</td>
+      <td style="padding: 8px 10px; color: #475569;">${em.address}</td>
+      <td style="padding: 8px 10px; text-align: center;">
+        <button type="button" onclick="dischargeEmergency('${em.uhid}')" 
+          style="background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">
+          Triage Done
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function dischargeEmergency(uhid) {
+  emergencyQueue = emergencyQueue.filter(p => p.uhid !== uhid);
+  renderEmergencyQueue();
 }
 </script>
 </body>
