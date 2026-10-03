@@ -484,8 +484,9 @@
       
       <!-- TOP SUB-RIBBON (10 SOFTCURE ACTIONS) -->
       <div style="background: #111827; color: white; display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 10px; border-radius: 6px 6px 0 0; font-size: 13px; margin-bottom: 8px;">
-        <button type="button" class="opd-ribbon-btn active" style="background: #0f766e; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: 600;"><i class="fa-solid fa-id-card"></i> OPD</button>
-        <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-microscope"></i> Investigations</button>
+        <button type="button" id="btn-sub-opd" class="opd-ribbon-btn active" onclick="switchOpdSubView('opd')" style="background: #0f766e; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: 600;"><i class="fa-solid fa-id-card"></i> OPD</button>
+<button type="button" id="btn-sub-inv" class="opd-ribbon-btn" onclick="switchOpdSubView('investigations')" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-microscope"></i> Investigations</button>
+        
         <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-bed"></i> Day Care</button>
         <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-baby"></i> Birth Reg</button>
         <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-barcode"></i> Revisit</button>
@@ -497,7 +498,7 @@
       </div>
 
       <!-- CARD 1: CONSULTATION REGISTRATION -->
-      <div style="background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+<div id="opd-subview-reg" style="background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
         
         <!-- ABDM / UHID Fast Search -->
         <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; background: #f8fafc; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; align-items: center;">
@@ -640,6 +641,132 @@
 
           </div>
         </form>
+      </div>
+      <!-- CARD: SOFTCURE INVESTIGATIONS SUB-VIEW -->
+      <div id="opd-subview-investigations" style="display: none; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        
+        <!-- Top Meta Bar matching Softcure Spec -->
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #f8fafc; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px; margin-bottom: 12px;">
+          <span style="font-weight: 700; color: #0f766e;">Enter UHID:</span>
+          <input type="text" id="inv-search-uhid" placeholder="UHID" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 100px;">
+          <button type="button" onclick="searchInvUhid()" style="background: #0f766e; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+
+          <div style="border-left: 1px solid #cbd5e1; height: 18px; margin: 0 4px;"></div>
+
+          <span style="font-weight: 600;">Rate List:</span>
+          <select id="inv-ratelist" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+            <option value="COMMON">COMMON</option>
+            <option value="CGHS">CGHS</option>
+            <option value="GIPSA">GIPSA</option>
+            <option value="PMJAY - GOVT">PMJAY - GOVT</option>
+          </select>
+
+          <span style="font-weight: 600;">TPA / Panel:</span>
+          <select id="inv-panel" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+            <option value="--NA--">--NA--</option>
+            <option value="Ayushman">Ayushman</option>
+            <option value="CGHS">CGHS</option>
+          </select>
+
+          <span style="font-weight: 600;">ABHA No:</span>
+          <input type="text" id="inv-abha" placeholder="12-1234-1234-1234" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 140px;">
+          <span style="font-weight: 600;">ABHA Address:</span>
+          <input type="text" id="inv-abha-addr" placeholder="user@abdm" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 120px;">
+        </div>
+
+        <!-- Demographics Row -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 12px; margin-bottom: 14px; background: #fafafa; padding: 10px; border: 1px solid #e5e7eb; border-radius: 4px;">
+          <div>
+            <label style="font-weight: 600; color: #b91c1c;">Department *:</label>
+            <select id="inv-dept" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+              <option value="PATHOLOGY">PATHOLOGY</option>
+              <option value="RADIOLOGY">RADIOLOGY</option>
+              <option value="MICROBIOLOGY">MICROBIOLOGY</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-weight: 600; color: #b91c1c;">Patient Name *:</label>
+            <input type="text" id="inv-name" placeholder="Patient Name" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="font-weight: 600; color: #b91c1c;">Gender / Age (Y) *:</label>
+            <div style="display: flex; gap: 4px;">
+              <select id="inv-gender" style="width: 80px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+              <input type="number" id="inv-age" placeholder="Age(Y)" style="flex: 1; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+            </div>
+          </div>
+          <div>
+            <label style="font-weight: 600; color: #b91c1c;">Mobile *:</label>
+            <input type="tel" id="inv-mobile" placeholder="10-digit Mobile" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+          <div>
+            <label style="font-weight: 600;">Consultant / Ref. By *:</label>
+            <input type="text" id="inv-consultant" value="SELF" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+        </div>
+
+        <!-- Dual Split Test Selection Pane -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          
+          <!-- Left: Catalog with Checkboxes -->
+          <div style="border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden;">
+            <div style="background: #0f172a; color: white; padding: 6px 10px; font-size: 12px; font-weight: 600;">
+              Test Name (Catalog)
+            </div>
+            <div style="padding: 6px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+              <input type="text" id="inv-search-test" placeholder="SEARCH NAME..." oninput="filterInvCatalog(this.value)" style="width: 100%; padding: 4px 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;">
+            </div>
+            <div id="inv-catalog-list" style="max-height: 250px; overflow-y: auto; font-size: 12px; padding: 6px;">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+
+          <!-- Right: Selected Tests Billing Table -->
+          <div style="border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden;">
+            <div style="background: #0f172a; color: white; padding: 6px 10px; font-size: 12px; font-weight: 600; display: flex; justify-content: space-between;">
+              <span>Selected Test Name</span>
+              <span>Rate | Unit | Amount</span>
+            </div>
+            <div style="max-height: 285px; overflow-y: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                <tbody id="inv-selected-body">
+                  <tr>
+                    <td colspan="5" style="text-align: center; color: #94a3b8; padding: 30px;">No tests selected yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom Financials Ribbon -->
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; background: #f1f5f9; padding: 10px 14px; border-radius: 4px; font-size: 12px;">
+          <div style="display: flex; gap: 14px; align-items: center;">
+            <span style="font-weight: 700; color: #0f766e; font-size: 14px;">Total: ₹<span id="inv-total-disp">0</span></span>
+            <span>Discount: <input type="number" id="inv-discount" value="0" oninput="calcInvSettlement()" style="width: 60px; padding: 3px; border: 1px solid #cbd5e1; border-radius: 3px;"></span>
+            <span>Waive Off: <input type="number" id="inv-waive" value="0" oninput="calcInvSettlement()" style="width: 60px; padding: 3px; border: 1px solid #cbd5e1; border-radius: 3px;"></span>
+            <span>Deposit: <input type="number" id="inv-deposit" value="0" oninput="calcInvSettlement()" style="width: 70px; padding: 3px; border: 1px solid #cbd5e1; border-radius: 3px; font-weight: 600;"></span>
+            <span style="font-weight: 700; color: #dc2626;">Due: ₹<span id="inv-due-disp">0</span></span>
+          </div>
+
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <label style="font-weight: 600;">Mode:</label>
+            <select id="inv-mode" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+              <option value="Cash">Cash</option>
+              <option value="Online">Online / UPI</option>
+              <option value="Card">Card</option>
+            </select>
+            <button type="button" onclick="submitInvestigationOrder()" style="background: #0f766e; color: white; border: none; padding: 6px 20px; border-radius: 4px; font-weight: 700; cursor: pointer;">
+              Submit
+            </button>
+          </div>
+        </div>
+
       </div>
 
       <!-- CARD 2: TODAY'S OUTPATIENT REGISTRY QUEUE -->
@@ -1923,6 +2050,192 @@ function searchExistingUhid() {
     alert(`Autofilled details for UHID: ${found.uhid}`);
   } else {
     alert("No local records found for this UHID. Proceeding with walk-in registration.");
+  }
+}
+// ==========================================
+// INVESTIGATIONS SUB-PANEL LOGIC
+// ==========================================
+const masterInvCatalog = [
+  { id: 'T01', name: 'A1 AFP', rate: 800 },
+  { id: 'T02', name: 'AB AMMONIA - BLOOD', rate: 1200 },
+  { id: 'T03', name: 'ABC ABSOLUTE BLOOD COUNTS', rate: 100 },
+  { id: 'T04', name: 'ABC Automated Blood Culture', rate: 1000 },
+  { id: 'T05', name: 'ABG ARTERIAL BLOOD GASES (ABG)', rate: 800 },
+  { id: 'T06', name: 'ABS APLAS ABS', rate: 0 },
+  { id: 'T07', name: 'AC ACID PHOSPHATES', rate: 200 },
+  { id: 'T08', name: 'ACE ANGIOTENSIN CONVERTING ENZYME', rate: 1000 },
+  { id: 'T09', name: 'ADA ADENOSINE DEAMINASE ACTIVITY', rate: 500 },
+  { id: 'T10', name: 'CBC COMPLETE BLOOD COUNT', rate: 250 },
+  { id: 'T11', name: 'LFT LIVER FUNCTION TEST', rate: 650 },
+  { id: 'T12', name: 'KFT / RFT RENAL PROFILE', rate: 600 }
+];
+
+let selectedInvTests = [];
+
+function switchOpdSubView(view) {
+  const regCard = document.getElementById("opd-subview-reg");
+  const queueCard = document.getElementById("opd-queue-body") ? document.getElementById("opd-queue-body").closest('div[style*="background: white"]') : null;
+  const consultCard = document.getElementById("doctor-consult-uhid") ? document.getElementById("doctor-consult-uhid").closest('.card') : null;
+  const invPanel = document.getElementById("opd-subview-investigations");
+  const btnOpd = document.getElementById("btn-sub-opd");
+  const btnInv = document.getElementById("btn-sub-inv");
+
+  if (view === 'investigations') {
+    if (regCard) regCard.style.display = 'none';
+    if (queueCard) queueCard.style.display = 'none';
+    if (consultCard) consultCard.style.display = 'none';
+    if (invPanel) invPanel.style.display = 'block';
+
+    if (btnOpd) { btnOpd.style.background = 'transparent'; btnOpd.style.color = '#d1d5db'; }
+    if (btnInv) { btnInv.style.background = '#0f766e'; btnInv.style.color = 'white'; }
+
+    renderInvCatalog(masterInvCatalog);
+  } else {
+    if (regCard) regCard.style.display = 'block';
+    if (queueCard) queueCard.style.display = 'block';
+    if (consultCard) consultCard.style.display = 'block';
+    if (invPanel) invPanel.style.display = 'none';
+
+    if (btnOpd) { btnOpd.style.background = '#0f766e'; btnOpd.style.color = 'white'; }
+    if (btnInv) { btnInv.style.background = 'transparent'; btnInv.style.color = '#d1d5db'; }
+  }
+}
+
+function renderInvCatalog(list) {
+  const container = document.getElementById("inv-catalog-list");
+  if (!container) return;
+  container.innerHTML = list.map(t => {
+    const isChecked = selectedInvTests.some(x => x.id === t.id);
+    return `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 5px 6px; border-bottom: 1px solid #f1f5f9;">
+        <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleInvTest('${t.id}')">
+          <span>${t.name}</span>
+        </label>
+        <span style="color: #64748b; font-weight: 600;">/ Rs ${t.rate}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterInvCatalog(term) {
+  const q = (term || '').toLowerCase();
+  renderInvCatalog(masterInvCatalog.filter(t => t.name.toLowerCase().includes(q)));
+}
+
+function toggleInvTest(id) {
+  const existing = selectedInvTests.find(t => t.id === id);
+  if (existing) {
+    selectedInvTests = selectedInvTests.filter(t => t.id !== id);
+  } else {
+    const item = masterInvCatalog.find(t => t.id === id);
+    if (item) selectedInvTests.push({ ...item, unit: 1, amount: item.rate });
+  }
+  renderSelectedInvTable();
+}
+
+function removeInvTest(id) {
+  selectedInvTests = selectedInvTests.filter(t => t.id !== id);
+  renderInvCatalog(masterInvCatalog);
+  renderSelectedInvTable();
+}
+
+function renderSelectedInvTable() {
+  const tbody = document.getElementById("inv-selected-body");
+  if (!tbody) return;
+
+  if (selectedInvTests.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 30px;">No tests selected yet.</td></tr>';
+    document.getElementById("inv-total-disp").innerText = "0";
+    calcInvSettlement();
+    return;
+  }
+
+  tbody.innerHTML = selectedInvTests.map(t => `
+    <tr style="border-bottom: 1px solid #f1f5f9;">
+      <td style="padding: 6px 10px; font-weight: 600;">${t.name}</td>
+      <td style="padding: 6px; text-align: right;">Rs.${t.rate}</td>
+      <td style="padding: 6px; text-align: center;">${t.unit}</td>
+      <td style="padding: 6px; text-align: right; font-weight: 700;">Rs.${t.amount}</td>
+      <td style="padding: 6px; text-align: center;">
+        <button type="button" onclick="removeInvTest('${t.id}')" style="background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 13px;">✕</button>
+      </td>
+    </tr>
+  `).join('');
+
+  calcInvSettlement();
+}
+
+function calcInvSettlement() {
+  const total = selectedInvTests.reduce((acc, curr) => acc + (curr.amount || 0), 0);
+  document.getElementById("inv-total-disp").innerText = total;
+
+  const discount = Number(document.getElementById("inv-discount")?.value || 0);
+  const waive = Number(document.getElementById("inv-waive")?.value || 0);
+  const deposit = Number(document.getElementById("inv-deposit")?.value || 0);
+
+  const netPayable = Math.max(0, total - discount - waive);
+  const due = Math.max(0, netPayable - deposit);
+
+  document.getElementById("inv-due-disp").innerText = due;
+}
+
+function searchInvUhid() {
+  const val = document.getElementById("inv-search-uhid").value.trim();
+  if (!val) return alert("Please enter a UHID");
+  const found = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []).find(v => (v.uhid || '').toLowerCase() === val.toLowerCase());
+  if (found) {
+    document.getElementById("inv-name").value = found.patientName || '';
+    document.getElementById("inv-mobile").value = found.mobile || '';
+    document.getElementById("inv-age").value = found.ageYears || '';
+    document.getElementById("inv-gender").value = found.gender || 'Male';
+    alert("Patient details autofilled for " + found.uhid);
+  } else {
+    alert("UHID not found in active cache. Please enter demographics manually.");
+  }
+}
+
+async function submitInvestigationOrder() {
+  if (selectedInvTests.length === 0) return alert("Please select at least one test.");
+  const name = document.getElementById("inv-name").value.trim();
+  const mobile = document.getElementById("inv-mobile").value.trim();
+  if (!name || !mobile) return alert("Patient Name and Mobile are required.");
+
+  const payload = {
+    uhid: document.getElementById("inv-search-uhid").value.trim() || `U-${Date.now().toString().slice(-5)}`,
+    patientName: name,
+    gender: document.getElementById("inv-gender").value,
+    ageYears: Number(document.getElementById("inv-age").value || 0),
+    mobile: mobile,
+    department: document.getElementById("inv-dept").value,
+    consultant: document.getElementById("inv-consultant").value,
+    rateList: document.getElementById("inv-ratelist").value,
+    tests: selectedInvTests,
+    totalAmount: Number(document.getElementById("inv-total-disp").innerText),
+    discount: Number(document.getElementById("inv-discount").value),
+    waiveOff: Number(document.getElementById("inv-waive").value),
+    deposit: Number(document.getElementById("inv-deposit").value),
+    due: Number(document.getElementById("inv-due-disp").innerText),
+    paymentMode: document.getElementById("inv-mode").value
+  };
+
+  try {
+    const res = await fetch('/api/investigations/book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert(`✅ Investigation Order Generated: ${result.data.orderId}\nTotal: Rs.${result.data.totalAmount}`);
+      selectedInvTests = [];
+      renderSelectedInvTable();
+      renderInvCatalog(masterInvCatalog);
+    } else {
+      alert("❌ " + (result.error || "Failed to book investigation"));
+    }
+  } catch (err) {
+    alert("❌ Network Error booking investigation.");
   }
 }
 </script>

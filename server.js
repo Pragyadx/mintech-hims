@@ -28,6 +28,7 @@ app.use("/api/ipd", ipdRoutes);
 app.use("/api/pharmacy", pharmacyRoutes);
 app.use("/api/abdm", abdmRoutes);
 app.use("/api/auth", authRoutes);
+app.use('/api/investigations', require('./routes/investigationRoutes'));
 const PORT = 5000;
 
 // Connect to MongoDB Atlas
