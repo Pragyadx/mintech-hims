@@ -538,12 +538,12 @@
   <span>Notes</span>
 </button>
 
-    <!-- 7. Live Token Queue -->
-    <button type="button" class="opd-ribbon-btn" 
-      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
-      <i class="fa-solid fa-display" style="font-size: 13px;"></i>
-      <span>Token TV</span>
-    </button>
+    <!-- 7. Token TV Display -->
+<button type="button" id="btn-sub-token" class="opd-ribbon-btn" onclick="switchOpdSubView('token')"
+  style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
+  <i class="fa-solid fa-users-viewfinder" style="font-size: 13px;"></i>
+  <span>Token TV</span>
+</button>
 
     <!-- 8. Emergency Triage -->
     <button type="button" class="opd-ribbon-btn" 
@@ -1243,6 +1243,93 @@
             <div style="text-align: center; color: #a8a29e; padding: 40px 10px;">
               Search an OPD ID above to view clinical notes.
             </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+    <!-- CARD: MINTECH TOKEN / WAITING AREA TV DISPLAY SUB-VIEW -->
+    <div id="opd-subview-token" style="display: none; background: #ffffff; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 118, 110, 0.05);">
+      
+      <!-- Top Title Bar -->
+      <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; border-radius: 6px 6px 0 0; margin: -14px -14px 14px -14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-tv"></i>
+          <span>Live OPD & Diagnostics Token Display Board</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span id="token-clock" style="font-size: 11px; background: #ccfbf1; color: #0f766e; padding: 3px 8px; border-radius: 4px; font-weight: 700;">--:--:--</span>
+          <button type="button" onclick="refreshTokensDisplay()" style="background: #0f766e; color: white; border: none; padding: 3px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 600;">
+            <i class="fa-solid fa-arrows-rotate"></i> Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Dual Split TV Panels (OPD Display & Pathology Display) -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        
+        <!-- Left: OPD Consultation Display -->
+        <div style="border: 2px solid #0f766e; border-radius: 8px; overflow: hidden; background: #f8fafc; box-shadow: 0 2px 5px rgba(15, 118, 110, 0.1);">
+          <div style="background: #0f766e; color: #ffffff; padding: 12px; font-size: 14px; font-weight: 700; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px;">
+            <i class="fa-solid fa-user-doctor"></i>
+            <span>OPD Display</span>
+          </div>
+
+          <!-- Highlight: Now Serving Banner -->
+          <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; padding: 12px; text-align: center;">
+            <span style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Now Serving</span>
+            <div id="opd-active-token" style="font-size: 38px; font-weight: 900; color: #0f766e; line-height: 1.1;">--</div>
+            <div id="opd-active-patient" style="font-size: 13px; font-weight: 700; color: #1e293b;">Waiting for consultation call...</div>
+          </div>
+
+          <!-- Live OPD Queue List -->
+          <div style="max-height: 320px; overflow-y: auto; padding: 8px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+              <thead>
+                <tr style="background: #e2e8f0; color: #475569; text-transform: uppercase; font-size: 11px;">
+                  <th style="padding: 6px 8px; text-align: center;">Token</th>
+                  <th style="padding: 6px 8px; text-align: left;">Patient Name</th>
+                  <th style="padding: 6px 8px; text-align: left;">Department</th>
+                  <th style="padding: 6px 8px; text-align: left;">Consultant</th>
+                </tr>
+              </thead>
+              <tbody id="token-opd-body">
+                <tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 25px;">No active OPD tokens in queue.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right: Pathology / Diagnostics Display -->
+        <div style="border: 2px solid #0d9488; border-radius: 8px; overflow: hidden; background: #f8fafc; box-shadow: 0 2px 5px rgba(13, 148, 136, 0.1);">
+          <div style="background: #0d9488; color: #ffffff; padding: 12px; font-size: 14px; font-weight: 700; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px;">
+            <i class="fa-solid fa-flask-vial"></i>
+            <span>Pathology Display</span>
+          </div>
+
+          <!-- Highlight: Now Collecting Banner -->
+          <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; padding: 12px; text-align: center;">
+            <span style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Sample Collection</span>
+            <div id="path-active-token" style="font-size: 38px; font-weight: 900; color: #0d9488; line-height: 1.1;">--</div>
+            <div id="path-active-patient" style="font-size: 13px; font-weight: 700; color: #1e293b;">Waiting for next sample...</div>
+          </div>
+
+          <!-- Live Diagnostic Queue List -->
+          <div style="max-height: 320px; overflow-y: auto; padding: 8px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+              <thead>
+                <tr style="background: #e2e8f0; color: #475569; text-transform: uppercase; font-size: 11px;">
+                  <th style="padding: 6px 8px; text-align: center;">Token / ID</th>
+                  <th style="padding: 6px 8px; text-align: left;">Patient Name</th>
+                  <th style="padding: 6px 8px; text-align: left;">Investigation</th>
+                  <th style="padding: 6px 8px; text-align: center;">Status</th>
+                </tr>
+              </thead>
+              <tbody id="token-path-body">
+                <tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 25px;">No active pathology tokens in queue.</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -2730,6 +2817,7 @@ function switchOpdSubView(view) {
   const nbPanel = document.getElementById("opd-subview-birthreg");
   const revisitPanel = document.getElementById("opd-subview-revisit");
   const notesPanel = document.getElementById("opd-subview-notes");
+  const tokenPanel = document.getElementById("opd-subview-token");
 
   // Grab ribbon buttons safely
   const btnOpd = document.getElementById("btn-sub-opd");
@@ -2738,6 +2826,7 @@ function switchOpdSubView(view) {
   const btnBirth = document.getElementById("btn-sub-birthreg");
   const btnRevisit = document.getElementById("btn-sub-revisit");
   const btnNotes = document.getElementById("btn-sub-notes");
+  const btnToken = document.getElementById("btn-sub-token");
 
   const setPill = (btn, active) => {
     if (!btn) return;
@@ -2756,6 +2845,7 @@ function switchOpdSubView(view) {
   if (nbPanel) nbPanel.style.display = 'none';
   if (revisitPanel) revisitPanel.style.display = 'none';
   if (notesPanel) notesPanel.style.display = 'none';
+  if (tokenPanel) tokenPanel.style.display = 'none';
 
   // Reset all buttons
   setPill(btnOpd, false);
@@ -2764,6 +2854,7 @@ function switchOpdSubView(view) {
   setPill(btnBirth, false);
   setPill(btnRevisit, false);
   setPill(btnNotes, false);
+  setPill(btnToken, false);
 
   // Activate requested view
   if (view === 'investigations') {
@@ -2786,6 +2877,10 @@ function switchOpdSubView(view) {
     if (notesPanel) notesPanel.style.display = 'block';
     setPill(btnNotes, true);
     setTimeout(() => document.getElementById("notes-search-opdid")?.focus(), 50);
+  } else if (view === 'token') {
+    if (tokenPanel) tokenPanel.style.display = 'block';
+    setPill(btnToken, true);
+    refreshTokensDisplay();
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
@@ -3323,6 +3418,64 @@ function saveClinicalNote() {
 
   renderPatientNotes(key);
   alert("✅ Clinical note saved successfully!");
+}
+// ==========================================
+// TOKEN TV DISPLAY LOGIC
+// ==========================================
+function refreshTokensDisplay() {
+  // Update live clock
+  const clock = document.getElementById("token-clock");
+  if (clock) clock.innerText = new Date().toLocaleTimeString();
+
+  const opdQueue = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []);
+  const opdBody = document.getElementById("token-opd-body");
+  const pathBody = document.getElementById("token-path-body");
+
+  // 1. Populate OPD Display
+  if (opdBody) {
+    if (opdQueue.length > 0) {
+      const active = opdQueue[0];
+      const activeToken = active.token || 'T-01';
+      document.getElementById("opd-active-token").innerText = activeToken;
+      document.getElementById("opd-active-patient").innerText = `${active.patientName} (${active.department || 'GENERAL'})`;
+
+      opdBody.innerHTML = opdQueue.map((item, idx) => `
+        <tr style="border-bottom: 1px solid #f1f5f9; background: ${idx === 0 ? '#f0fdfa' : '#ffffff'};">
+          <td style="padding: 7px 8px; text-align: center; font-weight: 700; color: #0f766e;">${item.token || (idx + 1)}</td>
+          <td style="padding: 7px 8px; font-weight: 600; color: #1e293b;">${item.patientName}</td>
+          <td style="padding: 7px 8px; color: #64748b;">${item.department || 'GENERAL'}</td>
+          <td style="padding: 7px 8px; color: #64748b;">${item.consultant || 'DR. CLINIC'}</td>
+        </tr>
+      `).join('');
+    } else {
+      document.getElementById("opd-active-token").innerText = "--";
+      document.getElementById("opd-active-patient").innerText = "Waiting for consultation call...";
+      opdBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 25px;">No active OPD tokens in queue.</td></tr>';
+    }
+  }
+
+  // 2. Populate Pathology Display (from investigation queue or orders)
+  if (pathBody) {
+    const labItems = opdQueue.filter(p => (p.department || '').toUpperCase().includes('PATH') || (p.department || '').toUpperCase().includes('LAB'));
+    if (labItems.length > 0) {
+      const activeLab = labItems[0];
+      document.getElementById("path-active-token").innerText = activeLab.token || 'L-01';
+      document.getElementById("path-active-patient").innerText = `${activeLab.patientName} (Collection Counter 1)`;
+
+      pathBody.innerHTML = labItems.map((item, idx) => `
+        <tr style="border-bottom: 1px solid #f1f5f9; background: ${idx === 0 ? '#f0fdfa' : '#ffffff'};">
+          <td style="padding: 7px 8px; text-align: center; font-weight: 700; color: #0d9488;">${item.token || `L-0${idx + 1}`}</td>
+          <td style="padding: 7px 8px; font-weight: 600; color: #1e293b;">${item.patientName}</td>
+          <td style="padding: 7px 8px; color: #64748b;">Blood / Routine Lab</td>
+          <td style="padding: 7px 8px; text-align: center;"><span style="background: #ccfbf1; color: #0f766e; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;">Called</span></td>
+        </tr>
+      `).join('');
+    } else {
+      document.getElementById("path-active-token").innerText = "--";
+      document.getElementById("path-active-patient").innerText = "Waiting for next sample...";
+      pathBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 25px;">No active pathology tokens in queue.</td></tr>';
+    }
+  }
 }
 </script>
 </body>
