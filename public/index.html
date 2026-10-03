@@ -482,20 +482,92 @@
         <!-- OPD SECTION (MINTECH STANDARD) -->
     <section id="tab-opd" class="tab-content" style="padding: 10px; background: #f1f5f9;"></section>
       
-      <!-- TOP SUB-RIBBON (10 MINTECH ACTIONS) -->
-      <div style="background: #111827; color: white; display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 10px; border-radius: 6px 6px 0 0; font-size: 13px; margin-bottom: 8px;">
-        <button type="button" id="btn-sub-opd" class="opd-ribbon-btn active" onclick="switchOpdSubView('opd')" style="background: #0f766e; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: 600;"><i class="fa-solid fa-id-card"></i> OPD</button>
-<button type="button" id="btn-sub-inv" class="opd-ribbon-btn" onclick="switchOpdSubView('investigations')" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-microscope"></i> Investigations</button>
-        
-        <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-bed"></i> Day Care</button>
-        <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-baby"></i> Birth Reg</button>
-        <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-barcode"></i> Revisit</button>
-        <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-file-lines"></i> Notes</button>
-        <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-ticket"></i> Token</button>
-        <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-truck-medical"></i> Emergency</button>
-        <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-certificate"></i> Certificate</button>
-        <button type="button" class="opd-ribbon-btn" style="background: transparent; color: #d1d5db; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer;"><i class="fa-solid fa-chart-line"></i> MIS</button>
-      </div>
+      <!-- MINTECH CLINICAL SUB-NAVIGATION BAR -->
+<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+  
+  <!-- Mintech Brand Accent Tag -->
+  <div style="display: flex; align-items: center; gap: 8px; padding: 4px 10px 4px 4px; border-right: 2px solid #f1f5f9;">
+    <div style="background: linear-gradient(135deg, #0f766e, #14b8a6); color: white; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; box-shadow: 0 2px 4px rgba(15, 118, 110, 0.2);">
+      <i class="fa-solid fa-hospital-user"></i>
+    </div>
+    <span style="font-size: 12px; font-weight: 700; color: #0f172a; letter-spacing: 0.3px;">Mintech OPD</span>
+  </div>
+
+  <!-- Segmented Navigation Pill Buttons -->
+  <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+    
+    <!-- 1. OPD -->
+    <button type="button" id="btn-sub-opd" class="opd-ribbon-btn active" onclick="switchOpdSubView('opd')" 
+      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #0f766e; background: #0f766e; color: #ffffff; transition: all 0.15s ease;">
+      <i class="fa-solid fa-notes-medical" style="font-size: 13px;"></i>
+      <span>OPD Desk</span>
+    </button>
+
+    <!-- 2. Investigations -->
+    <button type="button" id="btn-sub-inv" class="opd-ribbon-btn" onclick="switchOpdSubView('investigations')" 
+      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569; transition: all 0.15s ease;">
+      <i class="fa-solid fa-flask-vial" style="color: #6366f1; font-size: 13px;"></i>
+      <span>Investigations</span>
+    </button>
+
+    <!-- 3. Day Care -->
+    <button type="button" class="opd-ribbon-btn" 
+      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569;">
+      <i class="fa-solid fa-bed-pulse" style="color: #f59e0b; font-size: 13px;"></i>
+      <span>Day Care</span>
+    </button>
+
+    <!-- 4. Birth Registration -->
+    <button type="button" class="opd-ribbon-btn" 
+      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569;">
+      <i class="fa-solid fa-baby-carriage" style="color: #ec4899; font-size: 13px;"></i>
+      <span>Birth Reg</span>
+    </button>
+
+    <!-- 5. Revisit -->
+    <button type="button" class="opd-ribbon-btn" 
+      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569;">
+      <i class="fa-solid fa-arrows-rotate" style="color: #0ea5e9; font-size: 13px;"></i>
+      <span>Revisit</span>
+    </button>
+
+    <!-- 6. Clinical Notes -->
+    <button type="button" class="opd-ribbon-btn" 
+      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569;">
+      <i class="fa-solid fa-stethoscope" style="color: #10b981; font-size: 13px;"></i>
+      <span>Notes</span>
+    </button>
+
+    <!-- 7. Live Token Queue -->
+    <button type="button" class="opd-ribbon-btn" 
+      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569;">
+      <i class="fa-solid fa-display" style="color: #8b5cf6; font-size: 13px;"></i>
+      <span>Token TV</span>
+    </button>
+
+    <!-- 8. Emergency Triage -->
+    <button type="button" class="opd-ribbon-btn" 
+      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #fee2e2; background: #fef2f2; color: #dc2626;">
+      <i class="fa-solid fa-triangle-exclamation" style="font-size: 13px;"></i>
+      <span>Emergency</span>
+    </button>
+
+    <!-- 9. Medical Certificate -->
+    <button type="button" class="opd-ribbon-btn" 
+      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569;">
+      <i class="fa-solid fa-stamp" style="color: #64748b; font-size: 13px;"></i>
+      <span>Certificates</span>
+    </button>
+
+    <!-- 10. Reports / MIS -->
+    <button type="button" class="opd-ribbon-btn" 
+      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569;">
+      <i class="fa-solid fa-chart-pie" style="color: #0284c7; font-size: 13px;"></i>
+      <span>OPD Analytics</span>
+    </button>
+
+  </div>
+</div>
 
       <!-- CARD 1: CONSULTATION REGISTRATION -->
 <div id="opd-subview-reg" style="background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
@@ -2080,24 +2152,39 @@ function switchOpdSubView(view) {
   const btnOpd = document.getElementById("btn-sub-opd");
   const btnInv = document.getElementById("btn-sub-inv");
 
+  const setActiveStyle = (btn, isActive) => {
+    if (!btn) return;
+    if (isActive) {
+      btn.style.background = "#0f766e";
+      btn.style.color = "#ffffff";
+      btn.style.borderColor = "#0f766e";
+    } else {
+      btn.style.background = "#f8fafc";
+      btn.style.color = "#475569";
+      btn.style.borderColor = "#e2e8f0";
+    }
+  };
+
   if (view === 'investigations') {
     if (regCard) regCard.style.display = 'none';
     if (queueCard) queueCard.style.display = 'none';
     if (consultCard) consultCard.style.display = 'none';
     if (invPanel) invPanel.style.display = 'block';
 
-    if (btnOpd) { btnOpd.style.background = 'transparent'; btnOpd.style.color = '#d1d5db'; }
-    if (btnInv) { btnInv.style.background = '#0f766e'; btnInv.style.color = 'white'; }
+    setActiveStyle(btnOpd, false);
+    setActiveStyle(btnInv, true);
 
-    renderInvCatalog(masterInvCatalog);
+    if (typeof renderInvCatalog === 'function' && typeof masterInvCatalog !== 'undefined') {
+      renderInvCatalog(masterInvCatalog);
+    }
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
     if (consultCard) consultCard.style.display = 'block';
     if (invPanel) invPanel.style.display = 'none';
 
-    if (btnOpd) { btnOpd.style.background = '#0f766e'; btnOpd.style.color = 'white'; }
-    if (btnInv) { btnInv.style.background = 'transparent'; btnInv.style.color = '#d1d5db'; }
+    setActiveStyle(btnOpd, true);
+    setActiveStyle(btnInv, false);
   }
 }
 
