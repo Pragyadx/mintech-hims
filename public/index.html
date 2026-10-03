@@ -518,11 +518,11 @@
 </button>
 
     <!-- 4. Birth Registration -->
-    <button type="button" class="opd-ribbon-btn" 
-      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
-      <i class="fa-solid fa-baby-carriage" style="font-size: 13px;"></i>
-      <span>Birth Reg</span>
-    </button>
+<button type="button" id="btn-sub-birthreg" class="opd-ribbon-btn" onclick="switchOpdSubView('birthreg')"
+  style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
+  <i class="fa-solid fa-baby-carriage" style="font-size: 13px;"></i>
+  <span>Birth Reg</span>
+</button>
 
     <!-- 5. Revisit -->
     <button type="button" class="opd-ribbon-btn" 
@@ -997,6 +997,120 @@
             <option>Cash</option><option>UPI / QR</option><option>Card</option><option>Panel Credit</option>
           </select>
           <button type="button" onclick="submitDayCareOrder()" style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; cursor: pointer; font-weight: 700;">Submit Order</button>
+        </div>
+      </div>
+
+    </div>
+    <!-- CARD: MINTECH BIRTH REGISTRATION SUB-VIEW -->
+    <div id="opd-subview-birthreg" style="display: none; background: #ffffff; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 118, 110, 0.05);">
+      
+      <!-- Top Title Ribbon -->
+      <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; border-radius: 6px 6px 0 0; margin: -14px -14px 14px -14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-baby-carriage"></i>
+          <span>New Born Registration</span>
+        </div>
+        <span style="font-size: 11px; background: #ccfbf1; padding: 3px 8px; border-radius: 4px; font-weight: 600;">Obstetrics & Pediatrics</span>
+      </div>
+
+      <!-- Registration Form Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 12px; margin-bottom: 14px;">
+        
+        <!-- Left Column -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 110px; font-weight: 600; color: #0f766e;">Date & Time:</label>
+            <input type="date" id="nb-date" style="padding: 4px 6px; border: 1px solid #99f6e4; border-radius: 4px; flex: 1;">
+            <input type="time" id="nb-time" style="padding: 4px 6px; border: 1px solid #99f6e4; border-radius: 4px; width: 110px;">
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 110px; font-weight: 600; color: #0f766e;">Baby Name *:</label>
+            <input type="text" id="nb-name" placeholder="Baby of..." style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; flex: 1;">
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 110px; font-weight: 600; color: #0f766e;">Consultant Dr:</label>
+            <input type="text" id="nb-doctor" value="SELF" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; flex: 1;">
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 110px; font-weight: 600; color: #0f766e;">Gender / Blood:</label>
+            <select id="nb-gender" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; flex: 1;">
+              <option>Male</option><option>Female</option><option>Other</option>
+            </select>
+            <select id="nb-blood" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; width: 110px;">
+              <option value="">Blood Grp</option>
+              <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+              <option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+            </select>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 110px; font-weight: 600; color: #0f766e;">Address *:</label>
+            <input type="text" id="nb-address" placeholder="Residential Address" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; flex: 1;">
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 110px; font-weight: 600; color: #0f766e;">Parent Name:</label>
+            <select id="nb-parent-rel" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; width: 60px;">
+              <option>Mr.</option><option>Mrs.</option>
+            </select>
+            <input type="text" id="nb-parent-name" placeholder="Father / Mother Name" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; flex: 1;">
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 110px; font-weight: 600; color: #0f766e;">Mobile *:</label>
+            <input type="tel" id="nb-mobile" placeholder="10-digit Mobile" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; flex: 1;">
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 110px; font-weight: 600; color: #0f766e;">Vitals (L / W / HC):</label>
+            <input type="number" step="0.1" id="nb-length" placeholder="Len (in)" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; width: 85px;">
+            <input type="number" step="0.01" id="nb-weight" placeholder="Wt (kg)" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; width: 85px;">
+            <input type="number" step="0.1" id="nb-head" placeholder="HC (in)" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; flex: 1;">
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 110px; font-weight: 600; color: #0f766e;">Birth Type:</label>
+            <select id="nb-birth-type" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; flex: 1;">
+              <option value="NVD">NVD (Normal Delivery)</option>
+              <option value="LSCS">LSCS (Caesarean)</option>
+              <option value="Forceps">Forceps</option>
+              <option value="Vacuum">Vacuum</option>
+            </select>
+            <button type="button" onclick="submitBirthRegistration()" style="background: #0f766e; color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-weight: 700;">Register</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Newborn Registry Table -->
+      <div style="border: 1px solid #99f6e4; border-radius: 6px; overflow: hidden; background: #ffffff;">
+        <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 8px 12px; font-size: 12px; font-weight: 700;">
+          <i class="fa-solid fa-table-list"></i> Recent Newborn Deliveries
+        </div>
+        <div style="max-height: 240px; overflow-y: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+            <thead>
+              <tr style="background: #fafaf9; color: #78716c; border-bottom: 1px solid #f0fdfa; text-transform: uppercase;">
+                <th style="padding: 6px 8px; text-align: left;">UHID</th>
+                <th style="padding: 6px 8px; text-align: left;">Baby Name</th>
+                <th style="padding: 6px 8px; text-align: left;">Parent Name</th>
+                <th style="padding: 6px 8px; text-align: center;">DOB / Time</th>
+                <th style="padding: 6px 8px; text-align: center;">Sex</th>
+                <th style="padding: 6px 8px; text-align: right;">Weight</th>
+                <th style="padding: 6px 8px; text-align: center;">Delivery</th>
+                <th style="padding: 6px 8px; text-align: left;">Doctor</th>
+              </tr>
+            </thead>
+            <tbody id="mintech-nb-table-body">
+              <tr><td colspan="8" style="text-align: center; color: #a8a29e; padding: 25px;">No newborn records found.</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -2480,6 +2594,8 @@ function switchOpdSubView(view) {
   const consultCard = document.getElementById("doctor-consult-uhid") ? document.getElementById("doctor-consult-uhid").closest('.card') : null;
   const invPanel = document.getElementById("opd-subview-investigations");
   const dcPanel = document.getElementById("opd-subview-daycare");
+  const nbPanel = document.getElementById("opd-subview-birthreg");
+  const btnBirth = document.getElementById("btn-sub-birthreg");
 
   // Grab ribbon buttons safely
   const btnOpd = document.getElementById("btn-sub-opd");
@@ -2500,28 +2616,100 @@ function switchOpdSubView(view) {
   if (consultCard) consultCard.style.display = 'none';
   if (invPanel) invPanel.style.display = 'none';
   if (dcPanel) dcPanel.style.display = 'none';
+  if (nbPanel) nbPanel.style.display = 'none';
 
   setPill(btnOpd, false);
   setPill(btnInv, false);
   setPill(btnDc, false);
+  setPill(btnBirth, false);
 
   if (view === 'investigations') {
     if (invPanel) invPanel.style.display = 'block';
     setPill(btnInv, true);
     if (typeof loadHospitalTestCatalog === 'function') loadHospitalTestCatalog();
   } else if (view === 'daycare') {
-    if (dcPanel) {
-      dcPanel.style.display = 'block';
-    } else {
-      console.error("Element #opd-subview-daycare not found in DOM");
-    }
+    if (dcPanel) dcPanel.style.display = 'block';
     setPill(btnDc, true);
     if (typeof loadHospitalDcCatalog === 'function') loadHospitalDcCatalog();
+  } else if (view === 'birthreg') {
+    if (nbPanel) nbPanel.style.display = 'block';
+    setPill(btnBirth, true);
+    loadBirthRegistry();
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
     if (consultCard) consultCard.style.display = 'block';
     setPill(btnOpd, true);
+  }
+}
+// ==========================================
+// BIRTH REGISTRATION HANDLERS
+// ==========================================
+async function loadBirthRegistry() {
+  const tbody = document.getElementById("mintech-nb-table-body");
+  if (!tbody) return;
+  try {
+    const res = await fetch('/api/birth-reg');
+    const result = await res.json();
+    if (result.success && result.data.length > 0) {
+      tbody.innerHTML = result.data.map(b => `
+        <tr style="border-bottom: 1px solid #f0fdfa;">
+          <td style="padding: 6px 8px; font-weight: 700; color: #0f766e;">${b.uhid}</td>
+          <td style="padding: 6px 8px; font-weight: 600;">${b.babyName}</td>
+          <td style="padding: 6px 8px; color: #57534e;">${b.parentRelation} ${b.parentName}</td>
+          <td style="padding: 6px 8px; text-align: center;">${b.dob} ${b.birthTime}</td>
+          <td style="padding: 6px 8px; text-align: center;">${b.gender}</td>
+          <td style="padding: 6px 8px; text-align: right; font-weight: 600;">${b.weightKg} kg</td>
+          <td style="padding: 6px 8px; text-align: center;"><span style="background: #ccfbf1; color: #0f766e; padding: 2px 6px; border-radius: 4px;">${b.birthType}</span></td>
+          <td style="padding: 6px 8px;">${b.consultantDr}</td>
+        </tr>
+      `).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #a8a29e; padding: 25px;">No newborn records found.</td></tr>';
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #ef4444; padding: 20px;">Error loading registry.</td></tr>';
+  }
+}
+
+async function submitBirthRegistration() {
+  const name = document.getElementById("nb-name")?.value.trim();
+  const mobile = document.getElementById("nb-mobile")?.value.trim();
+  if (!name || !mobile) return alert("Baby Name and Contact Mobile are required.");
+
+  const payload = {
+    babyName: name,
+    parentName: document.getElementById("nb-parent-name")?.value.trim() || '',
+    parentRelation: document.getElementById("nb-parent-rel")?.value || 'Mr.',
+    mobile: mobile,
+    dob: document.getElementById("nb-date")?.value || new Date().toISOString().split('T')[0],
+    birthTime: document.getElementById("nb-time")?.value || new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+    gender: document.getElementById("nb-gender")?.value || 'Male',
+    bloodGroup: document.getElementById("nb-blood")?.value || '',
+    lengthInch: Number(document.getElementById("nb-length")?.value || 0),
+    weightKg: Number(document.getElementById("nb-weight")?.value || 0),
+    headCircumferenceInch: Number(document.getElementById("nb-head")?.value || 0),
+    birthType: document.getElementById("nb-birth-type")?.value || 'NVD',
+    consultantDr: document.getElementById("nb-doctor")?.value || 'SELF',
+    address: document.getElementById("nb-address")?.value.trim() || ''
+  };
+
+  try {
+    const res = await fetch('/api/birth-reg/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert(`✅ Newborn Registered: ${result.data.babyName} (${result.data.uhid})`);
+      document.getElementById("nb-name").value = '';
+      loadBirthRegistry();
+    } else {
+      alert("❌ " + (result.error || "Failed to register newborn"));
+    }
+  } catch (err) {
+    alert("❌ Network Error registering newborn.");
   }
 }
 
