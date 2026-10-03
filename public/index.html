@@ -2641,21 +2641,21 @@ async function promptAddNewTest() {
 }
 
 function switchOpdSubView(view) {
-  // Grab all view panels safely
+  // Grab panels safely
   const regCard = document.getElementById("opd-subview-reg");
-  const queueCard = document.getElementById("opd-queue-body") ? document.getElementById("opd-queue-body").closest('.card') || document.getElementById("opd-queue-body").parentElement : null;
+  const queueCard = document.getElementById("opd-queue-body") ? (document.getElementById("opd-queue-body").closest('.card') || document.getElementById("opd-queue-body").parentElement) : null;
   const consultCard = document.getElementById("doctor-consult-uhid") ? document.getElementById("doctor-consult-uhid").closest('.card') : null;
   const invPanel = document.getElementById("opd-subview-investigations");
   const dcPanel = document.getElementById("opd-subview-daycare");
   const nbPanel = document.getElementById("opd-subview-birthreg");
-  const btnBirth = document.getElementById("btn-sub-birthreg");
   const revisitPanel = document.getElementById("opd-subview-revisit");
 
   // Grab ribbon buttons safely
   const btnOpd = document.getElementById("btn-sub-opd");
   const btnInv = document.getElementById("btn-sub-inv");
   const btnDc = document.getElementById("btn-sub-daycare");
-  
+  const btnBirth = document.getElementById("btn-sub-birthreg");
+  const btnRevisit = document.getElementById("btn-sub-revisit");
 
   const setPill = (btn, active) => {
     if (!btn) return;
@@ -2673,14 +2673,15 @@ function switchOpdSubView(view) {
   if (dcPanel) dcPanel.style.display = 'none';
   if (nbPanel) nbPanel.style.display = 'none';
   if (revisitPanel) revisitPanel.style.display = 'none';
-  
 
+  // Reset all buttons
   setPill(btnOpd, false);
   setPill(btnInv, false);
   setPill(btnDc, false);
   setPill(btnBirth, false);
   setPill(btnRevisit, false);
 
+  // Activate requested panel
   if (view === 'investigations') {
     if (invPanel) invPanel.style.display = 'block';
     setPill(btnInv, true);
@@ -2696,7 +2697,6 @@ function switchOpdSubView(view) {
   } else if (view === 'revisit') {
     if (revisitPanel) revisitPanel.style.display = 'block';
     setPill(btnRevisit, true);
-    setTimeout(() => document.getElementById("revisit-search-input")?.focus(), 50);
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
