@@ -511,11 +511,11 @@
     </button>
 
     <!-- 3. Day Care -->
-    <button type="button" class="opd-ribbon-btn" 
-      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
-      <i class="fa-solid fa-bed-pulse" style="font-size: 13px;"></i>
-      <span>Day Care</span>
-    </button>
+    <button type="button" id="btn-sub-daycare" class="opd-ribbon-btn" onclick="switchOpdSubView('daycare')" 
+  style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
+  <i class="fa-solid fa-bed-pulse" style="font-size: 13px;"></i>
+  <span>Day Care</span>
+</button>
 
     <!-- 4. Birth Registration -->
     <button type="button" class="opd-ribbon-btn" 
@@ -2474,12 +2474,14 @@ async function promptAddNewTest() {
 }
 
 function switchOpdSubView(view) {
+  // Grab all view panels safely
   const regCard = document.getElementById("opd-subview-reg");
-  const queueCard = document.getElementById("opd-queue-body") ? document.getElementById("opd-queue-body").closest('div[style*="background: white"]') : null;
+  const queueCard = document.getElementById("opd-queue-body") ? document.getElementById("opd-queue-body").closest('.card') || document.getElementById("opd-queue-body").parentElement : null;
   const consultCard = document.getElementById("doctor-consult-uhid") ? document.getElementById("doctor-consult-uhid").closest('.card') : null;
   const invPanel = document.getElementById("opd-subview-investigations");
   const dcPanel = document.getElementById("opd-subview-daycare");
-  
+
+  // Grab ribbon buttons safely
   const btnOpd = document.getElementById("btn-sub-opd");
   const btnInv = document.getElementById("btn-sub-inv");
   const btnDc = document.getElementById("btn-sub-daycare");
@@ -2492,7 +2494,7 @@ function switchOpdSubView(view) {
     btn.style.fontWeight = active ? "700" : "600";
   };
 
-  // Hide all panels
+  // Hide all panels first
   if (regCard) regCard.style.display = 'none';
   if (queueCard) queueCard.style.display = 'none';
   if (consultCard) consultCard.style.display = 'none';
@@ -2506,11 +2508,15 @@ function switchOpdSubView(view) {
   if (view === 'investigations') {
     if (invPanel) invPanel.style.display = 'block';
     setPill(btnInv, true);
-    loadHospitalTestCatalog();
+    if (typeof loadHospitalTestCatalog === 'function') loadHospitalTestCatalog();
   } else if (view === 'daycare') {
-    if (dcPanel) dcPanel.style.display = 'block';
+    if (dcPanel) {
+      dcPanel.style.display = 'block';
+    } else {
+      console.error("Element #opd-subview-daycare not found in DOM");
+    }
     setPill(btnDc, true);
-    loadHospitalDcCatalog();
+    if (typeof loadHospitalDcCatalog === 'function') loadHospitalDcCatalog();
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
