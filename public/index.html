@@ -781,38 +781,65 @@
           </div>
         </div>
 
-        <!-- Dual Split Test Selection Pane -->
+        <!-- Dual Split Test Selection Pane (Light Teal & Beige Palette) -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
           
           <!-- Left: Catalog with Checkboxes -->
-          <div style="border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden;">
-            <div style="background: #0f172a; color: white; padding: 6px 10px; font-size: 12px; font-weight: 600;">
-              Test Name (Catalog)
+          <div style="border: 1px solid #99f6e4; border-radius: 8px; overflow: hidden; background: #ffffff; box-shadow: 0 1px 2px rgba(15, 118, 110, 0.05);">
+            <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 10px 14px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+              <span style="background: #ccfbf1; color: #0f766e; width: 22px; height: 22px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;">
+                <i class="fa-solid fa-list-check"></i>
+              </span>
+              <span>Available Test Catalog</span>
             </div>
-            <div style="padding: 6px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-              <input type="text" id="inv-search-test" placeholder="SEARCH NAME..." oninput="filterInvCatalog(this.value)" style="width: 100%; padding: 4px 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px;">
+            
+            <div style="padding: 8px 10px; background: #fafaf9; border-bottom: 1px solid #e7e5e4;">
+              <input type="text" id="inv-search-test" placeholder="Search test name or code..." oninput="filterInvCatalog(this.value)" 
+                style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #ccfbf1; background: #ffffff; border-radius: 5px; box-sizing: border-box; outline: none; color: #0f766e;">
             </div>
-            <div id="inv-catalog-list" style="max-height: 250px; overflow-y: auto; font-size: 12px; padding: 6px;">
-              <!-- Injected via JS -->
+            
+            <div id="inv-catalog-list" style="max-height: 260px; overflow-y: auto; font-size: 12px; padding: 6px;">
+              <!-- Populated by JS -->
             </div>
           </div>
 
           <!-- Right: Selected Tests Billing Table -->
-          <div style="border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden;">
-            <div style="background: #0f172a; color: white; padding: 6px 10px; font-size: 12px; font-weight: 600; display: flex; justify-content: space-between;">
-              <span>Selected Test Name</span>
-              <span>Rate | Unit | Amount</span>
+          <div style="border: 1px solid #99f6e4; border-radius: 8px; overflow: hidden; background: #ffffff; box-shadow: 0 1px 2px rgba(15, 118, 110, 0.05);">
+            <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 10px 14px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: #ccfbf1; color: #0f766e; width: 22px; height: 22px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;">
+                  <i class="fa-solid fa-file-invoice"></i>
+                </span>
+                <span>Selected Requisition Items</span>
+              </div>
+              <span style="font-size: 11px; font-weight: 600; color: #0d9488; background: #e6fffa; border: 1px solid #99f6e4; padding: 2px 8px; border-radius: 12px;">
+                Rate &bull; Unit &bull; Amount
+              </span>
             </div>
-            <div style="max-height: 285px; overflow-y: auto;">
+
+            <div style="max-height: 295px; overflow-y: auto;">
               <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                <tbody id="inv-selected-body">
+                <thead>
+                  <tr style="background: #fbfbfa; color: #78716c; border-bottom: 1px solid #f0fdfa; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px;">
+                    <th style="padding: 8px 10px; text-align: left; font-weight: 600;">Test Name</th>
+                    <th style="padding: 8px 6px; text-align: right; font-weight: 600;">Rate</th>
+                    <th style="padding: 8px 6px; text-align: center; font-weight: 600;">Unit</th>
+                    <th style="padding: 8px 6px; text-align: right; font-weight: 600;">Amount</th>
+                    <th style="padding: 8px 10px; text-align: center; width: 36px; font-weight: 600;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="mintech-inv-selected-body">
                   <tr>
-                    <td colspan="5" style="text-align: center; color: #94a3b8; padding: 30px;">No tests selected yet.</td>
+                    <td colspan="5" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">
+                      No tests selected yet. Choose tests from the catalog.
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
+
+        </div>
 
         </div>
 
@@ -2228,27 +2255,34 @@ function removeInvTest(id) {
 }
 
 function renderSelectedInvTable() {
-  const tbody = document.getElementById("inv-selected-body");
+  const tbody = document.getElementById("mintech-inv-selected-body") || document.getElementById("inv-selected-body");
   if (!tbody) return;
 
-  if (selectedInvTests.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 30px;">No tests selected yet.</td></tr>';
-    document.getElementById("inv-total-disp").innerText = "0";
+  if (!selectedInvTests || selectedInvTests.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">No tests selected yet. Choose tests from the catalog.</td></tr>';
+    const totalElem = document.getElementById("inv-total-disp");
+    if (totalElem) totalElem.innerText = "0";
     calcInvSettlement();
     return;
   }
 
-  tbody.innerHTML = selectedInvTests.map(t => `
-    <tr style="border-bottom: 1px solid #f1f5f9;">
-      <td style="padding: 6px 10px; font-weight: 600;">${t.name}</td>
-      <td style="padding: 6px; text-align: right;">Rs.${t.rate}</td>
-      <td style="padding: 6px; text-align: center;">${t.unit}</td>
-      <td style="padding: 6px; text-align: right; font-weight: 700;">Rs.${t.amount}</td>
-      <td style="padding: 6px; text-align: center;">
-        <button type="button" onclick="removeInvTest('${t.id}')" style="background: transparent; color: #ef4444; border: none; cursor: pointer; font-size: 13px;">✕</button>
-      </td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = selectedInvTests.map((t, idx) => {
+    const rowBg = idx % 2 === 0 ? '#ffffff' : '#fafaf9';
+    return `
+      <tr style="border-bottom: 1px solid #f0fdfa; background: ${rowBg};">
+        <td style="padding: 7px 10px; font-weight: 600; color: #292524;">${t.name}</td>
+        <td style="padding: 7px 6px; text-align: right; color: #78716c;">₹${t.rate}</td>
+        <td style="padding: 7px 6px; text-align: center; color: #44403c;">${t.unit}</td>
+        <td style="padding: 7px 6px; text-align: right; font-weight: 700; color: #0f766e;">₹${t.amount}</td>
+        <td style="padding: 7px 10px; text-align: center;">
+          <button type="button" onclick="removeInvTest('${t.id}')" 
+            style="background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; border-radius: 4px; padding: 3px 6px; cursor: pointer; font-size: 11px;">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
 
   calcInvSettlement();
 }
