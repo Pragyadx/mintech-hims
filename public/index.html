@@ -873,7 +873,134 @@
         </div>
 
       </div>
+<!-- CARD: MINTECH DAY CARE SUB-VIEW -->
+    <div id="opd-subview-daycare" style="display: none; background: #ffffff; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 118, 110, 0.05);">
 
+      <!-- Meta Scheme Row -->
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: #f0fdfa; padding: 8px 12px; border: 1px solid #99f6e4; border-radius: 6px; font-size: 12px; margin-bottom: 12px;">
+        <span style="font-weight: 700; color: #0f766e;">Enter UHID:</span>
+        <input type="text" id="dc-search-uhid" placeholder="UHID" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 90px;">
+        <button type="button" onclick="searchDcUhid()" style="background: #0f766e; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: 600;">Search</button>
+
+        <div style="border-left: 1px solid #99f6e4; height: 18px; margin: 0 4px;"></div>
+
+        <span style="font-weight: 600; color: #0f766e;">Rate List:</span>
+        <select id="dc-ratelist" style="padding: 4px; border: 1px solid #99f6e4; border-radius: 4px; background: white;">
+          <option value="COMMON">COMMON</option>
+          <option value="CGHS">CGHS</option>
+          <option value="PMJAY">PMJAY</option>
+        </select>
+
+        <span style="font-weight: 600; color: #0f766e;">TPA / Panel:</span>
+        <select id="dc-panel" style="padding: 4px; border: 1px solid #99f6e4; border-radius: 4px; background: white;">
+          <option value="--NA--">--NA--</option>
+          <option value="CGHS">CGHS</option>
+          <option value="ECHS Defence">ECHS / Defence</option>
+          <option value="Railways">Railways</option>
+        </select>
+
+        <span style="font-weight: 600; color: #0f766e;">Card No:</span>
+        <input type="text" id="dc-card-no" placeholder="Card No" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 95px;">
+
+        <span style="font-weight: 600; color: #0f766e;">Service:</span>
+        <input type="text" id="dc-service" placeholder="Service No" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 90px;">
+
+        <span style="font-weight: 600; color: #0f766e;">Rank:</span>
+        <input type="text" id="dc-rank" placeholder="Rank / Desig" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; width: 90px;">
+      </div>
+
+      <!-- Demographics Row -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 12px; font-size: 12px;">
+        <div>
+          <label style="font-weight: 600; color: #0f766e;">Department *:</label>
+          <select id="dc-dept" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+            <option value="DAY CARE">DAY CARE</option>
+            <option value="EMERGENCY">EMERGENCY</option>
+            <option value="SURGERY">SURGERY</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-weight: 600; color: #0f766e;">Patient Name *:</label>
+          <input type="text" id="dc-name" placeholder="Patient Name" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        </div>
+        <div>
+          <label style="font-weight: 600; color: #0f766e;">Gender / Age (Y) *:</label>
+          <div style="display: flex; gap: 4px;">
+            <select id="dc-gender" style="width: 80px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+              <option>Male</option><option>Female</option><option>Other</option>
+            </select>
+            <input type="number" id="dc-age" placeholder="Age(Y)" style="flex: 1; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+          </div>
+        </div>
+        <div>
+          <label style="font-weight: 600; color: #0f766e;">Mobile *:</label>
+          <input type="tel" id="dc-mobile" placeholder="10-digit Mobile" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        </div>
+        <div>
+          <label style="font-weight: 600; color: #0f766e;">Consultant / Ref. By *:</label>
+          <input type="text" id="dc-consultant" value="SELF" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        </div>
+      </div>
+
+      <!-- Dual Split Procedure Selection Pane -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+        
+        <!-- Left: Day Care Catalog -->
+        <div style="border: 1px solid #99f6e4; border-radius: 8px; overflow: hidden; background: #ffffff;">
+          <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 10px 14px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: space-between;">
+            <span><i class="fa-solid fa-bed-pulse"></i> Day Care Service Catalog</span>
+            <button type="button" onclick="promptAddDayCareService()" style="background: #0f766e; color: white; border: none; padding: 2px 8px; border-radius: 4px; font-size: 11px; cursor: pointer;">+ New</button>
+          </div>
+          <div style="padding: 8px 10px; background: #fafaf9; border-bottom: 1px solid #e7e5e4;">
+            <input type="text" placeholder="Search service name or code..." oninput="filterDcCatalog(this.value)" style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #ccfbf1; border-radius: 5px; box-sizing: border-box;">
+          </div>
+          <div id="dc-catalog-list" style="max-height: 260px; overflow-y: auto; font-size: 12px; padding: 6px;"></div>
+        </div>
+
+        <!-- Right: Selected Requisition Items Table -->
+        <div style="border: 1px solid #99f6e4; border-radius: 8px; overflow: hidden; background: #ffffff;">
+          <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 10px 14px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;">
+            <span><i class="fa-solid fa-receipt"></i> Selected Day Care Procedures</span>
+            <span style="font-size: 11px; color: #0d9488; background: #ccfbf1; padding: 2px 8px; border-radius: 12px;">Rate &bull; Unit &bull; Amount</span>
+          </div>
+          <div style="max-height: 295px; overflow-y: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+              <thead>
+                <tr style="background: #fbfbfa; color: #78716c; border-bottom: 1px solid #f0fdfa; font-size: 11px;">
+                  <th style="padding: 8px 10px; text-align: left;">Service Name</th>
+                  <th style="padding: 8px 6px; text-align: right;">Rate</th>
+                  <th style="padding: 8px 6px; text-align: center;">Qty</th>
+                  <th style="padding: 8px 6px; text-align: right;">Amount</th>
+                  <th style="padding: 8px 10px; text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="dc-selected-body">
+                <tr><td colspan="5" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">No procedures selected.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Settlement Ribbon -->
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; background: #f0fdfa; padding: 8px 14px; border: 1px solid #99f6e4; border-radius: 6px; font-size: 12px;">
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center;">
+          <span style="font-weight: 700; color: #0f766e;">Total: ₹<span id="dc-total-disp">0</span></span>
+          <label>Discount: <input type="number" id="dc-discount" value="0" oninput="calcDcSettlement()" style="width: 60px; padding: 2px 4px; border: 1px solid #99f6e4; border-radius: 3px;"></label>
+          <label>Waive Off: <input type="number" id="dc-waive" value="0" oninput="calcDcSettlement()" style="width: 60px; padding: 2px 4px; border: 1px solid #99f6e4; border-radius: 3px;"></label>
+          <label>Deposit: <input type="number" id="dc-deposit" value="0" oninput="calcDcSettlement()" style="width: 60px; padding: 2px 4px; border: 1px solid #99f6e4; border-radius: 3px;"></label>
+          <span style="font-weight: 700; color: #b91c1c;">Due: ₹<span id="dc-due-disp">0</span></span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <select id="dc-mode" style="padding: 4px 8px; border: 1px solid #99f6e4; border-radius: 4px; background: white;">
+            <option>Cash</option><option>UPI / QR</option><option>Card</option><option>Panel Credit</option>
+          </select>
+          <button type="button" onclick="submitDayCareOrder()" style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; cursor: pointer; font-weight: 700;">Submit Order</button>
+        </div>
+      </div>
+
+    </div>
       <!-- CARD 2: TODAY'S OUTPATIENT REGISTRY QUEUE -->
       <div style="background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 14px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -2351,42 +2478,44 @@ function switchOpdSubView(view) {
   const queueCard = document.getElementById("opd-queue-body") ? document.getElementById("opd-queue-body").closest('div[style*="background: white"]') : null;
   const consultCard = document.getElementById("doctor-consult-uhid") ? document.getElementById("doctor-consult-uhid").closest('.card') : null;
   const invPanel = document.getElementById("opd-subview-investigations");
+  const dcPanel = document.getElementById("opd-subview-daycare");
+  
   const btnOpd = document.getElementById("btn-sub-opd");
   const btnInv = document.getElementById("btn-sub-inv");
+  const btnDc = document.getElementById("btn-sub-daycare");
 
-  const setPillStyle = (btn, isActive) => {
+  const setPill = (btn, active) => {
     if (!btn) return;
-    if (isActive) {
-      btn.style.background = "#0f766e";
-      btn.style.color = "#ffffff";
-      btn.style.borderColor = "#0f766e";
-      btn.style.fontWeight = "700";
-    } else {
-      btn.style.background = "#f0fdfa";
-      btn.style.color = "#0f766e";
-      btn.style.borderColor = "#99f6e4";
-      btn.style.fontWeight = "600";
-    }
+    btn.style.background = active ? "#0f766e" : "#f0fdfa";
+    btn.style.color = active ? "#ffffff" : "#0f766e";
+    btn.style.borderColor = active ? "#0f766e" : "#99f6e4";
+    btn.style.fontWeight = active ? "700" : "600";
   };
 
+  // Hide all panels
+  if (regCard) regCard.style.display = 'none';
+  if (queueCard) queueCard.style.display = 'none';
+  if (consultCard) consultCard.style.display = 'none';
+  if (invPanel) invPanel.style.display = 'none';
+  if (dcPanel) dcPanel.style.display = 'none';
+
+  setPill(btnOpd, false);
+  setPill(btnInv, false);
+  setPill(btnDc, false);
+
   if (view === 'investigations') {
-    if (regCard) regCard.style.display = 'none';
-    if (queueCard) queueCard.style.display = 'none';
-    if (consultCard) consultCard.style.display = 'none';
     if (invPanel) invPanel.style.display = 'block';
-
-    setPillStyle(btnOpd, false);
-    setPillStyle(btnInv, true);
-
+    setPill(btnInv, true);
     loadHospitalTestCatalog();
+  } else if (view === 'daycare') {
+    if (dcPanel) dcPanel.style.display = 'block';
+    setPill(btnDc, true);
+    loadHospitalDcCatalog();
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
     if (consultCard) consultCard.style.display = 'block';
-    if (invPanel) invPanel.style.display = 'none';
-
-    setPillStyle(btnOpd, true);
-    setPillStyle(btnInv, false);
+    setPill(btnOpd, true);
   }
 }
 
@@ -2451,6 +2580,228 @@ async function submitInvestigationOrder() {
     }
   } catch (err) {
     alert("❌ Network Error booking investigation.");
+  }
+}
+// ==========================================
+// DYNAMIC DAY CARE PROCEDURES LOGIC
+// ==========================================
+let hospitalDcCatalog = [];
+let selectedDcServices = [];
+
+async function loadHospitalDcCatalog() {
+  const container = document.getElementById("dc-catalog-list");
+  if (container) {
+    container.innerHTML = '<div style="text-align: center; color: #0f766e; padding: 25px;"><i class="fa-solid fa-spinner fa-spin"></i> Fetching Day Care procedures...</div>';
+  }
+
+  try {
+    const res = await fetch('/api/daycare/catalog');
+    const result = await res.json();
+    if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+      hospitalDcCatalog = result.data;
+      renderDcCatalog(hospitalDcCatalog);
+    } else {
+      hospitalDcCatalog = [];
+      showDcCatalogEmpty();
+    }
+  } catch (err) {
+    hospitalDcCatalog = [];
+    showDcCatalogEmpty();
+  }
+}
+
+function showDcCatalogEmpty() {
+  const container = document.getElementById("dc-catalog-list");
+  if (!container) return;
+  container.innerHTML = `
+    <div style="text-align: center; padding: 30px 14px; color: #78716c; background: #fafaf9; border-radius: 6px;">
+      <i class="fa-solid fa-bed-pulse" style="font-size: 26px; color: #99f6e4; margin-bottom: 8px;"></i>
+      <p style="margin: 0; font-size: 12px; font-weight: 500;">No Day Care procedures found.</p>
+      <button type="button" onclick="promptAddDayCareService()" style="margin-top: 10px; background: #0f766e; color: white; border: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">
+        + Add Procedural Service
+      </button>
+    </div>
+  `;
+}
+
+function renderDcCatalog(list) {
+  const container = document.getElementById("dc-catalog-list");
+  if (!container) return;
+  if (!list || list.length === 0) { showDcCatalogEmpty(); return; }
+
+  container.innerHTML = list.map(s => {
+    const sId = s._id || s.serviceCode;
+    const isChecked = selectedDcServices.some(x => x.id === sId);
+    const rowBg = isChecked ? '#f0fdfa' : '#ffffff';
+    const borderCol = isChecked ? '#99f6e4' : '#f5f5f4';
+
+    return `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; margin-bottom: 4px; background: ${rowBg}; border: 1px solid ${borderCol}; border-radius: 5px;">
+        <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500; color: #1c1917; flex: 1;">
+          <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleDcService('${sId}')" style="accent-color: #0f766e; width: 14px; height: 14px; cursor: pointer;">
+          <span>${s.serviceName} <small style="color: #a8a29e;">[${s.serviceCode}]</small></span>
+        </label>
+        <span style="color: #0f766e; font-weight: 700; font-size: 11px; background: #ccfbf1; padding: 2px 7px; border-radius: 4px;">₹${s.rate}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterDcCatalog(term) {
+  const q = (term || '').toLowerCase().trim();
+  if (!q) return renderDcCatalog(hospitalDcCatalog);
+  renderDcCatalog(hospitalDcCatalog.filter(s => (s.serviceName && s.serviceName.toLowerCase().includes(q)) || (s.serviceCode && s.serviceCode.toLowerCase().includes(q))));
+}
+
+function toggleDcService(id) {
+  const existing = selectedDcServices.find(t => t.id === id);
+  if (existing) {
+    selectedDcServices = selectedDcServices.filter(t => t.id !== id);
+  } else {
+    const item = hospitalDcCatalog.find(t => (t._id || t.serviceCode) === id);
+    if (item) {
+      selectedDcServices.push({ id: item._id || item.serviceCode, serviceCode: item.serviceCode, name: item.serviceName, rate: item.rate, quantity: 1, amount: item.rate });
+    }
+  }
+  renderSelectedDcTable();
+}
+
+function removeDcService(id) {
+  selectedDcServices = selectedDcServices.filter(t => t.id !== id);
+  renderDcCatalog(hospitalDcCatalog);
+  renderSelectedDcTable();
+}
+
+function renderSelectedDcTable() {
+  const tbody = document.getElementById("dc-selected-body");
+  if (!tbody) return;
+
+  if (selectedDcServices.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">No procedures selected.</td></tr>';
+    const totalDisp = document.getElementById("dc-total-disp");
+    if (totalDisp) totalDisp.innerText = "0";
+    calcDcSettlement();
+    return;
+  }
+
+  tbody.innerHTML = selectedDcServices.map((t, idx) => `
+    <tr style="border-bottom: 1px solid #f0fdfa; background: ${idx % 2 === 0 ? '#ffffff' : '#fafaf9'};">
+      <td style="padding: 7px 10px; font-weight: 600; color: #292524;">${t.name}</td>
+      <td style="padding: 7px 6px; text-align: right; color: #78716c;">₹${t.rate}</td>
+      <td style="padding: 7px 6px; text-align: center;">${t.quantity}</td>
+      <td style="padding: 7px 6px; text-align: right; font-weight: 700; color: #0f766e;">₹${t.amount}</td>
+      <td style="padding: 7px 10px; text-align: center;">
+        <button type="button" onclick="removeDcService('${t.id}')" style="background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; border-radius: 4px; padding: 3px 6px; cursor: pointer; font-size: 11px;">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </td>
+    </tr>
+  `).join('');
+
+  calcDcSettlement();
+}
+
+function calcDcSettlement() {
+  const total = selectedDcServices.reduce((acc, curr) => acc + (curr.amount || 0), 0);
+  const totalDisp = document.getElementById("dc-total-disp");
+  if (totalDisp) totalDisp.innerText = total;
+
+  const discount = Number(document.getElementById("dc-discount")?.value || 0);
+  const waive = Number(document.getElementById("dc-waive")?.value || 0);
+  const deposit = Number(document.getElementById("dc-deposit")?.value || 0);
+
+  const netPayable = Math.max(0, total - discount - waive);
+  const due = Math.max(0, netPayable - deposit);
+  const dueDisp = document.getElementById("dc-due-disp");
+  if (dueDisp) dueDisp.innerText = due;
+}
+
+function searchDcUhid() {
+  const val = document.getElementById("dc-search-uhid")?.value.trim();
+  if (!val) return alert("Please enter a UHID");
+  const found = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []).find(v => (v.uhid || '').toLowerCase() === val.toLowerCase());
+  if (found) {
+    document.getElementById("dc-name").value = found.patientName || '';
+    document.getElementById("dc-mobile").value = found.mobile || '';
+    document.getElementById("dc-age").value = found.ageYears || '';
+    document.getElementById("dc-gender").value = found.gender || 'Male';
+    alert("Patient details autofilled for " + found.uhid);
+  } else {
+    alert("UHID not found in active cache. Please enter details manually.");
+  }
+}
+
+async function promptAddDayCareService() {
+  const code = prompt("Enter Service Code (e.g. CASU-1, ECG-01):");
+  if (!code) return;
+  const name = prompt("Enter Procedure Name (e.g. CATHETERIZATION, ECG):");
+  if (!name) return;
+  const rate = prompt("Enter Rate (₹):");
+  if (rate === null || isNaN(Number(rate))) return;
+
+  try {
+    const res = await fetch('/api/daycare/catalog/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ serviceCode: code.trim().toUpperCase(), serviceName: name.trim(), rate: Number(rate) })
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert("✅ Day Care Procedure saved to database!");
+      loadHospitalDcCatalog();
+    } else {
+      alert("❌ " + result.error);
+    }
+  } catch (err) {
+    alert("❌ Error saving Day Care service.");
+  }
+}
+
+async function submitDayCareOrder() {
+  if (selectedDcServices.length === 0) return alert("Please select at least one procedure.");
+  const name = document.getElementById("dc-name")?.value.trim();
+  const mobile = document.getElementById("dc-mobile")?.value.trim();
+  if (!name || !mobile) return alert("Patient Name and Mobile are required.");
+
+  const payload = {
+    uhid: document.getElementById("dc-search-uhid")?.value.trim() || `U-${Date.now().toString().slice(-5)}`,
+    patientName: name,
+    gender: document.getElementById("dc-gender")?.value || 'Male',
+    ageYears: Number(document.getElementById("dc-age")?.value || 0),
+    mobile: mobile,
+    department: document.getElementById("dc-dept")?.value || 'DAY CARE',
+    consultant: document.getElementById("dc-consultant")?.value || 'SELF',
+    rateList: document.getElementById("dc-ratelist")?.value || 'COMMON',
+    panel: document.getElementById("dc-panel")?.value || '--NA--',
+    cardNo: document.getElementById("dc-card-no")?.value.trim() || '',
+    serviceNo: document.getElementById("dc-service")?.value.trim() || '',
+    rank: document.getElementById("dc-rank")?.value.trim() || '',
+    services: selectedDcServices,
+    totalAmount: Number(document.getElementById("dc-total-disp")?.innerText || 0),
+    discount: Number(document.getElementById("dc-discount")?.value || 0),
+    waiveOff: Number(document.getElementById("dc-waive")?.value || 0),
+    deposit: Number(document.getElementById("dc-deposit")?.value || 0),
+    due: Number(document.getElementById("dc-due-disp")?.innerText || 0),
+    paymentMode: document.getElementById("dc-mode")?.value || 'Cash'
+  };
+
+  try {
+    const res = await fetch('/api/daycare/book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert(`✅ Day Care Order Booked: ${result.data.orderId}\nTotal: ₹${result.data.totalAmount}`);
+      selectedDcServices = [];
+      renderSelectedDcTable();
+      renderDcCatalog(hospitalDcCatalog);
+    } else {
+      alert("❌ " + (result.error || "Failed to book day care order"));
+    }
+  } catch (err) {
+    alert("❌ Network Error booking day care order.");
   }
 }
 </script>
