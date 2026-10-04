@@ -4447,6 +4447,164 @@ async function runAnalyticsReport() {
     </tbody>
   `;
 }
+// ==========================================
+// IPD INPATIENT LOGIC & CONTROLLER HANDLERS
+// ==========================================
+function getActiveHospitalId() {
+  return localStorage.getItem("hospitalId") || "HOSP01";
+}
+
+function copyRegToGuardian(checked) {
+  if (checked) {
+    document.getElementById("ipd-guardian-name").value = document.getElementById("ipd-relative-name")?.value || document.getElementById("ipd-name")?.value || '';
+    document.getElementById("ipd-guardian-mobile").value = document.getElementById("ipd-mobile")?.value || '';
+    document.getElementById("ipd-guardian-rel").value = 'Relative';
+  } else {
+    document.getElementById("ipd-guardian-name").value = '';
+    document.getElementById("ipd-guardian-mobile").value = '';
+  }
+}
+
+function autoAssignBed(wardType) {
+  if (!wardType) return;
+  const randBed = Math.floor(Math.random() * 20) + 101;
+  let prefix = 'GW';
+  if (wardType.includes('ICU')) prefix = 'ICU';
+  else if (wardType.includes('SEMI')) prefix = 'SP';
+  else if (wardType.includes('PRIVATE') || wardType.includes('DELUXE')) prefix = 'PVT';
+  else if (wardType.includes('EMERGENCY')) prefix = 'EM';
+  document.getElementById("ipd-bed-no").value = `${prefix}-${randBed}`;
+}
+
+async function loadIpdCensus() {
+  const tbody = document.getElementById("ipd-census-body");
+  const countBadge = document.getElementById("ipd-census-count");
+  if (!tbody) return;
+
+  const hospId = getActiveHospitalId();
+
+  try {
+    const res = await fetch(`/api/ipd/active/${hospId}`);
+    const data = await res.json();
+
+    if (data.success && Array.isArray(data.admissions)) {
+      const list = data.admissions;
+      if (countBadge) countBadge.innerText = `${data.occupiedBeds || list.length} Occupied Beds`;
+
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #a8a29e; padding: 30px;">No patients currently admitted in indoor wards.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(p => `
+        <tr style="border-bottom: 1px solid #f0fdfa;">
+          <td style="padding: 8px 10px; font-weight: 700; color: #0f766e;">${p.ipdNumber}</td>
+          <td style="padding: 8px 10px; font-weight: 600;">${p.uhid}</td>
+          <td style="padding: 8px 12px; font-weight: 600; color: #1e293b;">${p.patientName || p.uhid}</td>
+          <td style="padding: 8px 8px; text-align: center;">${p.ageYears ? p.ageYears + ' Y' : '--'} / ${p.gender || '--'}</td>
+          <td style="padding: 8px 10px; font-weight: 700; color: #0f766e;"><i class="fa-solid fa-bed"></i> ${p.bedNumber} (${p.wardType})</td>
+          <td style="padding: 8px 10px;">${p.department || 'GENERAL'} &bull; ${p.admittingDoctor}</td>
+          <td style="padding: 8px 8px; text-align: center;">
+            <span style="background: ${p.status === 'Admitted' ? '#ccfbf1' : '#fee2e2'}; color: ${p.status === 'Admitted' ? '#0f766e' : '#dc2626'}; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">
+              ${p.status}
+            </span>
+          </td>
+          <td style="padding: 8px 10px; text-align: right; font-weight: 700; color: #15803d;">₹${p.advanceDeposit || 0}</td>
+          <td style="padding: 8px 10px; text-align: center;">
+            <button type="button" onclick="dischargeIpdPatientPrompt('${p.ipdNumber}')" style="background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer;">
+              Discharge
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+  } catch (err) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #ef4444; padding: 30px;">Error loading IPD census.</td></tr>';
+  }
+}
+
+async function submitIpdAdmission(e) {
+  e.preventDefault();
+
+  const hospId = getActiveHospitalId();
+  let uhid = (document.getElementById("ipd-uhid")?.value || '').trim();
+  if (!uhid) {
+    uhid = `UH-${Date.now().toString().slice(-6)}`;
+  }
+
+  const title = document.getElementById("ipd-title")?.value || 'Mr.';
+  const rawName = document.getElementById("ipd-name")?.value.trim() || 'Admitted Patient';
+  const fullName = `${title} ${rawName}`;
+
+  // Payload matches your controller's IpdAdmission.create fields
+  const payload = {
+    hospitalId: hospId,
+    uhid: uhid,
+    patientName: fullName,
+    admittingDoctor: document.getElementById("ipd-doctor")?.value || 'DR. CLINIC',
+    wardType: document.getElementById("ipd-allocation")?.value || 'GENERAL WARD',
+    bedNumber: document.getElementById("ipd-bed-no")?.value.trim() || 'GW-101',
+    admissionReason: document.getElementById("ipd-diagnosis")?.value.trim() || 'Observation / Treatment',
+    
+    // Additional reference fields
+    mobile: document.getElementById("ipd-mobile")?.value.trim() || '',
+    department: document.getElementById("ipd-dept")?.value || 'GENERAL MEDICINE',
+    gender: document.getElementById("ipd-gender")?.value || 'Male',
+    ageYears: Number(document.getElementById("ipd-age")?.value || 0),
+    occupation: document.getElementById("ipd-occupation")?.value || 'Self Employed',
+    religion: document.getElementById("ipd-religion")?.value || 'Hindu',
+    address: document.getElementById("ipd-address")?.value.trim() || '',
+    bloodGroup: document.getElementById("ipd-blood")?.value || 'NA',
+    advanceDeposit: Number(document.getElementById("ipd-advance-input")?.value || 0)
+  };
+
+  try {
+    const res = await fetch('/api/ipd/admit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json();
+
+    if (result.success) {
+      alert(`✅ Patient Admitted to IPD!\nIPD No: ${result.admission.ipdNumber}\nBed: ${result.admission.bedNumber} (${result.admission.wardType})`);
+      document.getElementById("ipd-admission-form")?.reset();
+      loadIpdCensus();
+    } else {
+      alert("❌ Admission Error: " + (result.error || "Could not complete admission"));
+    }
+  } catch (err) {
+    alert("❌ Network Error submitting IPD admission.");
+  }
+}
+
+async function dischargeIpdPatientPrompt(ipdNumber) {
+  const reason = prompt("Condition at discharge (e.g., Stable / Recovered):", "Stable");
+  if (!reason) return;
+
+  const advice = prompt("Discharge advice / medications:", "Take medications as prescribed. Follow-up after 7 days.");
+
+  try {
+    const res = await fetch(`/api/ipd/discharge/${ipdNumber}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        conditionAtDischarge: reason,
+        treatmentGiven: "Indoor medical management completed.",
+        dischargeAdvice: advice || "Follow-up after 1 week."
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert(`✅ Patient Discharged Successfully!\nIPD No: ${ipdNumber}`);
+      loadIpdCensus();
+    } else {
+      alert("❌ Discharge Error: " + (result.error || "Failed to discharge patient"));
+    }
+  } catch (err) {
+    alert("❌ Network Error discharging patient.");
+  }
+}
 </script>
 </body>
 </html>
