@@ -553,11 +553,11 @@
 </button>
 
     <!-- 9. Medical Certificate -->
-    <button type="button" class="opd-ribbon-btn" 
-      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
-      <i class="fa-solid fa-stamp" style="font-size: 13px;"></i>
-      <span>Certificates</span>
-    </button>
+    <button type="button" id="btn-sub-cert" class="opd-ribbon-btn" onclick="switchOpdSubView('cert')"
+  style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
+  <i class="fa-solid fa-stamp" style="font-size: 13px;"></i>
+  <span>Certificates</span>
+</button>
 
     <!-- 10. Reports / MIS -->
     <button type="button" class="opd-ribbon-btn" 
@@ -1426,6 +1426,132 @@
             </tbody>
           </table>
         </div>
+      </div>
+
+    </div>
+    <!-- CARD: MINTECH MEDICAL CERTIFICATE GENERATOR SUB-VIEW -->
+    <div id="opd-subview-certificate" style="display: none; background: #ffffff; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 118, 110, 0.05);">
+      
+      <!-- Top Title Ribbon -->
+      <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; border-radius: 6px 6px 0 0; margin: -14px -14px 14px -14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-stamp"></i>
+          <span>Medical Certificate & Documentation Desk</span>
+        </div>
+        <span style="font-size: 11px; background: #ccfbf1; padding: 3px 8px; border-radius: 4px; font-weight: 600;">Official Documentation</span>
+      </div>
+
+      <!-- Search Ribbon by UHID -->
+      <div style="display: flex; gap: 10px; align-items: center; background: #fafaf9; border: 1px solid #e7e5e4; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px;">
+        <span style="font-weight: 700; color: #0f766e; font-size: 12px; white-space: nowrap;">UHID :</span>
+        <input type="text" id="cert-search-uhid" placeholder="Enter Patient UHID..." 
+          onkeydown="if(event.key==='Enter') searchCertificatePatient()" 
+          style="width: 220px; padding: 6px 12px; border: 1px solid #99f6e4; border-radius: 4px; font-size: 12px; outline: none; background: #fff;">
+        <button type="button" onclick="searchCertificatePatient()" 
+          style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+          <i class="fa-solid fa-magnifying-glass"></i> Search
+        </button>
+      </div>
+
+      <!-- Certificate Workspace (Revealed after searching) -->
+      <div id="cert-workspace" style="display: none; grid-template-columns: 340px 1fr; gap: 16px; font-size: 12px;">
+        
+        <!-- Left: Configuration Form -->
+        <div style="border: 1px solid #99f6e4; border-radius: 6px; padding: 12px; background: #f0fdfa;">
+          <div style="font-weight: 700; color: #0f766e; margin-bottom: 10px; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-sliders"></i> Certificate Parameters
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div>
+              <label style="font-weight: 600; color: #0f766e;">Certificate Type:</label>
+              <select id="cert-type" onchange="updateCertificatePreview()" style="width: 100%; padding: 5px; border: 1px solid #99f6e4; border-radius: 4px; background: white;">
+                <option value="FITNESS">Medical Fitness Certificate</option>
+                <option value="SICK">Medical Rest / Sick Leave Certificate</option>
+                <option value="ATTENDANCE">OPD Attendance Certificate</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="font-weight: 600; color: #0f766e;">Patient Name:</label>
+              <input type="text" id="cert-patient-name" oninput="updateCertificatePreview()" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <div>
+                <label style="font-weight: 600; color: #0f766e;">Age (Y):</label>
+                <input type="number" id="cert-age" oninput="updateCertificatePreview()" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+              </div>
+              <div>
+                <label style="font-weight: 600; color: #0f766e;">Gender:</label>
+                <select id="cert-gender" onchange="updateCertificatePreview()" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+                  <option>Male</option><option>Female</option><option>Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style="font-weight: 600; color: #0f766e;">Diagnosis / Reason:</label>
+              <input type="text" id="cert-diagnosis" value="Viral Fever & Physical Exhaustion" oninput="updateCertificatePreview()" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+            </div>
+
+            <div id="cert-dates-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <div>
+                <label style="font-weight: 600; color: #0f766e;">Rest From:</label>
+                <input type="date" id="cert-from" onchange="updateCertificatePreview()" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+              </div>
+              <div>
+                <label style="font-weight: 600; color: #0f766e;">Rest To:</label>
+                <input type="date" id="cert-to" onchange="updateCertificatePreview()" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+              </div>
+            </div>
+
+            <div>
+              <label style="font-weight: 600; color: #0f766e;">Issuing Doctor:</label>
+              <input type="text" id="cert-doctor" value="DR. CLINICAL SPECIALIST, MBBS, MD" oninput="updateCertificatePreview()" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+            </div>
+
+            <button type="button" onclick="printCertificate()" style="margin-top: 6px; background: #0f766e; color: white; border: none; padding: 8px; border-radius: 4px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <i class="fa-solid fa-print"></i> Print Official Certificate
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Print Preview Paper (A5/Letter styling) -->
+        <div style="border: 1px solid #e2e8f0; border-radius: 6px; background: #ffffff; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); min-height: 380px;" id="cert-printable-area">
+          
+          <!-- Hospital Header -->
+          <div style="text-align: center; border-bottom: 2px solid #0f766e; padding-bottom: 12px; margin-bottom: 16px;">
+            <div style="font-size: 18px; font-weight: 900; color: #0f766e; letter-spacing: 0.5px;">MINTECH MULTISPECIALITY HOSPITAL</div>
+            <div style="font-size: 11px; color: #64748b;">NABH Accredited &bull; 24x7 Emergency & Inpatient Services</div>
+            <div style="font-size: 10px; color: #94a3b8;">Phone: +91 98765 43210 &bull; Web: mintech-hims.onrender.com</div>
+          </div>
+
+          <!-- Certificate Title -->
+          <div style="text-align: center; margin-bottom: 20px;">
+            <span id="cert-preview-title" style="font-size: 14px; font-weight: 800; color: #1e293b; text-decoration: underline; text-transform: uppercase; letter-spacing: 0.5px;">MEDICAL FITNESS CERTIFICATE</span>
+          </div>
+
+          <!-- Body Text -->
+          <div id="cert-preview-body" style="font-size: 13px; line-height: 1.8; color: #334155; margin-bottom: 40px; text-align: justify;">
+            This is to certify that Mr./Ms. <strong>[Patient Name]</strong>, aged <strong>[Age]</strong> years, Gender: <strong>[Gender]</strong>, registered under Hospital UHID <strong>[UHID]</strong>, has been clinically examined.
+          </div>
+
+          <!-- Doctor Sign Footer -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px;">
+            <div style="font-size: 11px; color: #64748b;">
+              <div><strong>Date:</strong> <span id="cert-preview-date">--</span></div>
+              <div><strong>Place:</strong> Hospital Clinic Desk</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="width: 150px; border-bottom: 1px dashed #64748b; margin-bottom: 4px;"></div>
+              <div style="font-size: 11px; font-weight: 700; color: #0f766e;" id="cert-preview-dr">DR. CLINICAL SPECIALIST</div>
+              <div style="font-size: 10px; color: #94a3b8;">Authorized Signatory / Seal</div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
@@ -2912,6 +3038,7 @@ function switchOpdSubView(view) {
   const notesPanel = document.getElementById("opd-subview-notes");
   const tokenPanel = document.getElementById("opd-subview-token");
   const emPanel = document.getElementById("opd-subview-emergency");
+  const certPanel = document.getElementById("opd-subview-certificate");
 
   // Grab ribbon buttons safely
   const btnOpd = document.getElementById("btn-sub-opd");
@@ -2922,6 +3049,7 @@ function switchOpdSubView(view) {
   const btnNotes = document.getElementById("btn-sub-notes");
   const btnToken = document.getElementById("btn-sub-token");
   const btnEm = document.getElementById("btn-sub-emergency");
+  const btnCert = document.getElementById("btn-sub-cert");
 
   const setPill = (btn, active, isDanger = false) => {
     if (!btn) return;
@@ -2937,7 +3065,7 @@ function switchOpdSubView(view) {
     btn.style.fontWeight = active ? "700" : "600";
   };
 
-  // Hide all panels
+  // Hide all panels first
   if (regCard) regCard.style.display = 'none';
   if (queueCard) queueCard.style.display = 'none';
   if (consultCard) consultCard.style.display = 'none';
@@ -2948,6 +3076,7 @@ function switchOpdSubView(view) {
   if (notesPanel) notesPanel.style.display = 'none';
   if (tokenPanel) tokenPanel.style.display = 'none';
   if (emPanel) emPanel.style.display = 'none';
+  if (certPanel) certPanel.style.display = 'none';
 
   // Reset all buttons
   setPill(btnOpd, false);
@@ -2958,6 +3087,7 @@ function switchOpdSubView(view) {
   setPill(btnNotes, false);
   setPill(btnToken, false);
   setPill(btnEm, false, true);
+  setPill(btnCert, false);
 
   // Activate requested panel
   if (view === 'investigations') {
@@ -2987,8 +3117,12 @@ function switchOpdSubView(view) {
   } else if (view === 'emergency') {
     if (emPanel) emPanel.style.display = 'block';
     setPill(btnEm, true, true);
-    renderEmergencyQueue();
+    if (typeof renderEmergencyQueue === 'function') renderEmergencyQueue();
     setTimeout(() => document.getElementById("em-search-uhid")?.focus(), 50);
+  } else if (view === 'cert') {
+    if (certPanel) certPanel.style.display = 'block';
+    setPill(btnCert, true);
+    setTimeout(() => document.getElementById("cert-search-uhid")?.focus(), 50);
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
@@ -3687,6 +3821,110 @@ function renderEmergencyQueue() {
 function dischargeEmergency(uhid) {
   emergencyQueue = emergencyQueue.filter(p => p.uhid !== uhid);
   renderEmergencyQueue();
+}
+// ==========================================
+// MEDICAL CERTIFICATE HANDLERS
+// ==========================================
+let activeCertPatient = null;
+
+function searchCertificatePatient() {
+  const query = document.getElementById("cert-search-uhid")?.value.trim();
+  if (!query) return alert("Please enter a UHID to search.");
+
+  const allPatients = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []);
+  const found = allPatients.find(p => (p.uhid || '').toLowerCase() === query.toLowerCase());
+
+  if (found) {
+    activeCertPatient = found;
+  } else {
+    activeCertPatient = {
+      uhid: query,
+      patientName: "Patient " + query,
+      ageYears: "30",
+      gender: "Male",
+      consultant: "DR. CLINICAL SPECIALIST"
+    };
+  }
+
+  // Populate config form
+  document.getElementById("cert-patient-name").value = activeCertPatient.patientName || '';
+  document.getElementById("cert-age").value = activeCertPatient.ageYears || activeCertPatient.age || 30;
+  document.getElementById("cert-gender").value = activeCertPatient.gender || 'Male';
+  if (activeCertPatient.consultant) document.getElementById("cert-doctor").value = activeCertPatient.consultant;
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById("cert-from").value = today;
+  document.getElementById("cert-to").value = today;
+
+  document.getElementById("cert-workspace").style.display = 'grid';
+  updateCertificatePreview();
+}
+
+function updateCertificatePreview() {
+  if (!activeCertPatient) return;
+
+  const type = document.getElementById("cert-type")?.value || 'FITNESS';
+  const name = document.getElementById("cert-patient-name")?.value || activeCertPatient.patientName;
+  const age = document.getElementById("cert-age")?.value || activeCertPatient.ageYears || '--';
+  const gender = document.getElementById("cert-gender")?.value || 'Male';
+  const doctor = document.getElementById("cert-doctor")?.value || 'DR. CLINICAL SPECIALIST';
+  const diagnosis = document.getElementById("cert-diagnosis")?.value || 'Routine examination';
+  const fromDate = document.getElementById("cert-from")?.value || 'today';
+  const toDate = document.getElementById("cert-to")?.value || 'today';
+
+  const prefix = gender === 'Female' ? 'Ms./Mrs.' : 'Mr.';
+  const pronoun = gender === 'Female' ? 'she' : 'he';
+  const possessive = gender === 'Female' ? 'her' : 'his';
+
+  document.getElementById("cert-preview-date").innerText = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  document.getElementById("cert-preview-dr").innerText = doctor.toUpperCase();
+
+  const titleElem = document.getElementById("cert-preview-title");
+  const bodyElem = document.getElementById("cert-preview-body");
+
+  if (type === 'FITNESS') {
+    titleElem.innerText = "MEDICAL FITNESS CERTIFICATE";
+    bodyElem.innerHTML = `
+      This is to certify that ${prefix} <strong>${name}</strong>, aged <strong>${age}</strong> years, Gender: <strong>${gender}</strong>, residing at hospital records under UHID: <strong>${activeCertPatient.uhid}</strong>, was clinically examined at our Outpatient Department on <strong>${new Date().toLocaleDateString()}</strong>.<br><br>
+      Following clinical evaluation and systemic examination, no acute infectious or incapacitating illness was detected. In our professional opinion, ${pronoun} is <strong>medically fit</strong> to resume normal duties, work, and physical activities without restriction.
+    `;
+  } else if (type === 'SICK') {
+    titleElem.innerText = "MEDICAL REST & SICK LEAVE CERTIFICATE";
+    bodyElem.innerHTML = `
+      This is to certify that ${prefix} <strong>${name}</strong>, aged <strong>${age}</strong> years, registered under Hospital UHID: <strong>${activeCertPatient.uhid}</strong>, is under our medical treatment for <strong>${diagnosis}</strong>.<br><br>
+      Considering the clinical symptoms and recovery requirements, ${pronoun} is advised complete medical rest and abstention from work/duty for the period from <strong>${fromDate}</strong> to <strong>${toDate}</strong>.<br><br>
+      ${prefix} ${name} will be clinically reassessed on completion of the rest period before resuming duties.
+    `;
+  } else {
+    titleElem.innerText = "OUTPATIENT ATTENDANCE CERTIFICATE";
+    bodyElem.innerHTML = `
+      This is to certify that ${prefix} <strong>${name}</strong>, aged <strong>${age}</strong> years, UHID: <strong>${activeCertPatient.uhid}</strong>, attended our hospital Outpatient Department on <strong>${new Date().toLocaleDateString()}</strong> for clinical consultation and diagnostic investigations.<br><br>
+      This certificate is issued on patient request for official attendance verification purposes only.
+    `;
+  }
+}
+
+function printCertificate() {
+  const printContents = document.getElementById("cert-printable-area").innerHTML;
+  const printWindow = window.open('', '_blank', 'width=800,height=600');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Hospital Medical Certificate</title>
+        <style>
+          body { font-family: 'Segoe UI', Arial, sans-serif; padding: 40px; margin: 0; color: #1e293b; }
+          strong { color: #0f766e; }
+        </style>
+      </head>
+      <body>
+        ${printContents}
+        <script>
+          window.onload = function() { window.print(); window.close(); }
+        <\/script>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
 }
 </script>
 </body>
