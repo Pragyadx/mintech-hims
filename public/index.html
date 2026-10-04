@@ -559,12 +559,12 @@
   <span>Certificates</span>
 </button>
 
-    <!-- 10. Reports / MIS -->
-    <button type="button" class="opd-ribbon-btn" 
-      style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
-      <i class="fa-solid fa-chart-pie" style="font-size: 13px;"></i>
-      <span>OPD Analytics</span>
-    </button>
+    <!-- 10. OPD Analytics -->
+<button type="button" id="btn-sub-analytics" class="opd-ribbon-btn" onclick="switchOpdSubView('analytics')"
+  style="display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #99f6e4; background: #f0fdfa; color: #0f766e;">
+  <i class="fa-solid fa-chart-line" style="font-size: 13px;"></i>
+  <span>OPD Analytics</span>
+</button>
 
   </div>
 </div>
@@ -1552,6 +1552,128 @@
 
         </div>
 
+      </div>
+
+    </div>
+    <!-- CARD: MINTECH OPD ANALYTICS & MIS REPORTS SUB-VIEW -->
+    <div id="opd-subview-analytics" style="display: none; background: #ffffff; border: 1px solid #99f6e4; border-radius: 8px; padding: 14px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(15, 118, 110, 0.05);">
+      
+      <!-- Top Title Ribbon -->
+      <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 10px 14px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; border-radius: 6px 6px 0 0; margin: -14px -14px 14px -14px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>OPD Analytics & MIS Executive Reports</span>
+        </div>
+        <span style="font-size: 11px; background: #ccfbf1; padding: 3px 8px; border-radius: 4px; font-weight: 600;">Management Information System</span>
+      </div>
+
+      <!-- Quick-Action MIS Report Tiles Ribbon -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 6px; margin-bottom: 14px;">
+        <button type="button" class="mis-tile" onclick="filterMisCategory('daycare_dues')"><i class="fa-solid fa-file-invoice"></i> Daycare Dues</button>
+        <button type="button" class="mis-tile" onclick="filterMisCategory('daycare_bill')"><i class="fa-solid fa-receipt"></i> Daycare Bill</button>
+        <button type="button" class="mis-tile" onclick="filterMisCategory('daycare_coll')"><i class="fa-solid fa-indian-rupee-sign"></i> Daycare Coll</button>
+        <button type="button" class="mis-tile" onclick="filterMisCategory('inv_dues')"><i class="fa-solid fa-file-invoice-dollar"></i> Inves Dues</button>
+        <button type="button" class="mis-tile" onclick="filterMisCategory('inv_bill')"><i class="fa-solid fa-file-lines"></i> Inves Bill</button>
+        <button type="button" class="mis-tile" onclick="filterMisCategory('inv_coll')"><i class="fa-solid fa-coins"></i> Inves Coll</button>
+        <button type="button" class="mis-tile" onclick="filterMisCategory('opd_coll')"><i class="fa-solid fa-wallet"></i> OPD Coll/Dues</button>
+        <button type="button" class="mis-tile" onclick="filterMisCategory('birth_reg')"><i class="fa-solid fa-baby"></i> Birth Reg</button>
+        <button type="button" class="mis-tile mis-tile-active" onclick="filterMisCategory('followup')"><i class="fa-solid fa-user-clock"></i> Followup</button>
+        <button type="button" class="mis-tile" onclick="filterMisCategory('emergency_case')"><i class="fa-solid fa-truck-medical"></i> Emergency</button>
+        <button type="button" class="mis-tile" onclick="filterMisCategory('summary_bill')"><i class="fa-solid fa-scale-balanced"></i> Summary Bill</button>
+        <button type="button" class="mis-tile" onclick="filterMisCategory('queue')"><i class="fa-solid fa-list-ol"></i> Queue</button>
+      </div>
+
+      <style>
+        .mis-tile {
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
+          border-radius: 4px;
+          padding: 6px 4px;
+          font-size: 11px;
+          font-weight: 600;
+          color: #334155;
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          transition: all 0.15s ease;
+        }
+        .mis-tile:hover {
+          background: #e2e8f0;
+          border-color: #94a3b8;
+        }
+        .mis-tile-active {
+          background: #0f766e !important;
+          color: #ffffff !important;
+          border-color: #0f766e !important;
+        }
+      </style>
+
+      <!-- Filter Controls Bar -->
+      <div style="background: #fafaf9; border: 1px solid #e7e5e4; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 12px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-weight: 700; color: #0f766e;">From :</label>
+          <input type="date" id="mis-from-date" style="padding: 4px 8px; border: 1px solid #99f6e4; border-radius: 4px; outline: none; background: white;">
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-weight: 700; color: #0f766e;">To :</label>
+          <input type="date" id="mis-to-date" style="padding: 4px 8px; border: 1px solid #99f6e4; border-radius: 4px; outline: none; background: white;">
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-weight: 700; color: #0f766e;">Department :</label>
+          <select id="mis-dept-select" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; background: white;">
+            <option value="">-- All Department --</option>
+            <option value="GENERAL">General Medicine</option>
+            <option value="PEDIATRICS">Pediatrics</option>
+            <option value="ORTHOPEDIC">Orthopedic</option>
+            <option value="GYNECOLOGY">Gynecology</option>
+            <option value="PATHOLOGY">Pathology</option>
+            <option value="CASUALTY">Emergency / Casualty</option>
+          </select>
+        </div>
+
+        <div style="margin-left: auto; display: flex; gap: 8px;">
+          <button type="button" onclick="runAnalyticsReport()" style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-magnifying-glass"></i> Submit
+          </button>
+          <button type="button" onclick="resetAnalyticsFilters()" style="background: #64748b; color: white; border: none; padding: 6px 14px; border-radius: 4px; font-weight: 600; cursor: pointer;">
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Report Table -->
+      <div style="border: 1px solid #99f6e4; border-radius: 6px; overflow: hidden; background: #ffffff;">
+        <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; color: #0f766e; padding: 8px 12px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;">
+          <span id="mis-report-title"><i class="fa-solid fa-table-list"></i> Follow Up (Manual) Report</span>
+          <span id="mis-record-count" style="font-size: 11px; background: #ccfbf1; color: #0f766e; padding: 2px 8px; border-radius: 10px; font-weight: 600;">0 Records</span>
+        </div>
+        <div style="max-height: 380px; overflow-x: auto; overflow-y: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap;">
+            <thead>
+              <tr style="background: #fafaf9; color: #78716c; border-bottom: 1px solid #e7e5e4; text-transform: uppercase;">
+                <th style="padding: 8px 6px; text-align: center;">S. No.</th>
+                <th style="padding: 8px 8px; text-align: left;">OPD ID</th>
+                <th style="padding: 8px 8px; text-align: left;">UHID</th>
+                <th style="padding: 8px 10px; text-align: left;">Patient's Name</th>
+                <th style="padding: 8px 10px; text-align: left;">Husband / Guardian</th>
+                <th style="padding: 8px 6px; text-align: center;">Age</th>
+                <th style="padding: 8px 6px; text-align: center;">Gender</th>
+                <th style="padding: 8px 10px; text-align: left;">Mobile</th>
+                <th style="padding: 8px 10px; text-align: left;">Address</th>
+                <th style="padding: 8px 10px; text-align: left;">Doctor</th>
+                <th style="padding: 8px 8px; text-align: center;">Last Visit Date</th>
+                <th style="padding: 8px 8px; text-align: center;">Follow Up Date</th>
+              </tr>
+            </thead>
+            <tbody id="mis-table-body">
+              <tr><td colspan="12" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">No records found. Select date range and click Submit.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>
@@ -3039,6 +3161,7 @@ function switchOpdSubView(view) {
   const tokenPanel = document.getElementById("opd-subview-token");
   const emPanel = document.getElementById("opd-subview-emergency");
   const certPanel = document.getElementById("opd-subview-certificate");
+  const anaPanel = document.getElementById("opd-subview-analytics");
 
   // Grab ribbon buttons safely
   const btnOpd = document.getElementById("btn-sub-opd");
@@ -3050,6 +3173,7 @@ function switchOpdSubView(view) {
   const btnToken = document.getElementById("btn-sub-token");
   const btnEm = document.getElementById("btn-sub-emergency");
   const btnCert = document.getElementById("btn-sub-cert");
+  const btnAna = document.getElementById("btn-sub-analytics");
 
   const setPill = (btn, active, isDanger = false) => {
     if (!btn) return;
@@ -3065,7 +3189,7 @@ function switchOpdSubView(view) {
     btn.style.fontWeight = active ? "700" : "600";
   };
 
-  // Hide all panels first
+  // Hide all panels
   if (regCard) regCard.style.display = 'none';
   if (queueCard) queueCard.style.display = 'none';
   if (consultCard) consultCard.style.display = 'none';
@@ -3077,6 +3201,7 @@ function switchOpdSubView(view) {
   if (tokenPanel) tokenPanel.style.display = 'none';
   if (emPanel) emPanel.style.display = 'none';
   if (certPanel) certPanel.style.display = 'none';
+  if (anaPanel) anaPanel.style.display = 'none';
 
   // Reset all buttons
   setPill(btnOpd, false);
@@ -3088,6 +3213,7 @@ function switchOpdSubView(view) {
   setPill(btnToken, false);
   setPill(btnEm, false, true);
   setPill(btnCert, false);
+  setPill(btnAna, false);
 
   // Activate requested panel
   if (view === 'investigations') {
@@ -3123,6 +3249,11 @@ function switchOpdSubView(view) {
     if (certPanel) certPanel.style.display = 'block';
     setPill(btnCert, true);
     setTimeout(() => document.getElementById("cert-search-uhid")?.focus(), 50);
+  } else if (view === 'analytics') {
+    if (anaPanel) anaPanel.style.display = 'block';
+    setPill(btnAna, true);
+    initAnalyticsDates();
+    runAnalyticsReport();
   } else {
     if (regCard) regCard.style.display = 'block';
     if (queueCard) queueCard.style.display = 'block';
@@ -3925,6 +4056,79 @@ function printCertificate() {
     </html>
   `);
   printWindow.document.close();
+}
+// ==========================================
+// OPD ANALYTICS & MIS REPORT LOGIC
+// ==========================================
+let currentMisCategory = 'followup';
+
+function initAnalyticsDates() {
+  const today = new Date().toISOString().split('T')[0];
+  const from = document.getElementById("mis-from-date");
+  const to = document.getElementById("mis-to-date");
+  if (from && !from.value) from.value = today;
+  if (to && !to.value) to.value = today;
+}
+
+function filterMisCategory(cat) {
+  currentMisCategory = cat;
+  document.querySelectorAll('.mis-tile').forEach(btn => btn.classList.remove('mis-tile-active'));
+  if (event && event.currentTarget) event.currentTarget.classList.add('mis-tile-active');
+  
+  const title = document.getElementById("mis-report-title");
+  if (title) title.innerHTML = `<i class="fa-solid fa-table-list"></i> ${cat.replace('_', ' ').toUpperCase()} Report`;
+
+  runAnalyticsReport();
+}
+
+function resetAnalyticsFilters() {
+  initAnalyticsDates();
+  if (document.getElementById("mis-dept-select")) document.getElementById("mis-dept-select").value = '';
+  runAnalyticsReport();
+}
+
+function runAnalyticsReport() {
+  const tbody = document.getElementById("mis-table-body");
+  const countBadge = document.getElementById("mis-record-count");
+  if (!tbody) return;
+
+  const dept = document.getElementById("mis-dept-select")?.value || '';
+  let queue = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []);
+
+  // Filter by department if chosen
+  if (dept) {
+    queue = queue.filter(p => (p.department || '').toUpperCase().includes(dept));
+  }
+
+  if (countBadge) countBadge.innerText = `${queue.length} Records`;
+
+  if (queue.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">No records match your selected criteria.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = queue.map((p, idx) => {
+    const today = new Date();
+    const followDate = new Date();
+    followDate.setDate(today.getDate() + 7);
+
+    return `
+      <tr style="border-bottom: 1px solid #f1f5f9; text-align: left;">
+        <td style="padding: 7px 6px; text-align: center; font-weight: 600; color: #78716c;">${idx + 1}</td>
+        <td style="padding: 7px 8px; font-weight: 700; color: #0f766e;">${p.token || ('OPD-' + (1001 + idx))}</td>
+        <td style="padding: 7px 8px; font-weight: 600;">${p.uhid || '--'}</td>
+        <td style="padding: 7px 10px; font-weight: 600; color: #1e293b;">${p.patientName || '--'}</td>
+        <td style="padding: 7px 10px; color: #64748b;">${p.guardian || 'SELF'}</td>
+        <td style="padding: 7px 6px; text-align: center;">${p.ageYears || p.age || '--'}</td>
+        <td style="padding: 7px 6px; text-align: center;">${p.gender || '--'}</td>
+        <td style="padding: 7px 10px; color: #64748b;">${p.mobile || '--'}</td>
+        <td style="padding: 7px 10px; color: #64748b;">${p.address || 'LOCAL'}</td>
+        <td style="padding: 7px 10px; color: #0f766e; font-weight: 600;">${p.consultant || 'DR. CLINIC'}</td>
+        <td style="padding: 7px 8px; text-align: center; color: #64748b;">${today.toISOString().split('T')[0]}</td>
+        <td style="padding: 7px 8px; text-align: center; font-weight: 700; color: #0f766e;">${followDate.toISOString().split('T')[0]}</td>
+      </tr>
+    `;
+  }).join('');
 }
 </script>
 </body>
