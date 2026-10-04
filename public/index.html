@@ -1795,32 +1795,397 @@
           </div>
         </section>
 
-        <!-- IPD SECTION -->
-        <section id="tab-ipd" class="tab-content">
-          <div class="card">
-            <div class="card-title"><i class="fa-solid fa-bed-pulse"></i> Inpatient (IPD) Ward Bed Allocation</div>
-            <div class="form-grid">
-              <div class="form-group"><label>UHID</label><input type="text" id="ipd-uhid" placeholder="UHID-HOSP01-000001" /></div>
-              <div class="form-group"><label>Admitting Doctor</label><input type="text" id="ipd-doc" value="Dr. Sharma" /></div>
-              <div class="form-group"><label>Ward Type</label>
-                <select id="ipd-ward">
-                  <option value="General Ward">General Ward</option>
-                  <option value="Semi-Private">Semi-Private</option>
-                  <option value="Private">Private</option>
-                  <option value="ICU">ICU</option>
+        <!-- ========================================== -->
+    <!-- TAB: INPATIENT DEPARTMENT (IPD) MANAGEMENT -->
+    <!-- ========================================== -->
+    <section id="tab-ipd" class="tab-content" style="padding: 10px 0;">
+
+      <!-- Sub-Ribbon Actions -->
+      <div style="display: flex; flex-wrap: wrap; gap: 6px; background: #ffffff; border: 1px solid #99f6e4; padding: 8px 12px; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(15,118,110,0.05);">
+        <button type="button" class="ipd-sub-btn ipd-sub-active"><i class="fa-solid fa-id-card"></i> Registration</button>
+        <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Medicines / Pharmacy Indent...')"><i class="fa-solid fa-pills"></i> Medicines</button>
+        <button type="button" class="ipd-sub-btn" onclick="alert('Opening Ward Nursing Services...')"><i class="fa-solid fa-bell-concierge"></i> Services</button>
+        <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Investigations Requisition...')"><i class="fa-solid fa-vial-virus"></i> Investigation</button>
+        <button type="button" class="ipd-sub-btn" onclick="alert('Opening Dialysis Scheduler...')"><i class="fa-solid fa-droplet"></i> Dialysis</button>
+        <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Advance Payment Desk...')"><i class="fa-solid fa-cash-register"></i> Payment</button>
+        <button type="button" class="ipd-sub-btn" onclick="alert('Opening Operation Theatre (OT) Booking...')"><i class="fa-solid fa-syringe"></i> O.T.</button>
+        <button type="button" class="ipd-sub-btn" onclick="alert('Opening Patient Discharge Clearance...')"><i class="fa-solid fa-door-open"></i> Discharge</button>
+        <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Interim/Final Billing...')"><i class="fa-solid fa-receipt"></i> Billing</button>
+        <button type="button" class="ipd-sub-btn" onclick="alert('Opening Case Sheet File Manager...')"><i class="fa-solid fa-folder-open"></i> File</button>
+        <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Census & Bed Occupancy MIS...')"><i class="fa-solid fa-chart-pie"></i> MIS</button>
+      </div>
+
+      <style>
+        .ipd-sub-btn {
+          background: #f0fdfa;
+          border: 1px solid #99f6e4;
+          color: #0f766e;
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          transition: all 0.15s ease;
+        }
+        .ipd-sub-btn:hover { background: #ccfbf1; }
+        .ipd-sub-active {
+          background: #0f766e !important;
+          color: #ffffff !important;
+          border-color: #0f766e !important;
+          font-weight: 700;
+        }
+        .ipd-input {
+          width: 100%;
+          padding: 5px 8px;
+          border: 1px solid #cbd5e1;
+          border-radius: 4px;
+          font-size: 12px;
+          outline: none;
+          background: #ffffff;
+          box-sizing: border-box;
+        }
+        .ipd-input:focus {
+          border-color: #0f766e;
+          box-shadow: 0 0 0 2px rgba(15,118,110,0.1);
+        }
+        .ipd-label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #334155;
+          margin-bottom: 2px;
+          display: block;
+        }
+      </style>
+
+      <!-- 3-Column IPD Admission Card -->
+      <form id="ipd-admission-form" onsubmit="submitIpdAdmission(event)" style="background: #ffffff; border: 1px solid #99f6e4; border-radius: 8px; padding: 18px; box-shadow: 0 1px 4px rgba(15,118,110,0.06); margin-bottom: 20px;">
+        
+        <div style="display: grid; grid-template-columns: 1.4fr 1.1fr 1fr; gap: 18px;">
+          
+          <!-- COLUMN 1: PATIENT DEMOGRAPHICS & CLINIC -->
+          <div style="border-right: 1px dashed #e2e8f0; padding-right: 16px;">
+            <div style="font-weight: 700; color: #0f766e; font-size: 13px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #f0fdfa; padding-bottom: 6px;">
+              <i class="fa-solid fa-hospital-user"></i> Patient Identification & Details
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <label class="ipd-label">ABHA No. / Address</label>
+                <input type="text" id="ipd-abha" class="ipd-input" placeholder="12-1234-1234-1234">
+              </div>
+              <div>
+                <label class="ipd-label">Mobile Number *</label>
+                <input type="tel" id="ipd-mobile" required class="ipd-input" placeholder="10-digit mobile">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <label class="ipd-label">Department *</label>
+                <select id="ipd-dept" required class="ipd-input">
+                  <option value="">-- Select Department --</option>
+                  <option value="GENERAL MEDICINE">General Medicine</option>
+                  <option value="GENERAL SURGERY">General Surgery</option>
+                  <option value="ORTHOPEDICS">Orthopedics</option>
+                  <option value="GYNECOLOGY">Gynecology / Obstetrics</option>
+                  <option value="PEDIATRICS">Pediatrics</option>
+                  <option value="CARDIOLOGY">Cardiology</option>
+                  <option value="ICU / CRITICAL CARE">ICU / Critical Care</option>
                 </select>
               </div>
-              <div class="form-group"><label>Bed Number</label><input type="text" id="ipd-bed" placeholder="GW-101" /></div>
-              <div class="form-group" style="grid-column: 1 / -1;"><label>Reason for Admission</label><input type="text" id="ipd-reason" placeholder="Observation" /></div>
+              <div>
+                <label class="ipd-label">Consulting Doctor *</label>
+                <select id="ipd-doctor" required class="ipd-input">
+                  <option value="">-- Select Doctor --</option>
+                  <option value="DR. SHARMA, MBBS, MD">DR. SHARMA, MBBS, MD</option>
+                  <option value="DR. VERMA, MS (SURGERY)">DR. VERMA, MS (SURGERY)</option>
+                  <option value="DR. GUPTA, MD (MEDICINE)">DR. GUPTA, MD (MEDICINE)</option>
+                  <option value="DR. PATEL, DNB (ORTHO)">DR. PATEL, DNB (ORTHO)</option>
+                </select>
+              </div>
             </div>
-            <button class="btn" onclick="admitIpd()"><i class="fa-solid fa-door-open"></i> Admit Patient to Bed</button>
+
+            <div style="display: grid; grid-template-columns: 100px 1fr; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <label class="ipd-label">Referred By</label>
+                <input type="text" id="ipd-referred-by" value="SELF" class="ipd-input">
+              </div>
+              <div>
+                <label class="ipd-label">Patient Full Name *</label>
+                <div style="display: flex; gap: 4px;">
+                  <select id="ipd-title" style="width: 75px;" class="ipd-input">
+                    <option>Mr.</option><option>Mrs.</option><option>Ms.</option><option>Master</option><option>Baby</option>
+                  </select>
+                  <input type="text" id="ipd-name" required class="ipd-input" placeholder="Patient's Full Name">
+                </div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <label class="ipd-label">S/D/W/o Name</label>
+                <input type="text" id="ipd-relative-name" class="ipd-input" placeholder="Father / Husband Name">
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <div>
+                  <label class="ipd-label">Gender *</label>
+                  <select id="ipd-gender" class="ipd-input">
+                    <option>Male</option><option>Female</option><option>Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="ipd-label">Age (Y) *</label>
+                  <input type="number" id="ipd-age" required class="ipd-input" placeholder="Age" min="0" max="120">
+                </div>
+              </div>
+            </div>
+
+            <!-- Occupation & Religion -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <label class="ipd-label">Occupation</label>
+                <select id="ipd-occupation" class="ipd-input">
+                  <option value="Pvt Service">Pvt Service</option>
+                  <option value="Govt Service">Govt Service</option>
+                  <option value="Self Employed" selected>Self Employed</option>
+                  <option value="Business">Business</option>
+                  <option value="Consultant">Consultant</option>
+                  <option value="Farmer">Farmer</option>
+                  <option value="Accountant">Accountant</option>
+                  <option value="Doctor">Doctor</option>
+                  <option value="Homemaker">Homemaker</option>
+                  <option value="Student">Student</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label class="ipd-label">Religion</label>
+                <select id="ipd-religion" class="ipd-input">
+                  <option value="Hindu" selected>Hindu</option>
+                  <option value="Muslim">Muslim</option>
+                  <option value="Sikh">Sikh</option>
+                  <option value="Christian">Christian</option>
+                  <option value="Jain">Jain</option>
+                  <option value="Budh">Budh</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <label class="ipd-label">Residential Address</label>
+                <input type="text" id="ipd-address" class="ipd-input" placeholder="House, Street, Area">
+              </div>
+              <div>
+                <label class="ipd-label">Blood Group</label>
+                <select id="ipd-blood" class="ipd-input">
+                  <option>NA</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="ipd-label">Provisional Clinical Diagnosis</label>
+              <textarea id="ipd-diagnosis" rows="2" class="ipd-input" placeholder="Primary presenting complaint & tentative diagnosis..."></textarea>
+            </div>
           </div>
-          <div class="card">
-            <div class="card-title"><i class="fa-solid fa-procedures"></i> Active Occupied Bed Register</div>
-            <button class="btn btn-secondary" onclick="loadActiveBeds()"><i class="fa-solid fa-rotate"></i> Refresh Ward List</button>
-            <div id="ipd-active-list" style="margin-top:16px;"></div>
+
+          <!-- COLUMN 2: GUARDIAN & PAYER (INSURANCE) -->
+          <div style="border-right: 1px dashed #e2e8f0; padding-right: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0fdfa; padding-bottom: 6px; margin-bottom: 12px;">
+              <span style="font-weight: 700; color: #0f766e; font-size: 13px;"><i class="fa-solid fa-users"></i> Guardian Details</span>
+              <label style="font-size: 11px; display: flex; align-items: center; gap: 4px; cursor: pointer; color: #0f766e; font-weight: 600;">
+                <input type="checkbox" id="ipd-same-as-reg" onchange="copyRegToGuardian(this.checked)" style="accent-color: #0f766e;"> Same as Reg.
+              </label>
+            </div>
+
+            <div style="margin-bottom: 8px;">
+              <label class="ipd-label">Guardian's Full Name</label>
+              <input type="text" id="ipd-guardian-name" class="ipd-input" placeholder="Guardian's Name">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+              <div>
+                <label class="ipd-label">Relation</label>
+                <select id="ipd-guardian-rel" class="ipd-input">
+                  <option value="">-- Relation --</option>
+                  <option>Father</option><option>Mother</option><option>Husband</option><option>Wife</option><option>Son</option><option>Daughter</option><option>Brother</option><option>Relative</option>
+                </select>
+              </div>
+              <div>
+                <label class="ipd-label">Guardian Mobile</label>
+                <input type="tel" id="ipd-guardian-mobile" class="ipd-input" placeholder="Guardian Contact">
+              </div>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+              <div style="font-weight: 700; color: #0f766e; font-size: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-shield-heart"></i> Payer & TPA Details
+              </div>
+
+              <div style="margin-bottom: 8px;">
+                <label class="ipd-label">Insurance Co. / TPA</label>
+                <select id="ipd-insurance" class="ipd-input">
+                  <option value="">-- Self / Cash Paying --</option>
+                  <option value="STAR HEALTH">Star Health & Allied Insurance</option>
+                  <option value="ICICI LOMBARD">ICICI Lombard</option>
+                  <option value="HDFC ERGO">HDFC ERGO</option>
+                  <option value="AYUSHMAN BHARAT">PMJAY / Ayushman Bharat</option>
+                </select>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                <div>
+                  <label class="ipd-label">Card / Policy No.</label>
+                  <input type="text" id="ipd-card-no" class="ipd-input" placeholder="TPA Card No.">
+                </div>
+                <div>
+                  <label class="ipd-label">Policy / Service No.</label>
+                  <input type="text" id="ipd-policy-no" class="ipd-input" placeholder="Service No.">
+                </div>
+              </div>
+
+              <div>
+                <label class="ipd-label">Billing Mode</label>
+                <div style="display: flex; gap: 16px; margin-top: 4px; font-size: 12px; font-weight: 600;">
+                  <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <input type="radio" name="ipd-billing-mode" value="Cash" checked style="accent-color: #0f766e;"> Cash / Advance
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <input type="radio" name="ipd-billing-mode" value="Credit" style="accent-color: #0f766e;"> Credit (TPA / Panel)
+                  </label>
+                </div>
+              </div>
+            </div>
+
           </div>
-        </section>
+
+          <!-- COLUMN 3: BED ALLOCATION & ADMISSION -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0fdfa; padding-bottom: 6px; margin-bottom: 12px;">
+              <span style="font-weight: 700; color: #0f766e; font-size: 13px;"><i class="fa-solid fa-bed"></i> Bed Allocation</span>
+              <div style="background: #ccfbf1; color: #0f766e; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;">
+                Advance: ₹<span id="ipd-advance-display">0</span>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+              <div>
+                <label class="ipd-label">Arrival Date</label>
+                <input type="date" id="ipd-arrival-date" class="ipd-input">
+              </div>
+              <div>
+                <label class="ipd-label">Arrival Time</label>
+                <input type="time" id="ipd-arrival-time" class="ipd-input">
+              </div>
+            </div>
+
+            <div style="margin-bottom: 8px;">
+              <label class="ipd-label" style="color: #0f766e;">Allocation (Ward Category) *</label>
+              <select id="ipd-allocation" required class="ipd-input" onchange="autoAssignBed(this.value)">
+                <option value="">-- Select Category --</option>
+                <option value="GENERAL WARD">GENERAL WARD</option>
+                <option value="SEMI PRIVATE ROOM">SEMI PRIVATE ROOM</option>
+                <option value="PRIVATE ROOM">PRIVATE ROOM</option>
+                <option value="DELUXE ROOM">DELUXE ROOM</option>
+                <option value="ICU">ICU</option>
+                <option value="NICU">NICU</option>
+                <option value="LABOUR ROOM">LABOUR ROOM</option>
+                <option value="PICU">PICU</option>
+                <option value="EMERGENCY WARD">EMERGENCY WARD</option>
+              </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <label class="ipd-label">Unit / Bed No. *</label>
+                <input type="text" id="ipd-bed-no" required class="ipd-input" placeholder="e.g. GW-101">
+              </div>
+              <div>
+                <label class="ipd-label">File Charge (₹)</label>
+                <input type="number" id="ipd-file-charge" value="100" class="ipd-input">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <label class="ipd-label">Admission Type</label>
+                <select id="ipd-admission-type" class="ipd-input">
+                  <option value="Planned">Planned</option>
+                  <option value="Daycare">Daycare</option>
+                  <option value="Emergency">Emergency</option>
+                </select>
+              </div>
+              <div>
+                <label class="ipd-label">MLC (Medico-Legal)</label>
+                <div style="margin-top: 6px;">
+                  <label style="font-size: 11px; font-weight: 700; color: #dc2626; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="checkbox" id="ipd-is-mlc" style="accent-color: #dc2626; width: 16px; height: 16px;"> MLC Case
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 8px;">
+              <label class="ipd-label">Source of Admission</label>
+              <select id="ipd-source" class="ipd-input">
+                <option value="WALK-IN" selected>WALK-IN</option>
+                <option value="ADV HOARDINGS">ADV HOARDINGS</option>
+                <option value="CAMPS">CAMPS</option>
+                <option value="GOOGLE">GOOGLE</option>
+                <option value="REFERRAL">REFERRAL</option>
+              </select>
+            </div>
+
+            <div style="margin-bottom: 14px;">
+              <label class="ipd-label">Advance Deposit Collected (₹)</label>
+              <input type="number" id="ipd-advance-input" value="0" class="ipd-input" oninput="document.getElementById('ipd-advance-display').innerText = this.value || 0;">
+            </div>
+
+            <button type="submit" style="width: 100%; background: #0f766e; color: white; border: none; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 4px rgba(15,118,110,0.2);">
+              <i class="fa-solid fa-bed-pulse"></i> Confirm IPD Admission
+            </button>
+          </div>
+
+        </div>
+
+      </form>
+
+      <!-- Live Admitted Inpatient Census Table -->
+      <div style="background: #ffffff; border: 1px solid #99f6e4; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(15,118,110,0.05);">
+        <div style="background: #f0fdfa; border-bottom: 1px solid #99f6e4; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 700; color: #0f766e; font-size: 13px;">
+            <i class="fa-solid fa-procedures"></i> Currently Admitted Inpatients (Live Census)
+          </span>
+          <span id="ipd-census-count" style="font-size: 11px; background: #ccfbf1; color: #0f766e; padding: 2px 8px; border-radius: 10px; font-weight: 700;">0 Patients</span>
+        </div>
+        <div style="max-height: 280px; overflow-y: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap;">
+            <thead>
+              <tr style="background: #fafaf9; color: #78716c; border-bottom: 1px solid #e7e5e4; text-transform: uppercase; font-size: 11px;">
+                <th style="padding: 8px 10px; text-align: left;">IPD No.</th>
+                <th style="padding: 8px 10px; text-align: left;">UHID</th>
+                <th style="padding: 8px 12px; text-align: left;">Patient Name</th>
+                <th style="padding: 8px 8px; text-align: center;">Age / Sex</th>
+                <th style="padding: 8px 10px; text-align: left;">Ward / Bed</th>
+                <th style="padding: 8px 10px; text-align: left;">Department & Doctor</th>
+                <th style="padding: 8px 8px; text-align: center;">Status</th>
+                <th style="padding: 8px 10px; text-align: right;">Advance Paid</th>
+                <th style="padding: 8px 10px; text-align: center;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="ipd-census-body">
+              <tr><td colspan="9" style="text-align: center; color: #a8a29e; padding: 30px;">Loading indoor census...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
 
       <!-- PHARMACY MODULE (MARG / PHARMACYPRO STANDARD) -->
       <section id="tab-pharmacy" class="tab-content">
