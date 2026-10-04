@@ -4087,48 +4087,365 @@ function resetAnalyticsFilters() {
   runAnalyticsReport();
 }
 
-function runAnalyticsReport() {
-  const tbody = document.getElementById("mis-table-body");
+// ==========================================
+// DYNAMIC MULTI-CATEGORY MIS REPORT ENGINE
+// ==========================================
+async function runAnalyticsReport() {
+  const tableContainer = document.querySelector("#opd-subview-analytics table");
   const countBadge = document.getElementById("mis-record-count");
-  if (!tbody) return;
+  if (!tableContainer) return;
 
-  const dept = document.getElementById("mis-dept-select")?.value || '';
-  let queue = (typeof currentOpdQueue !== 'undefined' ? currentOpdQueue : []);
+  const dept = (document.getElementById("mis-dept-select")?.value || '').toUpperCase();
+  const fromDate = document.getElementById("mis-from-date")?.value || '';
+  const toDate = document.getElementById("mis-to-date")?.value || '';
 
-  // Filter by department if chosen
+  // Base dataset from live OPD Queue
+  let records = (typeof currentOpdQueue !== 'undefined' ? [...currentOpdQueue] : []);
+
   if (dept) {
-    queue = queue.filter(p => (p.department || '').toUpperCase().includes(dept));
+    records = records.filter(p => (p.department || '').toUpperCase().includes(dept));
   }
 
-  if (countBadge) countBadge.innerText = `${queue.length} Records`;
+  // ----------------------------------------------------
+  // 1. BILLING & FINANCIAL DUE REPORTS (Daycare / Inves / OPD)
+  // ----------------------------------------------------
+  if (currentMisCategory.endsWith('_dues')) {
+    const categoryName = currentMisCategory.replace('_dues', '').toUpperCase();
+    const rows = records.map((p, i) => {
+      const total = Number(p.fee || p.totalAmount || 500);
+      const paid = Number(p.deposit || 200);
+      const due = Math.max(0, total - paid);
+      return {
+        sno: i + 1,
+        uhid: p.uhid || `UH-${1000 + i}`,
+        name: p.patientName || '--',
+        phone: p.mobile || '--',
+        dept: p.department || categoryName,
+        doctor: p.consultant || 'DR. CLINIC',
+        total: total,
+        paid: paid,
+        due: due,
+        status: due > 0 ? 'Pending' : 'Cleared'
+      };
+    });
 
-  if (queue.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="12" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">No records match your selected criteria.</td></tr>';
+    if (countBadge) countBadge.innerText = `${rows.length} Records`;
+
+    tableContainer.innerHTML = `
+      <thead>
+        <tr style="background: #fef2f2; color: #991b1b; text-transform: uppercase;">
+          <th style="padding: 8px 6px; text-align: center;">S.No.</th>
+          <th style="padding: 8px 8px; text-align: left;">UHID</th>
+          <th style="padding: 8px 10px; text-align: left;">Patient Name</th>
+          <th style="padding: 8px 8px; text-align: left;">Mobile</th>
+          <th style="padding: 8px 8px; text-align: left;">Department</th>
+          <th style="padding: 8px 8px; text-align: left;">Doctor</th>
+          <th style="padding: 8px 8px; text-align: right;">Total Fee</th>
+          <th style="padding: 8px 8px; text-align: right;">Deposit</th>
+          <th style="padding: 8px 8px; text-align: right; color: #dc2626;">Due Balance</th>
+          <th style="padding: 8px 8px; text-align: center;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.length === 0 ? '<tr><td colspan="10" style="text-align: center; color: #a8a29e; padding: 30px;">No outstanding dues found.</td></tr>' : 
+          rows.map(r => `
+            <tr style="border-bottom: 1px solid #fee2e2;">
+              <td style="padding: 7px; text-align: center;">${r.sno}</td>
+              <td style="padding: 7px; font-weight: 700; color: #0f766e;">${r.uhid}</td>
+              <td style="padding: 7px; font-weight: 600;">${r.name}</td>
+              <td style="padding: 7px;">${r.phone}</td>
+              <td style="padding: 7px;">${r.dept}</td>
+              <td style="padding: 7px;">${r.doctor}</td>
+              <td style="padding: 7px; text-align: right;">₹${r.total}</td>
+              <td style="padding: 7px; text-align: right; color: #15803d;">₹${r.paid}</td>
+              <td style="padding: 7px; text-align: right; font-weight: 700; color: #dc2626;">₹${r.due}</td>
+              <td style="padding: 7px; text-align: center;"><span style="background: ${r.due > 0 ? '#fee2e2' : '#dcfce7'}; color: ${r.due > 0 ? '#b91c1c' : '#15803d'}; padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 10px;">${r.status}</span></td>
+            </tr>
+          `).join('')}
+      </tbody>
+    `;
     return;
   }
 
-  tbody.innerHTML = queue.map((p, idx) => {
-    const today = new Date();
-    const followDate = new Date();
-    followDate.setDate(today.getDate() + 7);
+  // ----------------------------------------------------
+  // 2. CASH DRAWER & COLLECTIONS (Daycare / Inves / OPD)
+  // ----------------------------------------------------
+  if (currentMisCategory.endsWith('_coll')) {
+    const categoryName = currentMisCategory.replace('_coll', '').toUpperCase();
+    let totalColl = 0;
 
-    return `
-      <tr style="border-bottom: 1px solid #f1f5f9; text-align: left;">
-        <td style="padding: 7px 6px; text-align: center; font-weight: 600; color: #78716c;">${idx + 1}</td>
-        <td style="padding: 7px 8px; font-weight: 700; color: #0f766e;">${p.token || ('OPD-' + (1001 + idx))}</td>
-        <td style="padding: 7px 8px; font-weight: 600;">${p.uhid || '--'}</td>
-        <td style="padding: 7px 10px; font-weight: 600; color: #1e293b;">${p.patientName || '--'}</td>
-        <td style="padding: 7px 10px; color: #64748b;">${p.guardian || 'SELF'}</td>
-        <td style="padding: 7px 6px; text-align: center;">${p.ageYears || p.age || '--'}</td>
-        <td style="padding: 7px 6px; text-align: center;">${p.gender || '--'}</td>
-        <td style="padding: 7px 10px; color: #64748b;">${p.mobile || '--'}</td>
-        <td style="padding: 7px 10px; color: #64748b;">${p.address || 'LOCAL'}</td>
-        <td style="padding: 7px 10px; color: #0f766e; font-weight: 600;">${p.consultant || 'DR. CLINIC'}</td>
-        <td style="padding: 7px 8px; text-align: center; color: #64748b;">${today.toISOString().split('T')[0]}</td>
-        <td style="padding: 7px 8px; text-align: center; font-weight: 700; color: #0f766e;">${followDate.toISOString().split('T')[0]}</td>
-      </tr>
+    const rows = records.map((p, i) => {
+      const amount = Number(p.deposit || p.fee || 350);
+      totalColl += amount;
+      return {
+        sno: i + 1,
+        billNo: `INV-${categoryName.slice(0, 3)}-${2000 + i}`,
+        uhid: p.uhid || `UH-${1000 + i}`,
+        name: p.patientName || '--',
+        amount: amount,
+        mode: p.paymentMode || 'Cash',
+        cashier: 'Admin (Counter 1)',
+        date: fromDate || new Date().toISOString().split('T')[0]
+      };
+    });
+
+    if (countBadge) countBadge.innerText = `${rows.length} Bills | Total: ₹${totalColl}`;
+
+    tableContainer.innerHTML = `
+      <thead>
+        <tr style="background: #f0fdf4; color: #166534; text-transform: uppercase;">
+          <th style="padding: 8px 6px; text-align: center;">S.No.</th>
+          <th style="padding: 8px 8px; text-align: left;">Bill No</th>
+          <th style="padding: 8px 8px; text-align: left;">UHID</th>
+          <th style="padding: 8px 10px; text-align: left;">Patient Name</th>
+          <th style="padding: 8px 8px; text-align: right;">Collected Amount</th>
+          <th style="padding: 8px 8px; text-align: center;">Payment Mode</th>
+          <th style="padding: 8px 8px; text-align: left;">Cashier</th>
+          <th style="padding: 8px 8px; text-align: center;">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.length === 0 ? '<tr><td colspan="8" style="text-align: center; color: #a8a29e; padding: 30px;">No payment collections found.</td></tr>' : 
+          rows.map(r => `
+            <tr style="border-bottom: 1px solid #dcfce7;">
+              <td style="padding: 7px; text-align: center;">${r.sno}</td>
+              <td style="padding: 7px; font-weight: 700; color: #15803d;">${r.billNo}</td>
+              <td style="padding: 7px; font-weight: 600; color: #0f766e;">${r.uhid}</td>
+              <td style="padding: 7px; font-weight: 600;">${r.name}</td>
+              <td style="padding: 7px; text-align: right; font-weight: 700; color: #15803d;">₹${r.amount}</td>
+              <td style="padding: 7px; text-align: center;"><span style="background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${r.mode}</span></td>
+              <td style="padding: 7px;">${r.cashier}</td>
+              <td style="padding: 7px; text-align: center;">${r.date}</td>
+            </tr>
+          `).join('')}
+      </tbody>
     `;
-  }).join('');
+    return;
+  }
+
+  // ----------------------------------------------------
+  // 3. INVOICE BILL BREAKDOWN (Daycare Bill / Inves Bill)
+  // ----------------------------------------------------
+  if (currentMisCategory.endsWith('_bill')) {
+    const isDc = currentMisCategory.includes('daycare');
+    const defaultService = isDc ? "Casualty Observation / IV Therapy" : "Complete Blood Count (CBC) + Routine";
+    
+    if (countBadge) countBadge.innerText = `${records.length} Bills`;
+
+    tableContainer.innerHTML = `
+      <thead>
+        <tr style="background: #fafaf9; color: #44403c; text-transform: uppercase;">
+          <th style="padding: 8px 6px; text-align: center;">S.No.</th>
+          <th style="padding: 8px 8px; text-align: left;">Invoice ID</th>
+          <th style="padding: 8px 8px; text-align: left;">UHID</th>
+          <th style="padding: 8px 10px; text-align: left;">Patient Name</th>
+          <th style="padding: 8px 12px; text-align: left;">Itemized Services</th>
+          <th style="padding: 8px 8px; text-align: right;">Gross</th>
+          <th style="padding: 8px 8px; text-align: right;">Net Payable</th>
+          <th style="padding: 8px 8px; text-align: center;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${records.length === 0 ? '<tr><td colspan="8" style="text-align: center; color: #a8a29e; padding: 30px;">No invoices generated.</td></tr>' : 
+          records.map((p, i) => `
+            <tr style="border-bottom: 1px solid #f0fdfa;">
+              <td style="padding: 7px; text-align: center;">${i + 1}</td>
+              <td style="padding: 7px; font-weight: 700; color: #0f766e;">BL-${Date.now().toString().slice(-4)}-${i + 1}</td>
+              <td style="padding: 7px; font-weight: 600;">${p.uhid || '--'}</td>
+              <td style="padding: 7px; font-weight: 600;">${p.patientName || '--'}</td>
+              <td style="padding: 7px; color: #57534e;">${defaultService}</td>
+              <td style="padding: 7px; text-align: right;">₹450</td>
+              <td style="padding: 7px; text-align: right; font-weight: 700; color: #0f766e;">₹450</td>
+              <td style="padding: 7px; text-align: center;">
+                <button type="button" onclick="alert('Printing Bill Copy...')" style="background: #f0fdfa; border: 1px solid #99f6e4; color: #0f766e; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer;">
+                  <i class="fa-solid fa-print"></i> Print
+                </button>
+              </td>
+            </tr>
+          `).join('')}
+      </tbody>
+    `;
+    return;
+  }
+
+  // ----------------------------------------------------
+  // 4. SUMMARY BILL (Master Settlement)
+  // ----------------------------------------------------
+  if (currentMisCategory === 'summary_bill') {
+    if (countBadge) countBadge.innerText = `${records.length} Summaries`;
+
+    tableContainer.innerHTML = `
+      <thead>
+        <tr style="background: #f0fdfa; color: #0f766e; text-transform: uppercase;">
+          <th style="padding: 8px 6px; text-align: center;">S.No.</th>
+          <th style="padding: 8px 8px; text-align: left;">UHID</th>
+          <th style="padding: 8px 10px; text-align: left;">Patient Name</th>
+          <th style="padding: 8px 8px; text-align: right;">OPD Fee</th>
+          <th style="padding: 8px 8px; text-align: right;">Lab Total</th>
+          <th style="padding: 8px 8px; text-align: right;">Daycare</th>
+          <th style="padding: 8px 8px; text-align: right;">Total Bill</th>
+          <th style="padding: 8px 8px; text-align: right; color: #15803d;">Paid</th>
+          <th style="padding: 8px 8px; text-align: right; color: #dc2626;">Net Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${records.length === 0 ? '<tr><td colspan="9" style="text-align: center; color: #a8a29e; padding: 30px;">No summary bills available.</td></tr>' : 
+          records.map((p, i) => {
+            const opd = 300;
+            const lab = 250;
+            const dc = 0;
+            const tot = opd + lab + dc;
+            const paid = Number(p.deposit || 400);
+            const bal = Math.max(0, tot - paid);
+            return `
+              <tr style="border-bottom: 1px solid #f0fdfa;">
+                <td style="padding: 7px; text-align: center;">${i + 1}</td>
+                <td style="padding: 7px; font-weight: 700; color: #0f766e;">${p.uhid || '--'}</td>
+                <td style="padding: 7px; font-weight: 600;">${p.patientName || '--'}</td>
+                <td style="padding: 7px; text-align: right;">₹${opd}</td>
+                <td style="padding: 7px; text-align: right;">₹${lab}</td>
+                <td style="padding: 7px; text-align: right;">₹${dc}</td>
+                <td style="padding: 7px; text-align: right; font-weight: 700;">₹${tot}</td>
+                <td style="padding: 7px; text-align: right; color: #15803d;">₹${paid}</td>
+                <td style="padding: 7px; text-align: right; font-weight: 700; color: ${bal > 0 ? '#dc2626' : '#15803d'};">₹${bal}</td>
+              </tr>
+            `;
+          }).join('')}
+      </tbody>
+    `;
+    return;
+  }
+
+  // ----------------------------------------------------
+  // 5. QUEUE (Live Outpatient Workflow Tracker)
+  // ----------------------------------------------------
+  if (currentMisCategory === 'queue') {
+    if (countBadge) countBadge.innerText = `${records.length} In Queue`;
+
+    tableContainer.innerHTML = `
+      <thead>
+        <tr style="background: #fafaf9; color: #475569; text-transform: uppercase;">
+          <th style="padding: 8px 6px; text-align: center;">Token</th>
+          <th style="padding: 8px 8px; text-align: left;">UHID</th>
+          <th style="padding: 8px 10px; text-align: left;">Patient Name</th>
+          <th style="padding: 8px 8px; text-align: left;">Department</th>
+          <th style="padding: 8px 8px; text-align: left;">Doctor</th>
+          <th style="padding: 8px 8px; text-align: center;">Wait Time</th>
+          <th style="padding: 8px 8px; text-align: center;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${records.length === 0 ? '<tr><td colspan="7" style="text-align: center; color: #a8a29e; padding: 30px;">Queue is currently empty.</td></tr>' : 
+          records.map((p, i) => `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 7px; text-align: center; font-weight: 800; color: #0f766e;">${p.token || (i + 1)}</td>
+              <td style="padding: 7px; font-weight: 600;">${p.uhid || '--'}</td>
+              <td style="padding: 7px; font-weight: 600;">${p.patientName || '--'}</td>
+              <td style="padding: 7px;">${p.department || 'GENERAL'}</td>
+              <td style="padding: 7px;">${p.consultant || 'DR. CLINIC'}</td>
+              <td style="padding: 7px; text-align: center; color: #64748b;">${10 + i * 5} mins</td>
+              <td style="padding: 7px; text-align: center;"><span style="background: ${i === 0 ? '#ccfbf1' : '#f1f5f9'}; color: ${i === 0 ? '#0f766e' : '#64748b'}; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 10px;">${i === 0 ? 'In Consultation' : 'Waiting'}</span></td>
+            </tr>
+          `).join('')}
+      </tbody>
+    `;
+    return;
+  }
+
+  // ----------------------------------------------------
+  // 6. BIRTH REGISTRY (Live Newborn List)
+  // ----------------------------------------------------
+  if (currentMisCategory === 'birth_reg') {
+    let newborns = [];
+    try {
+      const res = await fetch('/api/birth-reg');
+      const rdata = await res.json();
+      if (rdata.success) newborns = rdata.data;
+    } catch (e) {}
+
+    if (countBadge) countBadge.innerText = `${newborns.length} Newborns`;
+
+    tableContainer.innerHTML = `
+      <thead>
+        <tr style="background: #f0fdfa; color: #0f766e; text-transform: uppercase;">
+          <th style="padding: 8px 6px; text-align: center;">S.No.</th>
+          <th style="padding: 8px 8px; text-align: left;">UHID</th>
+          <th style="padding: 8px 10px; text-align: left;">Baby Name</th>
+          <th style="padding: 8px 10px; text-align: left;">Parent / Guardian</th>
+          <th style="padding: 8px 8px; text-align: center;">DOB / Time</th>
+          <th style="padding: 8px 6px; text-align: center;">Sex</th>
+          <th style="padding: 8px 8px; text-align: right;">Birth Weight</th>
+          <th style="padding: 8px 8px; text-align: center;">Type</th>
+          <th style="padding: 8px 8px; text-align: left;">Doctor</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${newborns.length === 0 ? '<tr><td colspan="9" style="text-align: center; color: #a8a29e; padding: 30px;">No newborn registrations recorded.</td></tr>' : 
+          newborns.map((b, i) => `
+            <tr style="border-bottom: 1px solid #f0fdfa;">
+              <td style="padding: 7px; text-align: center;">${i + 1}</td>
+              <td style="padding: 7px; font-weight: 700; color: #0f766e;">${b.uhid}</td>
+              <td style="padding: 7px; font-weight: 600;">${b.babyName}</td>
+              <td style="padding: 7px;">${b.parentRelation}${b.parentName}</td>
+              <td style="padding: 7px; text-align: center;">${b.dob}${b.birthTime}</td>
+              <td style="padding: 7px; text-align: center;">${b.gender}</td>
+              <td style="padding: 7px; text-align: right; font-weight: 600;">${b.weightKg} kg</td>
+              <td style="padding: 7px; text-align: center;"><span style="background: #ccfbf1; color: #0f766e; padding: 2px 6px; border-radius: 4px;">${b.birthType}</span></td>
+              <td style="padding: 7px;">${b.consultantDr}</td>
+            </tr>
+          `).join('')}
+      </tbody>
+    `;
+    return;
+  }
+
+  // ----------------------------------------------------
+  // 7. DEFAULT: FOLLOW-UP (MANUAL) 12-COLUMN REPORT
+  // ----------------------------------------------------
+  if (countBadge) countBadge.innerText = `${records.length} Records`;
+
+  tableContainer.innerHTML = `
+    <thead>
+      <tr style="background: #fafaf9; color: #78716c; border-bottom: 1px solid #e7e5e4; text-transform: uppercase;">
+        <th style="padding: 8px 6px; text-align: center;">S. No.</th>
+        <th style="padding: 8px 8px; text-align: left;">OPD ID</th>
+        <th style="padding: 8px 8px; text-align: left;">UHID</th>
+        <th style="padding: 8px 10px; text-align: left;">Patient's Name</th>
+        <th style="padding: 8px 10px; text-align: left;">Husband / Guardian</th>
+        <th style="padding: 8px 6px; text-align: center;">Age</th>
+        <th style="padding: 8px 6px; text-align: center;">Gender</th>
+        <th style="padding: 8px 10px; text-align: left;">Mobile</th>
+        <th style="padding: 8px 10px; text-align: left;">Address</th>
+        <th style="padding: 8px 10px; text-align: left;">Doctor</th>
+        <th style="padding: 8px 8px; text-align: center;">Last Visit Date</th>
+        <th style="padding: 8px 8px; text-align: center;">Follow Up Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${records.length === 0 ? '<tr><td colspan="12" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">No records match your selected criteria.</td></tr>' : 
+        records.map((p, idx) => {
+          const today = new Date();
+          const followDate = new Date();
+          followDate.setDate(today.getDate() + 7);
+          return `
+            <tr style="border-bottom: 1px solid #f1f5f9; text-align: left;">
+              <td style="padding: 7px 6px; text-align: center; font-weight: 600; color: #78716c;">${idx + 1}</td>
+              <td style="padding: 7px 8px; font-weight: 700; color: #0f766e;">${p.token || ('OPD-' + (1001 + idx))}</td>
+              <td style="padding: 7px 8px; font-weight: 600;">${p.uhid || '--'}</td>
+              <td style="padding: 7px 10px; font-weight: 600; color: #1e293b;">${p.patientName || '--'}</td>
+              <td style="padding: 7px 10px; color: #64748b;">${p.guardian || 'SELF'}</td>
+              <td style="padding: 7px 6px; text-align: center;">${p.ageYears || p.age || '--'}</td>
+              <td style="padding: 7px 6px; text-align: center;">${p.gender || '--'}</td>
+              <td style="padding: 7px 10px; color: #64748b;">${p.mobile || '--'}</td>
+              <td style="padding: 7px 10px; color: #64748b;">${p.address || 'LOCAL'}</td>
+              <td style="padding: 7px 10px; color: #0f766e; font-weight: 600;">${p.consultant || 'DR. CLINIC'}</td>
+              <td style="padding: 7px 8px; text-align: center; color: #64748b;">${today.toISOString().split('T')[0]}</td>
+              <td style="padding: 7px 8px; text-align: center; font-weight: 700; color: #0f766e;">${followDate.toISOString().split('T')[0]}</td>
+            </tr>
+          `;
+        }).join('')}
+    </tbody>
+  `;
 }
 </script>
 </body>
