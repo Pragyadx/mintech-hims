@@ -2535,6 +2535,9 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     if (tabId === 'opd' && typeof loadOpdQueue === 'function') {
     loadOpdQueue();
   }
+  if (tabId === 'ipd' && typeof loadIpdCensus === 'function') {
+      loadIpdCensus();
+    }
     }
 
     async function registerPatient() {
