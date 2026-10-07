@@ -446,38 +446,12 @@
     <main>
       <header>
         <h2 id="view-title">Department Dashboard</h2>
-        <button onclick="handleLogout()" class="btn btn-secondary" style="padding:6px 12px; font-size:0.85rem;"></button>
+        <button onclick="handleLogout()" class="btn btn-secondary" style="padding:6px 12px">
           <i class="fa-solid fa-arrow-left"></i> Exit to Website
         </button>
       </header>
 
-      <div class="content-area">
-
-        <!-- REGISTRATION SECTION -->
-        <section id="tab-registration" class="tab-content">
-          <div class="card">
-            <div class="card-title"><i class="fa-solid fa-user-plus"></i> Patient Intake & UHID Assignment</div>
-            <div class="form-grid">
-              <div class="form-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="Ramesh Patel" /></div>
-              <div class="form-group"><label>Age</label><input type="number" id="reg-age" placeholder="35" /></div>
-              <div class="form-group"><label>Gender</label>
-                <select id="reg-gender"><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select>
-              </div>
-              <div class="form-group"><label>Phone</label><input type="text" id="reg-phone" placeholder="10-digit mobile" /></div>
-              <div class="form-group"><label>Blood Group</label><input type="text" id="reg-blood" placeholder="B+" /></div>
-            </div>
-            <button class="btn" onclick="registerPatient()"><i class="fa-solid fa-id-card"></i> Issue UHID & Register</button>
-          </div>
-
-          <div class="card">
-            <div class="card-title"><i class="fa-solid fa-magnifying-glass"></i> Master Patient Index (MPI) Lookup</div>
-            <div style="display:flex; gap:12px;">
-              <input type="text" id="lookup-uhid" placeholder="Enter UHID (e.g. UHID-HOSP01-000001)" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
-              <button class="btn btn-secondary" onclick="fetchPatientProfile()"><i class="fa-solid fa-search"></i> Search Profile</button>
-            </div>
-            <div id="patient-lookup-result" style="margin-top:16px;"></div>
-          </div>
-        </section>
+      <!-- OPD Tab Opens HERE (Line 454) -->
 
         <!-- OPD SECTION (MINTECH STANDARD) -->
     <section id="tab-opd" class="tab-content" style="padding: 10px; background: #f1f5f9;"></section>
