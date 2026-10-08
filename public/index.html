@@ -1777,11 +1777,11 @@
   <section id="tab-ipd" class="tab-content" style="padding: 10px 0;">
 
     <!-- Sub-Ribbon Actions -->
-    <div style="display: flex; flex-wrap: wrap; gap: 6px; background: #ffffff; border: 1px solid #99f6e4; padding: 8px 12px; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(15,118,110,0.05);">
-      <button type="button" class="ipd-sub-btn ipd-sub-active"><i class="fa-solid fa-id-card"></i> Registration</button>
-        <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Medicines / Pharmacy Indent...')"><i class="fa-solid fa-pills"></i> Medicines</button>
-        <button type="button" class="ipd-sub-btn" onclick="alert('Opening Ward Nursing Services...')"><i class="fa-solid fa-bell-concierge"></i> Services</button>
-        <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Investigations Requisition...')"><i class="fa-solid fa-vial-virus"></i> Investigation</button>
+   <div style="display: flex; flex-wrap: wrap; gap: 6px; background: #ffffff; border: 1px solid #99f6e4; padding: 8px 12px; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(15,118,110,0.05);">
+  <button type="button" class="ipd-sub-btn ipd-sub-active" onclick="switchIpdSubView('registration', this)"><i class="fa-solid fa-id-card"></i> Registration</button>
+  <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('medicines', this)"><i class="fa-solid fa-pills"></i> Medicines</button>
+  <button type="button" class="ipd-sub-btn" onclick="alert('Opening Ward Nursing Services...')"><i class="fa-solid fa-bell-concierge"></i> Services</button>
+  <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Investigations Requisition...')"><i class="fa-solid fa-vial-virus"></i> Investigation</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Dialysis Scheduler...')"><i class="fa-solid fa-droplet"></i> Dialysis</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Advance Payment Desk...')"><i class="fa-solid fa-cash-register"></i> Payment</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Operation Theatre (OT) Booking...')"><i class="fa-solid fa-syringe"></i> O.T.</button>
@@ -1790,6 +1790,8 @@
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Case Sheet File Manager...')"><i class="fa-solid fa-folder-open"></i> File</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Census & Bed Occupancy MIS...')"><i class="fa-solid fa-chart-pie"></i> MIS</button>
       </div>
+      <!-- IPD SUBVIEW: REGISTRATION -->
+<div id="ipd-subview-registration" class="ipd-subview">
 
       <style>
         .ipd-sub-btn {
@@ -2159,8 +2161,165 @@
           </table>
         </div>
       </div>
+  </div> <!-- Closes ipd-subview-registration -->
 
-    </section>
+  <!-- ======================================================== -->
+  <!-- IPD SUBVIEW: INHOUSE MEDICINES & PHARMACY INDENT        -->
+  <!-- ======================================================== -->
+  <div id="ipd-subview-medicines" class="ipd-subview" style="display: none;">
+    
+    <!-- Header Bar -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 15px; color: #0f766e; font-weight: 700;">Inhouse Medicines</h3>
+        <div id="ipd-med-admission-time" style="font-size: 12px; font-weight: 600; color: #475569;">
+          Date of Admission: <span id="ipd-disp-doa">--</span>
+        </div>
+      </div>
+
+      <!-- Search Controls Bar -->
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 700; color: #1e293b;">Enter IPD :</label>
+          <input type="text" id="ipd-med-search-id" placeholder="3197" style="width: 100px; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; font-weight: 600;">
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 600; color: #475569;">Rate List :</label>
+          <select id="ipd-med-ratelist" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+            <option value="COMMON">COMMON</option>
+            <option value="CGHS">CGHS</option>
+            <option value="PMJAY">PMJAY</option>
+            <option value="CORPORATE">CORPORATE</option>
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 600; color: #475569;">Room Type :</label>
+          <select id="ipd-med-roomtype" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+            <option value="ICU">ICU</option>
+            <option value="GENERAL">General Ward</option>
+            <option value="DELUXE">Private Deluxe</option>
+          </select>
+        </div>
+
+        <button type="button" onclick="searchIpdPatientForMedicines()" style="background: #0f766e; color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+          Search
+        </button>
+
+        <button type="button" onclick="clearIpdMedicineForm()" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+
+      <!-- Patient Meta Summary Pane -->
+      <div style="margin-top: 12px; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 8px;">Patient's Details</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 12px;">
+          <div>
+            <div><strong style="color: #64748b;">IPD No. :</strong> <span id="ipd-med-meta-no" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Occu. :</strong> <span id="ipd-med-meta-bed" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">Name/Age :</strong> <span id="ipd-med-meta-name" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Department :</strong> <span id="ipd-med-meta-dept" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">S/D/W/o :</strong> <span id="ipd-med-meta-guardian" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Doctor :</strong> <span id="ipd-med-meta-doc" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">TPA :</strong> <span id="ipd-med-meta-tpa" style="background: #fef08a; padding: 2px 6px; border-radius: 4px; font-weight: 700; color: #854d0e;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Entry Date :</strong> <span id="ipd-med-meta-date" style="font-weight: 600;">--</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Indent Item Entry & Table Card -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      
+      <!-- Pharma Sub-Category Dropdown -->
+      <div style="margin-bottom: 12px;">
+        <select id="ipd-pharma-category" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; font-weight: 600; width: 260px;">
+          <option value="">-- Select Pharma Type --</option>
+          <option value="OT">OT Medicines &amp; Consumable</option>
+          <option value="WARD" selected>Ward Medicines &amp; Drug</option>
+          <option value="LABOUR">Labour Room Medicines</option>
+          <option value="DISCHARGE">Discharge Medicines</option>
+        </select>
+      </div>
+
+      <!-- Inline Add Row -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr auto; gap: 8px; align-items: end; background: #f0fdfa; padding: 10px; border-radius: 6px; border: 1px solid #ccfbf1; margin-bottom: 12px;">
+        <div>
+          <label style="display: block; font-size: 11px; font-weight: 700; color: #0f766e; margin-bottom: 4px;">MEDICINE NAME</label>
+          <input type="text" id="ipd-item-name" placeholder="Search drug..." style="width: 100%; padding: 5px; border: 1px solid #99f6e4; border-radius: 4px; font-size: 12px;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 11px; font-weight: 700; color: #0f766e; margin-bottom: 4px;">Batch No.</label>
+          <input type="text" id="ipd-item-batch" placeholder="Batch" style="width: 100%; padding: 5px; border: 1px solid #99f6e4; border-radius: 4px; font-size: 12px;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 11px; font-weight: 700; color: #0f766e; margin-bottom: 4px;">Expiry</label>
+          <input type="text" id="ipd-item-exp" placeholder="MM/YY" style="width: 100%; padding: 5px; border: 1px solid #99f6e4; border-radius: 4px; font-size: 12px;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 11px; font-weight: 700; color: #0f766e; margin-bottom: 4px;">Rate</label>
+          <input type="number" id="ipd-item-rate" placeholder="0.00" oninput="recalcIpdRowTotal()" style="width: 100%; padding: 5px; border: 1px solid #99f6e4; border-radius: 4px; font-size: 12px;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 11px; font-weight: 700; color: #0f766e; margin-bottom: 4px;">Quantity</label>
+          <input type="number" id="ipd-item-qty" value="1" oninput="recalcIpdRowTotal()" style="width: 100%; padding: 5px; border: 1px solid #99f6e4; border-radius: 4px; font-size: 12px;">
+        </div>
+        <div>
+          <label style="display: block; font-size: 11px; font-weight: 700; color: #0f766e; margin-bottom: 4px;">Amount (₹)</label>
+          <input type="number" id="ipd-item-amt" readonly placeholder="0.00" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; background: #e2e8f0; border-radius: 4px; font-size: 12px;">
+        </div>
+        <div>
+          <button type="button" onclick="addIpdMedicineRow()" style="background: #0f766e; color: white; border: none; padding: 7px 18px; border-radius: 4px; font-weight: 700; font-size: 12px; cursor: pointer;">
+            Add
+          </button>
+        </div>
+      </div>
+
+      <!-- Staging Table -->
+      <div style="border: 1px solid #0f766e; border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+          <thead style="background: #0f766e; color: #ffffff;">
+            <tr>
+              <th style="padding: 7px 10px; text-align: center; width: 45px;">S.No.</th>
+              <th style="padding: 7px 10px; text-align: left;">Medicine</th>
+              <th style="padding: 7px 10px; text-align: left;">Batch No.</th>
+              <th style="padding: 7px 10px; text-align: center;">Expiry</th>
+              <th style="padding: 7px 10px; text-align: right;">Rate</th>
+              <th style="padding: 7px 10px; text-align: center;">Quantity</th>
+              <th style="padding: 7px 10px; text-align: right;">Amount (₹)</th>
+              <th style="padding: 7px 10px; text-align: center; width: 60px;">Delete</th>
+            </tr>
+          </thead>
+          <tbody id="ipd-med-table-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: #94a3b8; padding: 20px;">No items added to this indent.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Summary Total & Submit Trigger -->
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 13px; font-weight: 700; color: #1e293b;">Total Amount (₹):</span>
+          <input type="text" id="ipd-med-grand-total" value="0.00" readonly style="width: 120px; font-weight: 800; font-size: 14px; text-align: right; padding: 4px 8px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 4px;">
+        </div>
+        <button type="button" onclick="submitIpdMedicineIndent()" style="background: #0f766e; color: white; border: none; padding: 8px 24px; border-radius: 4px; font-weight: 700; font-size: 13px; cursor: pointer;">
+          Submit
+        </button>
+      </div>
+
+    </div>
+  </div> <!-- Closes ipd-subview-medicines -->
+</section> <!-- Closes section#tab-ipd -->
 
       <!-- PHARMACY MODULE (MARG / PHARMACYPRO STANDARD) -->
       <section id="tab-pharmacy" class="tab-content">
