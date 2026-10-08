@@ -3185,6 +3185,41 @@ function switchPharmaView(view) {
     loadPharmacyStock();
   }
 }
+// ==========================================
+  // IPD SUB-RIBBON VIEW SWITCHER
+  // ==========================================
+  window.switchIpdSubView = function(subviewName, btn) {
+    // 1. Hide all IPD subviews
+    document.querySelectorAll('.ipd-subview').forEach(function(el) {
+      el.style.display = 'none';
+    });
+
+    // 2. Remove active state from all ribbon buttons
+    document.querySelectorAll('.ipd-sub-btn').forEach(function(b) {
+      b.classList.remove('ipd-sub-active');
+    });
+
+    // 3. Display the target subview
+    const target = document.getElementById('ipd-subview-' + subviewName);
+    if (target) {
+      target.style.display = 'block';
+    } else {
+      console.warn('IPD subview not found: ipd-subview-' + subviewName);
+    }
+
+    // 4. Highlight the active button
+    if (btn) {
+      btn.classList.add('ipd-sub-active');
+    }
+  };
+
+  // Helper: Recalculate row amount on quantity or rate change
+  window.recalcIpdRowTotal = function() {
+    const rate = parseFloat(document.getElementById('ipd-item-rate').value) || 0;
+    const qty = parseFloat(document.getElementById('ipd-item-qty').value) || 0;
+    const amtField = document.getElementById('ipd-item-amt');
+    if (amtField) amtField.value = (rate * qty).toFixed(2);
+  };
 
 async function loadPharmacyStock() {
   try {
