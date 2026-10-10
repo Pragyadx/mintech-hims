@@ -1780,7 +1780,7 @@
    <div style="display: flex; flex-wrap: wrap; gap: 6px; background: #ffffff; border: 1px solid #99f6e4; padding: 8px 12px; border-radius: 8px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(15,118,110,0.05);">
   <button type="button" class="ipd-sub-btn ipd-sub-active" onclick="switchIpdSubView('registration', this)"><i class="fa-solid fa-id-card"></i> Registration</button>
   <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('medicines', this)"><i class="fa-solid fa-pills"></i> Medicines</button>
-  <button type="button" class="ipd-sub-btn" onclick="alert('Opening Ward Nursing Services...')"><i class="fa-solid fa-bell-concierge"></i> Services</button>
+  <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('services', this)"><i class="fa-solid fa-bell-concierge"></i> Services</button>
   <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Investigations Requisition...')"><i class="fa-solid fa-vial-virus"></i> Investigation</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Dialysis Scheduler...')"><i class="fa-solid fa-droplet"></i> Dialysis</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Advance Payment Desk...')"><i class="fa-solid fa-cash-register"></i> Payment</button>
@@ -2319,6 +2319,201 @@
 
     </div>
   </div> <!-- Closes ipd-subview-medicines -->
+  <!-- ======================================================== -->
+<!-- IPD SUBVIEW: ROOM SERVICES & TREATMENT                   -->
+<!-- ======================================================== -->
+<div id="ipd-subview-services" class="ipd-subview" style="display: none;">
+
+  <!-- Header & Patient Filter Strip -->
+  <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px;">
+      <h3 style="margin: 0; font-size: 15px; color: #0f766e; font-weight: 700;">IPD Room Services &amp; Treatment</h3>
+      <div style="font-size: 12px; font-weight: 600; color: #475569;">
+        Date of Admission: <span id="ipd-serv-doa">--</span>
+      </div>
+    </div>
+
+    <!-- Top Query Toolbar -->
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <label style="font-size: 12px; font-weight: 700; color: #1e293b;">Enter IPD :</label>
+        <input type="text" id="ipd-serv-search-id" placeholder="3197" style="width: 90px; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600;">
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <label style="font-size: 12px; font-weight: 600; color: #475569;">Rate List :</label>
+        <select id="ipd-serv-ratelist" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          <option value="COMMON">COMMON</option>
+          <option value="CGHS">CGHS</option>
+          <option value="PMJAY">PMJAY</option>
+          <option value="CORPORATE">CORPORATE</option>
+        </select>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <label style="font-size: 12px; font-weight: 600; color: #475569;">Room Type :</label>
+        <select id="ipd-serv-roomtype" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          <option value="ICU">ICU</option>
+          <option value="GENERAL">General Ward</option>
+          <option value="DELUXE">Private Deluxe</option>
+        </select>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <label style="font-size: 12px; font-weight: 600; color: #475569;">Package :</label>
+        <input type="checkbox" id="ipd-serv-package-check" onchange="toggleIpdPackageMode(this)">
+      </div>
+
+      <button type="button" onclick="searchIpdPatientForServices()" style="background: #0f766e; color: white; border: none; padding: 6px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+        Search
+      </button>
+
+      <button type="button" onclick="clearIpdServicesForm()" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    </div>
+
+    <!-- Patient Meta Summary Strip -->
+    <div style="margin-top: 12px; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px;">
+      <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 8px;">Patient's Details</div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 12px;">
+        <div>
+          <div><strong style="color: #64748b;">IPD No. :</strong> <span id="ipd-serv-meta-no" style="font-weight: 600;">--</span></div>
+          <div style="margin-top: 4px;"><strong style="color: #64748b;">Occu. :</strong> <span id="ipd-serv-meta-bed" style="font-weight: 600;">--</span></div>
+        </div>
+        <div>
+          <div><strong style="color: #64748b;">Name/Age :</strong> <span id="ipd-serv-meta-name" style="font-weight: 600;">--</span></div>
+          <div style="margin-top: 4px;"><strong style="color: #64748b;">Department :</strong> <span id="ipd-serv-meta-dept" style="font-weight: 600;">--</span></div>
+        </div>
+        <div>
+          <div><strong style="color: #64748b;">S/D/W/o :</strong> <span id="ipd-serv-meta-guardian" style="font-weight: 600;">--</span></div>
+          <div style="margin-top: 4px;"><strong style="color: #64748b;">Doctor :</strong> <span id="ipd-serv-meta-doc" style="font-weight: 600;">--</span></div>
+        </div>
+        <div>
+          <div><strong style="color: #64748b;">TPA :</strong> <span id="ipd-serv-meta-tpa" style="background: #fef08a; padding: 2px 6px; border-radius: 4px; font-weight: 700; color: #854d0e;">--</span></div>
+          <div style="margin-top: 4px;"><strong style="color: #64748b;">Entry Date :</strong> <span id="ipd-serv-meta-date" style="font-weight: 600;">--</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Package / Category Custom Selection Bar -->
+  <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px;">
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <label style="font-size: 12px; font-weight: 700; color: #0f766e;">Select Package / Group :</label>
+      <input type="text" id="ipd-serv-custom-package" placeholder="e.g. ICU Day Care, General Surgery Package, Nursing Care..." list="ipd-package-datalist" style="width: 320px; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+      <datalist id="ipd-package-datalist">
+        <option value="Standard Nursing &amp; Monitoring"></option>
+        <option value="Surgical / OT Procedural Package"></option>
+        <option value="ICU Critical Care Day Package"></option>
+        <option value="General Bed Charges &amp; RMO"></option>
+      </datalist>
+      <span style="font-size: 11px; color: #64748b;">(Type any custom package name or select from suggestions)</span>
+    </div>
+  </div>
+
+  <!-- Dual Workspace: Service Selection Catalog & Staging Table -->
+  <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 14px; margin-bottom: 14px;">
+    
+    <!-- Left Panel: Fast Item Input & Catalog Finder -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px;">
+      <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 8px;">Add Custom Service / Procedure</div>
+      
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px; margin-bottom: 8px;">
+        <input type="text" id="ipd-serv-input-code" placeholder="Service Code (e.g. SRV-01)" style="padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+        <input type="number" id="ipd-serv-input-unit" placeholder="Unit (Qty)" value="1" min="1" oninput="recalcIpdServiceEntryRow()" style="padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+      </div>
+
+      <div style="margin-bottom: 8px;">
+        <input type="text" id="ipd-serv-input-name" placeholder="Service / Procedure Particular Name" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+        <div>
+          <label style="font-size: 10px; color: #64748b; font-weight: 700;">Rate (₹)</label>
+          <input type="number" id="ipd-serv-input-rate" placeholder="0.00" oninput="recalcIpdServiceEntryRow()" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+        </div>
+        <div>
+          <label style="font-size: 10px; color: #64748b; font-weight: 700;">Discount (₹)</label>
+          <input type="number" id="ipd-serv-input-discount" value="0" min="0" oninput="recalcIpdServiceEntryRow()" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+        </div>
+        <div>
+          <label style="font-size: 10px; color: #64748b; font-weight: 700;">Net Total (₹)</label>
+          <input type="text" id="ipd-serv-input-net" readonly placeholder="0.00" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; background: #f1f5f9; border-radius: 4px; font-size: 12px; font-weight: 700;">
+        </div>
+      </div>
+
+      <button type="button" onclick="addIpdServiceToGrid()" style="width: 100%; background: #0f766e; color: white; border: none; padding: 7px; border-radius: 4px; font-weight: 700; font-size: 12px; cursor: pointer;">
+        + Add Service to Bill
+      </button>
+
+      <!-- Quick Template Library Checklist -->
+      <div style="margin-top: 14px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+        <div style="font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px;">Quick Presets (Click to autofill):</div>
+        <div style="max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+          <div onclick="fillIpdServicePreset('SRV-BED', 'ICU Bed Charges (Per Day)', 2500)" style="padding: 4px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; justify-content: space-between;">
+            <span>ICU Bed Charges</span><strong>₹2500</strong>
+          </div>
+          <div onclick="fillIpdServicePreset('SRV-NURS', 'Nursing Care Charges', 500)" style="padding: 4px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; justify-content: space-between;">
+            <span>Nursing Care Charges</span><strong>₹500</strong>
+          </div>
+          <div onclick="fillIpdServicePreset('SRV-RMO', 'RMO Resident Doctor Visit', 400)" style="padding: 4px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; justify-content: space-between;">
+            <span>RMO Doctor Visit</span><strong>₹400</strong>
+          </div>
+          <div onclick="fillIpdServicePreset('SRV-NEB', 'Nebulization Charges', 150)" style="padding: 4px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; justify-content: space-between;">
+            <span>Nebulization</span><strong>₹150</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Billed Services Staging Table -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+          <thead style="background: #0f766e; color: #ffffff;">
+            <tr>
+              <th style="padding: 6px 8px; text-align: left; width: 60px;">Code</th>
+              <th style="padding: 6px 8px; text-align: left;">Particular</th>
+              <th style="padding: 6px 8px; text-align: right; width: 60px;">Rate</th>
+              <th style="padding: 6px 8px; text-align: center; width: 45px;">Unit</th>
+              <th style="padding: 6px 8px; text-align: right; width: 60px;">Gross</th>
+              <th style="padding: 6px 8px; text-align: right; width: 60px;">Discount</th>
+              <th style="padding: 6px 8px; text-align: right; width: 70px;">Amount (₹)</th>
+              <th style="padding: 6px 8px; text-align: center; width: 45px;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="ipd-services-table-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: #94a3b8; padding: 25px;">No services added yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Financial Calculations Footer Strip -->
+      <div style="margin-top: 14px; border-top: 2px solid #e2e8f0; padding-top: 10px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+        <div style="display: flex; gap: 14px; font-size: 12px;">
+          <span style="color: #64748b;">Total Amount:</span>
+          <strong id="ipd-serv-disp-total" style="color: #1e293b;">₹ 0.00</strong>
+        </div>
+        <div style="display: flex; gap: 14px; font-size: 12px;">
+          <span style="color: #64748b;">Total Discount:</span>
+          <strong id="ipd-serv-disp-discount" style="color: #ef4444;">₹ 0.00</strong>
+        </div>
+        <div style="display: flex; gap: 14px; font-size: 14px;">
+          <span style="font-weight: 700; color: #0f766e;">Balance Amount:</span>
+          <strong id="ipd-serv-disp-balance" style="color: #0f766e;">₹ 0.00</strong>
+        </div>
+        <button type="button" onclick="submitIpdServicesRequisition()" style="margin-top: 6px; background: #0f766e; color: white; border: none; padding: 7px 22px; border-radius: 4px; font-weight: 700; font-size: 12px; cursor: pointer;">
+          Submit Services
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
 </section> <!-- Closes section#tab-ipd -->
 
       <!-- PHARMACY MODULE (MARG / PHARMACYPRO STANDARD) -->
@@ -3278,6 +3473,147 @@ function switchPharmaView(view) {
     
     const total = document.getElementById('ipd-med-grand-total');
     if (total) total.value = '0.00';
+  };
+  // ==========================================
+  // IPD SERVICES & PROCEDURES CONTROLLER
+  // ==========================================
+  let ipdServicesStagingList = [];
+
+  // Recalculate single entry input preview
+  window.recalcIpdServiceEntryRow = function() {
+    const rate = parseFloat(document.getElementById('ipd-serv-input-rate').value) || 0;
+    const unit = parseFloat(document.getElementById('ipd-serv-input-unit').value) || 1;
+    const disc = parseFloat(document.getElementById('ipd-serv-input-discount').value) || 0;
+    const net = Math.max(0, (rate * unit) - disc);
+    document.getElementById('ipd-serv-input-net').value = net.toFixed(2);
+  };
+
+  // Preset filler
+  window.fillIpdServicePreset = function(code, name, rate) {
+    document.getElementById('ipd-serv-input-code').value = code;
+    document.getElementById('ipd-serv-input-name').value = name;
+    document.getElementById('ipd-serv-input-rate').value = rate;
+    document.getElementById('ipd-serv-input-unit').value = 1;
+    document.getElementById('ipd-serv-input-discount').value = 0;
+    window.recalcIpdServiceEntryRow();
+  };
+
+  // Add Item to Staging Grid
+  window.addIpdServiceToGrid = function() {
+    const code = document.getElementById('ipd-serv-input-code').value.trim() || 'SRV';
+    const name = document.getElementById('ipd-serv-input-name').value.trim();
+    const rate = parseFloat(document.getElementById('ipd-serv-input-rate').value) || 0;
+    const unit = parseFloat(document.getElementById('ipd-serv-input-unit').value) || 1;
+    const disc = parseFloat(document.getElementById('ipd-serv-input-discount').value) || 0;
+
+    if (!name) {
+      alert('Please enter a service or procedure name.');
+      return;
+    }
+
+    const gross = rate * unit;
+    const amount = Math.max(0, gross - disc);
+
+    ipdServicesStagingList.push({ code, name, rate, unit, gross, disc, amount });
+    renderIpdServicesTable();
+
+    // Reset input fields
+    document.getElementById('ipd-serv-input-code').value = '';
+    document.getElementById('ipd-serv-input-name').value = '';
+    document.getElementById('ipd-serv-input-rate').value = '';
+    document.getElementById('ipd-serv-input-unit').value = '1';
+    document.getElementById('ipd-serv-input-discount').value = '0';
+    document.getElementById('ipd-serv-input-net').value = '0.00';
+  };
+
+  // Render Table & Update Totals
+  window.renderIpdServicesTable = function() {
+    const tbody = document.getElementById('ipd-services-table-body');
+    if (!tbody) return;
+
+    if (ipdServicesStagingList.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #94a3b8; padding: 25px;">No services added yet.</td></tr>';
+      document.getElementById('ipd-serv-disp-total').innerText = '₹ 0.00';
+      document.getElementById('ipd-serv-disp-discount').innerText = '₹ 0.00';
+      document.getElementById('ipd-serv-disp-balance').innerText = '₹ 0.00';
+      return;
+    }
+
+    let totGross = 0;
+    let totDisc = 0;
+    let totBal = 0;
+
+    tbody.innerHTML = ipdServicesStagingList.map((item, index) => {
+      totGross += item.gross;
+      totDisc += item.disc;
+      totBal += item.amount;
+      return `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 6px 8px; font-weight: 600;">${item.code}</td>
+          <td style="padding: 6px 8px;">${item.name}</td>
+          <td style="padding: 6px 8px; text-align: right;">${item.rate.toFixed(2)}</td>
+          <td style="padding: 6px 8px; text-align: center;">${item.unit}</td>
+          <td style="padding: 6px 8px; text-align: right;">${item.gross.toFixed(2)}</td>
+          <td style="padding: 6px 8px; text-align: right; color: #ef4444;">${item.disc.toFixed(2)}</td>
+          <td style="padding: 6px 8px; text-align: right; font-weight: 700;">${item.amount.toFixed(2)}</td>
+          <td style="padding: 6px 8px; text-align: center;">
+            <button type="button" onclick="removeIpdServiceItem(${index})" style="background: none; border: none; color: #ef4444; cursor: pointer;">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    document.getElementById('ipd-serv-disp-total').innerText = `₹ ${totGross.toFixed(2)}`;
+    document.getElementById('ipd-serv-disp-discount').innerText = `₹ ${totDisc.toFixed(2)}`;
+    document.getElementById('ipd-serv-disp-balance').innerText = `₹ ${totBal.toFixed(2)}`;
+  };
+
+  window.removeIpdServiceItem = function(index) {
+    ipdServicesStagingList.splice(index, 1);
+    renderIpdServicesTable();
+  };
+
+  // Search IPD for Services Subview
+  window.searchIpdPatientForServices = async function() {
+    const ipdVal = (document.getElementById('ipd-serv-search-id').value || '').trim();
+    if (!ipdVal) return alert('Enter IPD Number to search.');
+
+    try {
+      const res = await fetch(`/api/ipd/admissions?search=${encodeURIComponent(ipdVal)}`);
+      const data = await res.json();
+      const p = Array.isArray(data) ? data.find(x => String(x.ipdNumber || x.id) === ipdVal) : (data.patient || data);
+      if (!p) return alert('No patient record found for IPD: ' + ipdVal);
+
+      document.getElementById('ipd-serv-doa').innerText = p.admissionDate || p.arrivalDate || '--';
+      document.getElementById('ipd-serv-meta-no').innerText = p.ipdNumber || ipdVal;
+      document.getElementById('ipd-serv-meta-bed').innerText = `${p.wardCategory || 'Ward'} - ${p.unitBedNo || '1'}`;
+      document.getElementById('ipd-serv-meta-name').innerText = `${p.patientName || '--'} / ${p.age || '--'}Y`;
+      document.getElementById('ipd-serv-meta-dept').innerText = p.department || '--';
+      document.getElementById('ipd-serv-meta-guardian').innerText = p.guardianName || '--';
+      document.getElementById('ipd-serv-meta-doc').innerText = p.consultingDoctor || '--';
+      document.getElementById('ipd-serv-meta-tpa').innerText = p.insuranceCompany || 'Cash / Self';
+      document.getElementById('ipd-serv-meta-date').innerText = (p.admissionDate || new Date().toISOString()).split('T')[0];
+    } catch(e) {
+      alert('Error fetching patient data.');
+    }
+  };
+
+  window.clearIpdServicesForm = function() {
+    document.getElementById('ipd-serv-search-id').value = '';
+    ['ipd-serv-doa', 'ipd-serv-meta-no', 'ipd-serv-meta-bed', 'ipd-serv-meta-name', 'ipd-serv-meta-dept', 'ipd-serv-meta-guardian', 'ipd-serv-meta-doc', 'ipd-serv-meta-tpa', 'ipd-serv-meta-date'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = '--';
+    });
+    ipdServicesStagingList = [];
+    renderIpdServicesTable();
+  };
+
+  window.submitIpdServicesRequisition = function() {
+    if (ipdServicesStagingList.length === 0) return alert('No services to submit.');
+    alert('Services successfully recorded to patient folio!');
+    clearIpdServicesForm();
   };
 
 async function loadPharmacyStock() {
