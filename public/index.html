@@ -1782,7 +1782,7 @@
   <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('medicines', this)"><i class="fa-solid fa-pills"></i> Medicines</button>
   <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('services', this)"><i class="fa-solid fa-bell-concierge"></i> Services</button>
   <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Investigations Requisition...')"><i class="fa-solid fa-vial-virus"></i> Investigation</button>
-        <button type="button" class="ipd-sub-btn" onclick="alert('Opening Dialysis Scheduler...')"><i class="fa-solid fa-droplet"></i> Dialysis</button>
+        <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('dialysis', this)"><i class="fa-solid fa-droplet"></i> Dialysis</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Advance Payment Desk...')"><i class="fa-solid fa-cash-register"></i> Payment</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Operation Theatre (OT) Booking...')"><i class="fa-solid fa-syringe"></i> O.T.</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Patient Discharge Clearance...')"><i class="fa-solid fa-door-open"></i> Discharge</button>
@@ -2514,6 +2514,249 @@
   </div>
 
 </div>
+<!-- ======================================================== -->
+<!-- IPD SUBVIEW: HEMODIALYSIS CLINICAL CHART                 -->
+<!-- ======================================================== -->
+<div id="ipd-subview-dialysis" class="ipd-subview" style="display: none;">
+
+  <!-- Header & IPD Lookup Strip -->
+  <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px;">
+      <h3 style="margin: 0; font-size: 15px; color: #0f766e; font-weight: 700;">IPD Details &amp; Dialysis Unit</h3>
+      <div style="font-size: 12px; font-weight: 600; color: #475569;">
+        Date of Admission: <span id="ipd-dial-doa">--</span>
+      </div>
+    </div>
+
+    <!-- Query Bar -->
+    <div style="display: flex; gap: 12px; align-items: center; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+      <label style="font-size: 12px; font-weight: 700; color: #1e293b;">Enter IPD No. :</label>
+      <input type="text" id="ipd-dial-search-id" placeholder="IPD No" style="width: 120px; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; font-weight: 600; background: #fef08a;">
+      <button type="button" onclick="searchIpdPatientForDialysis()" style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+        Submit
+      </button>
+      <button type="button" onclick="clearIpdDialysisForm()" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    </div>
+
+    <!-- Patient Meta Matrix -->
+    <div style="margin-top: 12px; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px;">
+      <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 8px;">Patient's Details</div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 12px;">
+        <div>
+          <div><strong style="color: #64748b;">IPD No. :</strong> <span id="ipd-dial-meta-no" style="font-weight: 600;">--</span></div>
+          <div style="margin-top: 4px;"><strong style="color: #64748b;">Occupancy :</strong> <span id="ipd-dial-meta-occu" style="font-weight: 600;">--</span></div>
+        </div>
+        <div>
+          <div><strong style="color: #64748b;">Name :</strong> <span id="ipd-dial-meta-name" style="font-weight: 600;">--</span></div>
+          <div style="margin-top: 4px;"><strong style="color: #64748b;">Room / Bed :</strong> <span id="ipd-dial-meta-room" style="font-weight: 600;">--</span></div>
+        </div>
+        <div>
+          <div><strong style="color: #64748b;">Father/Husband :</strong> <span id="ipd-dial-meta-father" style="font-weight: 600;">--</span></div>
+          <div style="margin-top: 4px;"><strong style="color: #64748b;">Department :</strong> <span id="ipd-dial-meta-dept" style="font-weight: 600;">--</span></div>
+        </div>
+        <div>
+          <div><strong style="color: #64748b;">Age/Gender :</strong> <span id="ipd-dial-meta-age-gen" style="font-weight: 600;">--</span></div>
+          <div style="margin-top: 4px;"><strong style="color: #64748b;">Consultant :</strong> <span id="ipd-dial-meta-doc" style="font-weight: 600;">--</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dialysis Clinical Chart Sheet -->
+  <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <div style="background: #f1f5f9; padding: 6px 12px; border-radius: 4px; font-weight: 700; color: #0f766e; font-size: 13px; margin-bottom: 12px; border-left: 4px solid #0f766e;">
+      Dialysis Chart
+    </div>
+
+    <!-- 4-Column Clinical Parameters Grid -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; font-size: 12px;">
+      
+      <!-- Row 1 -->
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Date of Initiation:</label>
+        <input type="date" id="dial-init-date" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Frequency:</label>
+        <input type="text" id="dial-freq" placeholder="e.g. 2x / Week" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Panel / TPA:</label>
+        <input type="text" id="dial-panel" placeholder="Cash / TPA" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Dialysis No:</label>
+        <input type="text" id="dial-session-no" placeholder="e.g. HD-104" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+
+      <!-- Row 2 -->
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Machine:</label>
+        <input type="text" id="dial-machine" placeholder="Machine No / Model" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Station:</label>
+        <input type="text" id="dial-station" placeholder="Station / Bed" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Technical Incharge:</label>
+        <input type="text" id="dial-incharge" placeholder="Technician Name" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Technical Puncturing:</label>
+        <input type="text" id="dial-puncturing" placeholder="Staff Name" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+
+      <!-- Row 3 -->
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Hepatitis Status / Date:</label>
+        <input type="text" id="dial-hep-status" placeholder="Negative / Non-Reactive" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Technical Detaching:</label>
+        <input type="text" id="dial-detaching" placeholder="Staff Name" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Target Weight (KGS):</label>
+        <input type="number" step="0.1" id="dial-target-wt" placeholder="kg" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Pre HD Weight (KGS):</label>
+        <input type="number" step="0.1" id="dial-pre-wt" placeholder="kg" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+
+      <!-- Row 4 -->
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Ultra Filtration Order (Ltr):</label>
+        <input type="text" id="dial-uf-order" placeholder="UF Order" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Post HD Weight (KGS):</label>
+        <input type="number" step="0.1" id="dial-post-wt" placeholder="kg" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Dialyser:</label>
+        <input type="text" id="dial-dialyser" placeholder="e.g. FX 80 / F6" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Reuse No.:</label>
+        <input type="text" id="dial-reuse" placeholder="e.g. 1st / New" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+
+      <!-- Row 5 -->
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Vascular Access:</label>
+        <input type="text" id="dial-access" placeholder="AV Fistula / Permcath / Femoral" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Complication:</label>
+        <input type="text" id="dial-complication" placeholder="None / Hypotension / Cramps" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Heparin (IU):</label>
+        <input type="text" id="dial-heparin" placeholder="e.g. 5000 IU" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Potassium (MEQ/L):</label>
+        <input type="text" id="dial-potassium" placeholder="MEQ/L" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+
+      <!-- Row 6 -->
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Calcium (MEQ/L):</label>
+        <input type="text" id="dial-calcium" placeholder="MEQ/L" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Profiling / Sodium (MEQ/L):</label>
+        <input type="text" id="dial-sodium" placeholder="MEQ/L" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Blood Flow (MLS/MIN):</label>
+        <input type="text" id="dial-bloodflow" placeholder="e.g. 250 - 300" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Dialysis Flow &amp; Temp:</label>
+        <input type="text" id="dial-flow-temp" placeholder="500 MLS/MIN &amp; 36.5 C" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+
+      <!-- Row 7 -->
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Duration (Hours):</label>
+        <input type="text" id="dial-duration" placeholder="e.g. 4 Hours" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Kt/V:</label>
+        <input type="text" id="dial-ktv" placeholder="e.g. 1.2" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Pre HD Investigations:</label>
+        <input type="text" id="dial-pre-inv" placeholder="Urea, Creatinine, Electrolytes" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div>
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Post HD Investigations:</label>
+        <input type="text" id="dial-post-inv" placeholder="Post HD Urea, CBC" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+
+      <!-- Row 8 -->
+      <div style="grid-column: span 2;">
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Pre HD Injection / Medication:</label>
+        <input type="text" id="dial-pre-inj" placeholder="Inj Heparin, Pre-medications..." style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+      <div style="grid-column: span 2;">
+        <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Post HD Injection / Medication:</label>
+        <input type="text" id="dial-post-inj" placeholder="Inj EPO, Iron Sucrose, Antibiotics..." style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+      </div>
+<!-- Sequential Intra-Dialytic Blood Pressure Checks -->
+        <div>
+          <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Blood Pressure 1 (mm of Hg):</label>
+          <input type="text" id="dial-bp-1" placeholder="120/80" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Blood Pressure 2 (mm of Hg):</label>
+          <input type="text" id="dial-bp-2" placeholder="120/80" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Blood Pressure 3 (mm of Hg):</label>
+          <input type="text" id="dial-bp-3" placeholder="110/70" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 3px;">Blood Pressure 4 (mm of Hg):</label>
+          <input type="text" id="dial-bp-4" placeholder="120/80" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        </div>
+
+      </div> <!-- Closes the 4-column parameters grid -->
+
+      <!-- Clinical Observations & Professional Notes Section -->
+      <div style="margin-top: 14px; border-top: 1px solid #cbd5e1; padding-top: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+        
+        <div style="display: grid; grid-template-columns: 180px 1fr; align-items: center; gap: 8px;">
+          <label style="font-weight: 600; color: #334155;">Doctor Notes / Comments :</label>
+          <input type="text" id="dial-doc-notes" placeholder="Enter consulting doctor's observations or instructions..." style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 180px 1fr; align-items: center; gap: 8px;">
+          <label style="font-weight: 600; color: #334155;">RMO Notes / Comments :</label>
+          <input type="text" id="dial-rmo-notes" placeholder="Enter Resident Medical Officer notes..." style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 180px 1fr; align-items: center; gap: 8px;">
+          <label style="font-weight: 600; color: #334155;">Technician Notes / Comments :</label>
+          <input type="text" id="dial-tech-notes" placeholder="Enter dialysis technician comments or machine notes..." style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        </div>
+
+      </div>
+
+      <!-- Submit Trigger -->
+      <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+        <button type="button" onclick="saveIpdDialysisSession()" style="background: #0f766e; color: white; border: none; padding: 8px 30px; border-radius: 4px; font-weight: 700; font-size: 13px; cursor: pointer;">
+          Submit
+        </button>
+      </div>
+
+    </div> <!-- Closes Dialysis Clinical Chart Sheet Card -->
+  </div> <!-- Closes ipd-subview-dialysis -->
 </section> <!-- Closes section#tab-ipd -->
 
       <!-- PHARMACY MODULE (MARG / PHARMACYPRO STANDARD) -->
@@ -3614,6 +3857,56 @@ function switchPharmaView(view) {
     if (ipdServicesStagingList.length === 0) return alert('No services to submit.');
     alert('Services successfully recorded to patient folio!');
     clearIpdServicesForm();
+  };
+  // ==========================================
+  // IPD DIALYSIS SUBVIEW CONTROLLER
+  // ==========================================
+  window.searchIpdPatientForDialysis = async function() {
+    const ipdVal = (document.getElementById('ipd-dial-search-id').value || '').trim();
+    if (!ipdVal) return alert('Please enter an IPD Number to search.');
+
+    try {
+      const res = await fetch(`/api/ipd/admissions?search=${encodeURIComponent(ipdVal)}`);
+      const data = await res.json();
+      const p = Array.isArray(data) ? data.find(x => String(x.ipdNumber || x.id) === ipdVal) : (data.patient || data);
+      
+      if (!p) return alert('No inpatient record found for IPD No: ' + ipdVal);
+
+      document.getElementById('ipd-dial-doa').innerText = p.admissionDate || p.arrivalDate || '--';
+      document.getElementById('ipd-dial-meta-no').innerText = p.ipdNumber || ipdVal;
+      document.getElementById('ipd-dial-meta-occu').innerText = `${p.wardCategory || 'Ward'} - Bed ${p.unitBedNo || '1'}`;
+      document.getElementById('ipd-dial-meta-name').innerText = p.patientName || '--';
+      document.getElementById('ipd-dial-meta-room').innerText = `${p.wardCategory || '--'} / Bed: ${p.unitBedNo || '--'}`;
+      document.getElementById('ipd-dial-meta-father').innerText = p.guardianName || p.relativeName || '--';
+      document.getElementById('ipd-dial-meta-dept').innerText = p.department || 'Nephrology / Dialysis';
+      document.getElementById('ipd-dial-meta-age-gen').innerText = `${p.age || '--'} Y / ${p.gender || '--'}`;
+      document.getElementById('ipd-dial-meta-doc').innerText = p.consultingDoctor ? `Dr. ${p.consultingDoctor}` : '--';
+      document.getElementById('dial-panel').value = p.insuranceCompany || p.billingMode || 'Cash';
+    } catch(err) {
+      console.error(err);
+      alert('Error fetching patient details for Dialysis.');
+    }
+  };
+
+  window.clearIpdDialysisForm = function() {
+    // Clear display tags
+    ['ipd-dial-doa', 'ipd-dial-meta-no', 'ipd-dial-meta-occu', 'ipd-dial-meta-name', 
+     'ipd-dial-meta-room', 'ipd-dial-meta-father', 'ipd-dial-meta-dept', 
+     'ipd-dial-meta-age-gen', 'ipd-dial-meta-doc'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = '--';
+    });
+
+    // Reset all input fields inside the dialysis subview
+    document.querySelectorAll('#ipd-subview-dialysis input').forEach(inp => {
+      if (inp.type !== 'button') inp.value = '';
+    });
+  };
+
+  window.saveIpdDialysisSession = function() {
+    const ipd = document.getElementById('ipd-dial-meta-no').innerText;
+    if (!ipd || ipd === '--') return alert('Please search and select a patient first.');
+    alert('Dialysis chart session recorded successfully!');
   };
 
 async function loadPharmacyStock() {
