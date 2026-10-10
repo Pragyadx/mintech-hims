@@ -1783,7 +1783,7 @@
   <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('services', this)"><i class="fa-solid fa-bell-concierge"></i> Services</button>
   <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('investigation', this)"><i class="fa-solid fa-microscope"></i> Investigation</button>
         <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('dialysis', this)"><i class="fa-solid fa-droplet"></i> Dialysis</button>
-        <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Advance Payment Desk...')"><i class="fa-solid fa-cash-register"></i> Payment</button>
+        <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('payment', this)"><i class="fa-solid fa-money-bill-wave"></i> Payment</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Operation Theatre (OT) Booking...')"><i class="fa-solid fa-syringe"></i> O.T.</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Patient Discharge Clearance...')"><i class="fa-solid fa-door-open"></i> Discharge</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Interim/Final Billing...')"><i class="fa-solid fa-receipt"></i> Billing</button>
@@ -2956,6 +2956,170 @@
         </div>
       </div>
 
+    </div>
+
+  </div>
+  <!-- ======================================================== -->
+  <!-- IPD SUBVIEW: PAYMENT, ADVANCE & DEPOSIT MODULE           -->
+  <!-- ======================================================== -->
+  <div id="ipd-subview-payment" class="ipd-subview" style="display: none;">
+
+    <!-- Top Card: Payment Details & Account Summary -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 15px; color: #0f766e; font-weight: 700;">IPD Payment Details &amp; Advance Collection</h3>
+        <div style="font-size: 12px; font-weight: 600; color: #475569;">
+          Date of Admission: <span id="ipd-pay-doa">--</span>
+        </div>
+      </div>
+
+      <!-- Search Toolbar -->
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 700; color: #1e293b;">Enter IPD No. :</label>
+          <input type="text" id="ipd-pay-search-id" placeholder="3197" style="width: 110px; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600; background: #fef08a;">
+        </div>
+
+        <button type="button" onclick="searchIpdPatientForPayment()" style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+          Submit
+        </button>
+
+        <button type="button" onclick="clearIpdPaymentForm()" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+
+      <!-- Patient Demographics and Live Folio Ledger Badges -->
+      <div style="margin-top: 12px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 14px; align-items: center;">
+        
+        <!-- Patient Meta Details -->
+        <div style="padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px;">
+          <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 6px;">Patient's Details</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+            <div><strong style="color: #64748b;">Name:</strong> <span id="ipd-pay-meta-name" style="font-weight: 600;">--</span></div>
+            <div><strong style="color: #64748b;">S/D/W Of:</strong> <span id="ipd-pay-meta-guardian" style="font-weight: 600;">--</span></div>
+            <div><strong style="color: #64748b;">Age/Gen:</strong> <span id="ipd-pay-meta-age-gen" style="font-weight: 600;">--</span></div>
+          </div>
+        </div>
+
+        <!-- Real-Time Accounting Balance Strip -->
+        <div style="background: #0f766e; color: white; border-radius: 6px; padding: 8px 12px; display: grid; grid-template-columns: repeat(5, 1fr); text-align: center; font-size: 11px;">
+          <div style="border-right: 1px solid rgba(255,255,255,0.2); padding: 2px;">
+            <div style="opacity: 0.85;">Bill:</div>
+            <strong id="ipd-pay-disp-bill" style="font-size: 13px;">Rs. 0</strong>
+          </div>
+          <div style="border-right: 1px solid rgba(255,255,255,0.2); padding: 2px;">
+            <div style="opacity: 0.85;">Discount:</div>
+            <strong id="ipd-pay-disp-disc" style="font-size: 13px;">Rs. 0</strong>
+          </div>
+          <div style="border-right: 1px solid rgba(255,255,255,0.2); padding: 2px;">
+            <div style="opacity: 0.85;">Deduction:</div>
+            <strong id="ipd-pay-disp-deduct" style="font-size: 13px;">Rs. 0</strong>
+          </div>
+          <div style="border-right: 1px solid rgba(255,255,255,0.2); padding: 2px;">
+            <div style="opacity: 0.85;">Deposit:</div>
+            <strong id="ipd-pay-disp-deposit" style="font-size: 13px;">Rs. 0</strong>
+          </div>
+          <div style="padding: 2px;">
+            <div style="opacity: 0.85;">Due:</div>
+            <strong id="ipd-pay-disp-due" style="font-size: 13px; color: #fef08a;">Rs. 0</strong>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Middle Card: Deposit / Refund Transaction Form -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="background: #f1f5f9; padding: 6px 12px; border-radius: 4px; font-weight: 700; color: #0f766e; font-size: 13px; margin-bottom: 12px; border-left: 4px solid #0f766e;">
+        Deposit Amount
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; font-size: 12px; align-items: center;">
+        
+        <!-- Column 1: Date & Refund -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 70px; font-weight: 600; color: #475569;">Date :</label>
+            <input type="date" id="ipd-pay-date" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; flex: 1;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; background: #fef08a; padding: 5px 8px; border-radius: 4px;">
+            <label style="font-weight: 700; color: #854d0e;">Refund :</label>
+            <input type="checkbox" id="ipd-pay-refund-check" style="cursor: pointer; width: 16px; height: 16px;">
+          </div>
+        </div>
+
+        <!-- Column 2: Time & Mode -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 70px; font-weight: 600; color: #475569;">Time :</label>
+            <input type="text" id="ipd-pay-time" placeholder="HH:MM:SS" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; flex: 1;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 70px; font-weight: 600; color: #475569;">Mode :</label>
+            <select id="ipd-pay-mode" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; flex: 1;">
+              <option value="Cash">Cash</option>
+              <option value="Cheque">Cheque</option>
+              <option value="Online">Online / UPI</option>
+              <option value="Card Swipe">Card Swipe</option>
+              <option value="TPA">TPA / Panel</option>
+              <option value="Complimentary">Complimentary</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Column 3: Amount & Details -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 70px; font-weight: 600; color: #475569;">Amount :</label>
+            <input type="number" id="ipd-pay-amount" placeholder="Amount (₹)" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; flex: 1; font-weight: 700;">
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="width: 70px; font-weight: 600; color: #475569;">Details :</label>
+            <input type="text" id="ipd-pay-details" placeholder="Ref/Txn No, Bank, Remarks" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; flex: 1;">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Button Row -->
+      <div style="margin-top: 14px; display: flex; justify-content: flex-end;">
+        <button type="button" onclick="submitIpdPaymentEntry()" style="background: #0f766e; color: white; border: none; padding: 7px 26px; border-radius: 4px; font-weight: 700; font-size: 12px; cursor: pointer;">
+          Submit
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Card: Receipt History Ledger Table -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 12px; font-weight: 700; color: #0f766e;">Payment History &amp; Receipts</div>
+        <button type="button" onclick="printAllIpdReceipts()" style="background: none; border: 1px solid #0f766e; color: #0f766e; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">
+          <i class="fa-solid fa-print"></i> All Receipts
+        </button>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+          <thead style="background: #0f766e; color: #ffffff;">
+            <tr>
+              <th style="padding: 6px 8px; text-align: center; width: 50px;">S. No.</th>
+              <th style="padding: 6px 8px; text-align: left; width: 110px;">Receipt No.</th>
+              <th style="padding: 6px 8px; text-align: center; width: 90px;">Mode</th>
+              <th style="padding: 6px 8px; text-align: left;">Patient's Name</th>
+              <th style="padding: 6px 8px; text-align: left;">Particular</th>
+              <th style="padding: 6px 8px; text-align: right; width: 90px;">Amount</th>
+              <th style="padding: 6px 8px; text-align: center; width: 95px;">Date</th>
+              <th style="padding: 6px 8px; text-align: center; width: 50px;">Print</th>
+            </tr>
+          </thead>
+          <tbody id="ipd-pay-history-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: #94a3b8; padding: 22px;">No record.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
   </div>
@@ -4227,6 +4391,148 @@ function switchPharmaView(view) {
     const total = document.getElementById('ipd-inv-disp-total').innerText;
     alert(`Investigation order (${ipdInvStagingList.length} tests, Total: ${total}) submitted and routed to Diagnostic Lab!`);
     clearIpdInvestigationForm();
+  };
+  // ==========================================
+  // IPD PAYMENT & ADVANCE DEPOSIT CONTROLLER
+  // ==========================================
+  let ipdPaymentReceipts = [];
+
+  // Auto-fill Current Date & Local Time
+  function initIpdPaymentDefaults() {
+    const today = new Date();
+    const dateInput = document.getElementById('ipd-pay-date');
+    const timeInput = document.getElementById('ipd-pay-time');
+    if (dateInput && !dateInput.value) dateInput.value = today.toISOString().split('T')[0];
+    if (timeInput && !timeInput.value) timeInput.value = today.toLocaleTimeString();
+  }
+
+  window.searchIpdPatientForPayment = async function() {
+    const ipdVal = (document.getElementById('ipd-pay-search-id').value || '').trim();
+    if (!ipdVal) return alert('Enter IPD Number to search.');
+
+    try {
+      const res = await fetch(`/api/ipd/admissions?search=${encodeURIComponent(ipdVal)}`);
+      const data = await res.json();
+      const p = Array.isArray(data) ? data.find(x => String(x.ipdNumber || x.id) === ipdVal) : (data.patient || data);
+      if (!p) return alert('No admitted patient found for IPD No: ' + ipdVal);
+
+      document.getElementById('ipd-pay-doa').innerText = p.admissionDate || p.arrivalDate || '--';
+      document.getElementById('ipd-pay-meta-name').innerText = p.patientName || '--';
+      document.getElementById('ipd-pay-meta-guardian').innerText = p.guardianName || p.relativeName || '--';
+      document.getElementById('ipd-pay-meta-age-gen').innerText = `${p.age || '--'}Y / ${p.gender || '--'}`;
+
+      // Simulate Folio Ledger Totals
+      const billAmt = 3575.00;
+      const discAmt = 0.00;
+      const deductAmt = 0.00;
+      const depositAmt = (p.advancePayment || 0);
+      const dueAmt = Math.max(0, billAmt - discAmt - deductAmt - depositAmt);
+
+      document.getElementById('ipd-pay-disp-bill').innerText = `Rs. ${billAmt}`;
+      document.getElementById('ipd-pay-disp-disc').innerText = `Rs. ${discAmt}`;
+      document.getElementById('ipd-pay-disp-deduct').innerText = `Rs. ${deductAmt}`;
+      document.getElementById('ipd-pay-disp-deposit').innerText = `Rs. ${depositAmt}`;
+      document.getElementById('ipd-pay-disp-due').innerText = `Rs. ${dueAmt}`;
+
+      initIpdPaymentDefaults();
+      renderIpdPaymentHistory(p.patientName || 'Patient');
+
+    } catch(err) {
+      console.error(err);
+      alert('Error fetching patient payment record.');
+    }
+  };
+
+  window.clearIpdPaymentForm = function() {
+    document.getElementById('ipd-pay-search-id').value = '';
+    ['ipd-pay-doa', 'ipd-pay-meta-name', 'ipd-pay-meta-guardian', 'ipd-pay-meta-age-gen'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = '--';
+    });
+    ['ipd-pay-disp-bill', 'ipd-pay-disp-disc', 'ipd-pay-disp-deduct', 'ipd-pay-disp-deposit', 'ipd-pay-disp-due'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = 'Rs. 0';
+    });
+    
+    document.getElementById('ipd-pay-amount').value = '';
+    document.getElementById('ipd-pay-details').value = '';
+    document.getElementById('ipd-pay-refund-check').checked = false;
+    
+    ipdPaymentReceipts = [];
+    renderIpdPaymentHistory();
+  };
+
+  window.submitIpdPaymentEntry = function() {
+    const pName = document.getElementById('ipd-pay-meta-name').innerText;
+    if (!pName || pName === '--') return alert('Please search and select a patient first.');
+
+    const amt = parseFloat(document.getElementById('ipd-pay-amount').value) || 0;
+    if (amt <= 0) return alert('Please enter a valid amount.');
+
+    const isRefund = document.getElementById('ipd-pay-refund-check').checked;
+    const mode = document.getElementById('ipd-pay-mode').value;
+    const date = document.getElementById('ipd-pay-date').value || new Date().toISOString().split('T')[0];
+    const details = document.getElementById('ipd-pay-details').value || (isRefund ? 'Advance Refund' : 'IPD Deposit');
+    const rNo = 'RCP-' + Math.floor(100000 + Math.random() * 900000);
+
+    ipdPaymentReceipts.unshift({
+      receiptNo: rNo,
+      mode: mode,
+      patientName: pName,
+      particular: isRefund ? `[REFUND] ${details}` : details,
+      amount: isRefund ? -amt : amt,
+      date: date
+    });
+
+    // Update live deposit & due amounts
+    const currentDep = parseFloat(document.getElementById('ipd-pay-disp-deposit').innerText.replace('Rs. ', '')) || 0;
+    const currentBill = parseFloat(document.getElementById('ipd-pay-disp-bill').innerText.replace('Rs. ', '')) || 0;
+    const newDep = isRefund ? Math.max(0, currentDep - amt) : (currentDep + amt);
+    const newDue = Math.max(0, currentBill - newDep);
+
+    document.getElementById('ipd-pay-disp-deposit').innerText = `Rs. ${newDep}`;
+    document.getElementById('ipd-pay-disp-due').innerText = `Rs. ${newDue}`;
+
+    renderIpdPaymentHistory(pName);
+
+    // Reset input fields
+    document.getElementById('ipd-pay-amount').value = '';
+    document.getElementById('ipd-pay-details').value = '';
+    document.getElementById('ipd-pay-refund-check').checked = false;
+
+    alert(`Payment recorded successfully!\nReceipt No: ${rNo}\nAmount: Rs. ${amt}\nMode: ${mode}`);
+  };
+
+  function renderIpdPaymentHistory(pName) {
+    const tbody = document.getElementById('ipd-pay-history-body');
+    if (!tbody) return;
+
+    if (ipdPaymentReceipts.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #94a3b8; padding: 22px;">No record.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = ipdPaymentReceipts.map((item, index) => `
+      <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 6px 8px; text-align: center;">${index + 1}</td>
+        <td style="padding: 6px 8px; font-weight: 700; color: #0f766e;">${item.receiptNo}</td>
+        <td style="padding: 6px 8px; text-align: center;"><span style="background: #e2e8f0; padding: 2px 6px; border-radius: 4px; font-size: 11px;">${item.mode}</span></td>
+        <td style="padding: 6px 8px;">${item.patientName}</td>
+        <td style="padding: 6px 8px;">${item.particular}</td>
+        <td style="padding: 6px 8px; text-align: right; font-weight: 700; color: ${item.amount < 0 ? '#ef4444' : '#1e293b'};">${item.amount < 0 ? '- Rs. ' + Math.abs(item.amount) : 'Rs. ' + item.amount}</td>
+        <td style="padding: 6px 8px; text-align: center;">${item.date}</td>
+        <td style="padding: 6px 8px; text-align: center;">
+          <button type="button" onclick="alert('Printing Receipt: ${item.receiptNo}')" style="background: none; border: none; color: #0f766e; cursor: pointer;">
+            <i class="fa-solid fa-print"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  window.printAllIpdReceipts = function() {
+    if (ipdPaymentReceipts.length === 0) return alert('No receipts available to print.');
+    alert('Opening consolidated receipts print view...');
   };
 
 async function loadPharmacyStock() {
