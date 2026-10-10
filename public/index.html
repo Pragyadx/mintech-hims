@@ -1784,7 +1784,7 @@
   <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('investigation', this)"><i class="fa-solid fa-microscope"></i> Investigation</button>
         <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('dialysis', this)"><i class="fa-solid fa-droplet"></i> Dialysis</button>
         <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('payment', this)"><i class="fa-solid fa-money-bill-wave"></i> Payment</button>
-        <button type="button" class="ipd-sub-btn" onclick="alert('Opening Operation Theatre (OT) Booking...')"><i class="fa-solid fa-syringe"></i> O.T.</button>
+        <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('ot', this)"><i class="fa-solid fa-heart-pulse"></i> O.T.</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Patient Discharge Clearance...')"><i class="fa-solid fa-door-open"></i> Discharge</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Interim/Final Billing...')"><i class="fa-solid fa-receipt"></i> Billing</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Case Sheet File Manager...')"><i class="fa-solid fa-folder-open"></i> File</button>
@@ -3116,6 +3116,239 @@
           <tbody id="ipd-pay-history-body">
             <tr>
               <td colspan="8" style="text-align: center; color: #94a3b8; padding: 22px;">No record.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+  <!-- ======================================================== -->
+  <!-- IPD SUBVIEW: OPERATION THEATER (O.T.) NOTES MODULE       -->
+  <!-- ======================================================== -->
+  <div id="ipd-subview-ot" class="ipd-subview" style="display: none;">
+
+    <!-- Top Card: Header & Lookup Strip -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 15px; color: #0f766e; font-weight: 700;">IPD Details for Operation &amp; Surgical Notes</h3>
+        <div style="font-size: 12px; font-weight: 600; color: #475569;">
+          Arrival Date: <span id="ipd-ot-doa">--</span>
+        </div>
+      </div>
+
+      <!-- Search Toolbar & Template Selector -->
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; gap: 10px;">
+        
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="font-size: 12px; font-weight: 700; color: #1e293b;">Enter IPD No. :</label>
+          <input type="text" id="ipd-ot-search-id" placeholder="3197" style="width: 100px; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600; background: #fef08a;">
+          <button type="button" onclick="searchIpdPatientForOt()" style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+            Submit
+          </button>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="font-size: 12px; font-weight: 600; color: #475569;">Choose Template :</label>
+          <select id="ipd-ot-template-select" onchange="applyIpdOtTemplate(this.value)" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; min-width: 180px;">
+            <option value="">-- Select Template --</option>
+            <option value="appendectomy">Appendectomy Procedure</option>
+            <option value="cholecystectomy">Laparoscopic Cholecystectomy</option>
+            <option value="cesarean">Lower Segment Cesarean Section (LSCS)</option>
+            <option value="hernia">Inguinal Hernia Mesh Repair</option>
+          </select>
+          <button type="button" onclick="clearIpdOtForm()" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Patient Demographics Matrix -->
+      <div style="margin-top: 12px; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 8px;">Patient's Details</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 12px;">
+          <div>
+            <div><strong style="color: #64748b;">IPD No. :</strong> <span id="ipd-ot-meta-no" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Occupancy :</strong> <span id="ipd-ot-meta-occu" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">Name :</strong> <span id="ipd-ot-meta-name" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Room / Bed :</strong> <span id="ipd-ot-meta-bed" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">S/D/W/o :</strong> <span id="ipd-ot-meta-guardian" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Department :</strong> <span id="ipd-ot-meta-dept" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">Age/Gender :</strong> <span id="ipd-ot-meta-age-gen" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Consultant's Name :</strong> <span id="ipd-ot-meta-doc" style="font-weight: 600;">--</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Card: Operation Record & Clinical Notes -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="background: #f1f5f9; padding: 6px 12px; border-radius: 4px; font-weight: 700; color: #0f766e; font-size: 13px; margin-bottom: 14px; border-left: 4px solid #0f766e;">
+        Operation Record
+      </div>
+
+      <!-- Surgery Metadata Details -->
+      <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; font-size: 12px; margin-bottom: 14px;">
+        
+        <!-- Left Column: Staff & Theater Setup -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Date of Admission :</label>
+            <span id="ipd-ot-op-doa" style="font-weight: 600; color: #1e293b;">--</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Surgeon Incharge :</label>
+            <input type="text" id="ipd-ot-surgeon" placeholder="Primary Surgeon Name" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Anesthetists :</label>
+            <input type="text" id="ipd-ot-anesthetist" placeholder="Anesthesiologist Name" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Assistant :</label>
+            <input type="text" id="ipd-ot-assistant" placeholder="Assistant Surgeon / Scrub Nurse" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Operation Theater :</label>
+            <select id="ipd-ot-theater" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+              <option value="OT I (Main)">OT I (Main Major OT)</option>
+              <option value="OT II (Modular)">OT II (Modular OT)</option>
+              <option value="OT III (Emergency)">OT III (Emergency / Minor OT)</option>
+              <option value="OT IV (Eye / ENT)">OT IV (Eye / ENT Suite)</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Surgery Name :</label>
+            <input type="text" id="ipd-ot-surgery-name" placeholder="Procedure / Surgery Name" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600;">
+          </div>
+        </div>
+
+        <!-- Right Column: Timings & ICD-10 Code -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 6px;">
+            <label style="font-weight: 600; color: #475569;">Operation Starts :</label>
+            <div style="display: flex; gap: 6px;">
+              <input type="date" id="ipd-ot-start-date" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; flex: 1;">
+              <input type="time" id="ipd-ot-start-time" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; width: 100px;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 6px;">
+            <label style="font-weight: 600; color: #475569;">Operation Finished :</label>
+            <div style="display: flex; gap: 6px;">
+              <input type="date" id="ipd-ot-finish-date" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; flex: 1;">
+              <input type="time" id="ipd-ot-finish-time" style="padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; width: 100px;">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 120px 1fr; gap: 6px;">
+            <label style="font-weight: 600; color: #475569;">
+              ICD Code-10 <i class="fa-solid fa-square-plus" style="color: #ef4444; margin-left: 2px;"></i> :
+            </label>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; gap: 4px;">
+                <input type="text" id="ipd-ot-icd-code" placeholder="Search ICD-10 (e.g. K35.80, K80.20)..." style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; flex: 1;">
+                <button type="button" onclick="alert('ICD Code search dialog opened')" style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </div>
+              <textarea id="ipd-ot-icd-desc" rows="2" placeholder="ICD Diagnostic Description..." style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; resize: vertical;"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Multi-Tier Clinical Operative Notes Textareas -->
+      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12px;">
+        
+        <div style="display: grid; grid-template-columns: 210px 1fr; gap: 8px;">
+          <label style="font-weight: 600; color: #334155;">Pre Operative Diagnosis :</label>
+          <textarea id="ipd-ot-pre-diag" rows="2" placeholder="Clinical indication and pre-op diagnosis..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 210px 1fr; gap: 8px;">
+          <label style="font-weight: 600; color: #334155;">Findings :</label>
+          <textarea id="ipd-ot-findings" rows="2" placeholder="Intra-operative visual and pathological findings..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 210px 1fr; gap: 8px;">
+          <label style="font-weight: 600; color: #334155;">Type of Anaesthesia &amp; Technique :</label>
+          <textarea id="ipd-ot-anesthesia" rows="2" placeholder="General / Spinal / Epidural / Local + Block details..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 210px 1fr; gap: 8px;">
+          <label style="font-weight: 600; color: #334155;">Details of Procedure / Surgery :</label>
+          <textarea id="ipd-ot-procedure" rows="3" placeholder="Step-by-step incision, dissection, repair, closure details..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 210px 1fr; gap: 8px;">
+          <label style="font-weight: 600; color: #334155;">Problem / Complications :</label>
+          <textarea id="ipd-ot-complications" rows="2" placeholder="None / Intra-operative blood loss, vitals changes, adverse events..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 210px 1fr; gap: 8px;">
+          <label style="font-weight: 600; color: #334155;">Post Operative Instructions :</label>
+          <textarea id="ipd-ot-post-inst" rows="2" placeholder="Recovery monitoring, drain care, post-op antibiotics &amp; analgesics..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 210px 1fr; gap: 8px;">
+          <label style="font-weight: 600; color: #334155;">O.T. Notes :</label>
+          <textarea id="ipd-ot-general-notes" rows="2" placeholder="Additional surgical scrub, sponge and instrument count verified..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical;"></textarea>
+        </div>
+
+      </div>
+
+      <!-- Save As Template & Submit Row -->
+      <div style="margin-top: 14px; border-top: 1px solid #e2e8f0; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px;">
+          <label style="font-weight: 700; color: #0f766e;">Save as Template :</label>
+          <input type="text" id="ipd-ot-new-template-name" placeholder="Template Name (e.g. LSCS Routine)" style="width: 240px; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          <button type="button" onclick="saveIpdOtCustomTemplate()" style="background: #e2e8f0; color: #1e293b; border: 1px solid #cbd5e1; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 11px;">
+            Save Template
+          </button>
+        </div>
+
+        <button type="button" onclick="submitIpdOtRecord()" style="background: #0f766e; color: white; border: none; padding: 8px 32px; border-radius: 4px; font-weight: 700; font-size: 13px; cursor: pointer;">
+          Submit
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Bottom Card: O.T. Registered Procedures Table -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 8px;">Recent Operation Theater Log</div>
+      
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+          <thead style="background: #0f766e; color: #ffffff;">
+            <tr>
+              <th style="padding: 6px 8px; text-align: center; width: 45px;">S.No.</th>
+              <th style="padding: 6px 8px; text-align: left; width: 85px;">UHID</th>
+              <th style="padding: 6px 8px; text-align: left; width: 80px;">IPD</th>
+              <th style="padding: 6px 8px; text-align: left; width: 90px;">OT ID</th>
+              <th style="padding: 6px 8px; text-align: left; width: 140px;">Department</th>
+              <th style="padding: 6px 8px; text-align: left;">Patient's Name</th>
+              <th style="padding: 6px 8px; text-align: left;">Surgery</th>
+              <th style="padding: 6px 8px; text-align: center; width: 95px;">Surgery Date</th>
+            </tr>
+          </thead>
+          <tbody id="ipd-ot-log-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: #94a3b8; padding: 22px;">No operation records submitted yet.</td>
             </tr>
           </tbody>
         </table>
@@ -4534,6 +4767,196 @@ function switchPharmaView(view) {
     if (ipdPaymentReceipts.length === 0) return alert('No receipts available to print.');
     alert('Opening consolidated receipts print view...');
   };
+  // ==========================================
+  // IPD OPERATION THEATER (O.T.) CONTROLLER
+  // ==========================================
+  let ipdOtLogRecords = [];
+
+  const ipdOtTemplates = {
+    appendectomy: {
+      surgeryName: 'Open / Laparoscopic Appendectomy',
+      anesthesia: 'General Anaesthesia with Endotracheal Intubation',
+      preDiag: 'Acute Appendicitis with localized peritonitis',
+      findings: 'Inflamed, edematous appendix with fibrinous exudate, no perforation.',
+      procedure: 'Infra-umbilical port inserted. Mesoappendix skeletonized and cauterized. Base ligated with Roeder knot and divided. Hemostasis secured.',
+      complications: 'Nil intra-operative complications.',
+      postInst: 'NPO for 6 hours, IV fluids, IV Ceftriaxone & Metronidazole, monitor vitals 2 hourly.'
+    },
+    cholecystectomy: {
+      surgeryName: 'Laparoscopic Cholecystectomy',
+      anesthesia: 'General Anaesthesia',
+      preDiag: 'Symptomatic Cholelithiasis / Chronic Cholecystitis',
+      findings: 'Distended gall bladder with multiple calculi, Calot\'s triangle clearly visualized.',
+      procedure: 'Standard 4-port approach. Calot\'s triangle dissected. Cystic duct and artery clipped and divided. Gall bladder dissected off liver bed.',
+      complications: 'None. Minimal blood loss.',
+      postInst: 'Sips of water after 4 hours, injectable analgesics, check subhepatic drain in evening.'
+    },
+    cesarean: {
+      surgeryName: 'Lower Segment Cesarean Section (LSCS)',
+      anesthesia: 'Subarachnoid Block (Spinal Anaesthesia - Bupivacaine 0.5% Heavy)',
+      preDiag: 'Term Pregnancy with Previous LSCS / Non-progression of labour',
+      findings: 'Live baby delivered, vigorous, cried immediately. Clear liquor.',
+      procedure: 'Pfannenstiel incision taken. Uterovesical fold opened. Lower uterine segment incision taken. Baby delivered by head. Placenta delivered completely. Closed in layers.',
+      complications: 'Nil. Hemostasis achieved.',
+      postInst: 'Monitor lochia, IV Oxytocin infusion, catheter care, analgesia SOS.'
+    },
+    hernia: {
+      surgeryName: 'Lichtenstein Inguinal Hernia Mesh Repair',
+      anesthesia: 'Spinal Anaesthesia',
+      preDiag: 'Right Indirect Inguinal Hernia',
+      findings: 'Indirect hernia sac reaching scrotum, posterior wall lax.',
+      procedure: 'Inguinal canal opened. Cord structures preserved. Sac dissected, transfixed, and reduced. Polypropylene mesh placed and fixed with Prolene 2-0. Layers closed.',
+      complications: 'Nil.',
+      postInst: 'Scrotal support, oral fluids allowed after 4 hours, oral analgesics.'
+    }
+  };
+
+  function initIpdOtTimestamps() {
+    const today = new Date();
+    const dStr = today.toISOString().split('T')[0];
+    const tStr = today.toTimeString().substring(0, 5);
+
+    const sD = document.getElementById('ipd-ot-start-date');
+    const sT = document.getElementById('ipd-ot-start-time');
+    const fD = document.getElementById('ipd-ot-finish-date');
+    const fT = document.getElementById('ipd-ot-finish-time');
+
+    if (sD && !sD.value) sD.value = dStr;
+    if (sT && !sT.value) sT.value = tStr;
+    if (fD && !fD.value) fD.value = dStr;
+    if (fT && !fT.value) fT.value = tStr;
+  }
+
+  window.searchIpdPatientForOt = async function() {
+    const ipdVal = (document.getElementById('ipd-ot-search-id').value || '').trim();
+    if (!ipdVal) return alert('Enter IPD Number to search.');
+
+    try {
+      const res = await fetch(`/api/ipd/admissions?search=${encodeURIComponent(ipdVal)}`);
+      const data = await res.json();
+      const p = Array.isArray(data) ? data.find(x => String(x.ipdNumber || x.id) === ipdVal) : (data.patient || data);
+      if (!p) return alert('No admitted patient found for IPD: ' + ipdVal);
+
+      document.getElementById('ipd-ot-doa').innerText = p.admissionDate || p.arrivalDate || '--';
+      document.getElementById('ipd-ot-op-doa').innerText = p.admissionDate || p.arrivalDate || '--';
+      document.getElementById('ipd-ot-meta-no').innerText = p.ipdNumber || ipdVal;
+      document.getElementById('ipd-ot-meta-occu').innerText = `${p.wardCategory || 'Ward'} - Bed ${p.unitBedNo || '1'}`;
+      document.getElementById('ipd-ot-meta-name').innerText = p.patientName || '--';
+      document.getElementById('ipd-ot-meta-bed').innerText = `${p.wardCategory || '--'} / ${p.unitBedNo || '--'}`;
+      document.getElementById('ipd-ot-meta-guardian').innerText = p.guardianName || p.relativeName || '--';
+      document.getElementById('ipd-ot-meta-dept').innerText = p.department || 'General Surgery';
+      document.getElementById('ipd-ot-meta-age-gen').innerText = `${p.age || '--'}Y / ${p.gender || '--'}`;
+      document.getElementById('ipd-ot-meta-doc').innerText = p.consultingDoctor ? `Dr. ${p.consultingDoctor}` : '--';
+      document.getElementById('ipd-ot-surgeon').value = p.consultingDoctor || '';
+
+      initIpdOtTimestamps();
+    } catch(err) {
+      console.error(err);
+      alert('Error fetching patient data for Operation Theater.');
+    }
+  };
+
+  window.applyIpdOtTemplate = function(templateKey) {
+    if (!templateKey || !ipdOtTemplates[templateKey]) return;
+    const t = ipdOtTemplates[templateKey];
+
+    document.getElementById('ipd-ot-surgery-name').value = t.surgeryName || '';
+    document.getElementById('ipd-ot-anesthesia').value = t.anesthesia || '';
+    document.getElementById('ipd-ot-pre-diag').value = t.preDiag || '';
+    document.getElementById('ipd-ot-findings').value = t.findings || '';
+    document.getElementById('ipd-ot-procedure').value = t.procedure || '';
+    document.getElementById('ipd-ot-complications').value = t.complications || '';
+    document.getElementById('ipd-ot-post-inst').value = t.postInst || '';
+  };
+
+  window.saveIpdOtCustomTemplate = function() {
+    const tName = (document.getElementById('ipd-ot-new-template-name').value || '').trim();
+    if (!tName) return alert('Enter a template name to save.');
+
+    const newKey = 'custom_' + Date.now();
+    ipdOtTemplates[newKey] = {
+      surgeryName: document.getElementById('ipd-ot-surgery-name').value,
+      anesthesia: document.getElementById('ipd-ot-anesthesia').value,
+      preDiag: document.getElementById('ipd-ot-pre-diag').value,
+      findings: document.getElementById('ipd-ot-findings').value,
+      procedure: document.getElementById('ipd-ot-procedure').value,
+      complications: document.getElementById('ipd-ot-complications').value,
+      postInst: document.getElementById('ipd-ot-post-inst').value
+    };
+
+    const sel = document.getElementById('ipd-ot-template-select');
+    const opt = document.createElement('option');
+    opt.value = newKey;
+    opt.innerText = tName;
+    sel.appendChild(opt);
+    sel.value = newKey;
+
+    document.getElementById('ipd-ot-new-template-name').value = '';
+    alert(`Template "${tName}" saved successfully!`);
+  };
+
+  window.clearIpdOtForm = function() {
+    document.getElementById('ipd-ot-search-id').value = '';
+    ['ipd-ot-doa', 'ipd-ot-op-doa', 'ipd-ot-meta-no', 'ipd-ot-meta-occu', 'ipd-ot-meta-name', 
+     'ipd-ot-meta-bed', 'ipd-ot-meta-guardian', 'ipd-ot-meta-dept', 'ipd-ot-meta-age-gen', 'ipd-ot-meta-doc'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = '--';
+    });
+
+    document.querySelectorAll('#ipd-subview-ot input:not([type="button"])').forEach(i => i.value = '');
+    document.querySelectorAll('#ipd-subview-ot textarea').forEach(t => t.value = '');
+    document.getElementById('ipd-ot-template-select').value = '';
+  };
+
+  window.submitIpdOtRecord = function() {
+    const pName = document.getElementById('ipd-ot-meta-name').innerText;
+    const ipd = document.getElementById('ipd-ot-meta-no').innerText;
+    if (!pName || pName === '--') return alert('Please search and select a patient first.');
+
+    const sName = document.getElementById('ipd-ot-surgery-name').value.trim();
+    if (!sName) return alert('Please enter the Surgery / Procedure Name.');
+
+    const sDate = document.getElementById('ipd-ot-start-date').value || new Date().toISOString().split('T')[0];
+    const dept = document.getElementById('ipd-ot-meta-dept').innerText;
+    const otId = 'OT-' + Math.floor(1000 + Math.random() * 9000);
+    const uhid = 'U' + Math.floor(100000 + Math.random() * 900000);
+
+    ipdOtLogRecords.unshift({
+      uhid: uhid,
+      ipd: ipd,
+      otId: otId,
+      dept: dept,
+      name: pName,
+      surgery: sName,
+      date: sDate
+    });
+
+    renderIpdOtLog();
+    alert(`Operation theater record saved successfully!\nOT ID: ${otId}\nSurgery: ${sName}`);
+  };
+
+  function renderIpdOtLog() {
+    const tbody = document.getElementById('ipd-ot-log-body');
+    if (!tbody) return;
+
+    if (ipdOtLogRecords.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #94a3b8; padding: 22px;">No operation records submitted yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = ipdOtLogRecords.map((item, index) => `
+      <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 6px 8px; text-align: center;">${index + 1}</td>
+        <td style="padding: 6px 8px; font-weight: 600;">${item.uhid}</td>
+        <td style="padding: 6px 8px; font-weight: 600; color: #0f766e;">${item.ipd}</td>
+        <td style="padding: 6px 8px; font-weight: 700; color: #0f766e;">${item.otId}</td>
+        <td style="padding: 6px 8px;">${item.dept}</td>
+        <td style="padding: 6px 8px; font-weight: 600;">${item.name}</td>
+        <td style="padding: 6px 8px;">${item.surgery}</td>
+        <td style="padding: 6px 8px; text-align: center;">${item.date}</td>
+      </tr>
+    `).join('');
+  }
 
 async function loadPharmacyStock() {
   try {
