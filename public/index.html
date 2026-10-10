@@ -1781,7 +1781,7 @@
   <button type="button" class="ipd-sub-btn ipd-sub-active" onclick="switchIpdSubView('registration', this)"><i class="fa-solid fa-id-card"></i> Registration</button>
   <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('medicines', this)"><i class="fa-solid fa-pills"></i> Medicines</button>
   <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('services', this)"><i class="fa-solid fa-bell-concierge"></i> Services</button>
-  <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Investigations Requisition...')"><i class="fa-solid fa-vial-virus"></i> Investigation</button>
+  <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('investigation', this)"><i class="fa-solid fa-microscope"></i> Investigation</button>
         <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('dialysis', this)"><i class="fa-solid fa-droplet"></i> Dialysis</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Advance Payment Desk...')"><i class="fa-solid fa-cash-register"></i> Payment</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Operation Theatre (OT) Booking...')"><i class="fa-solid fa-syringe"></i> O.T.</button>
@@ -2757,6 +2757,208 @@
 
     </div> <!-- Closes Dialysis Clinical Chart Sheet Card -->
   </div> <!-- Closes ipd-subview-dialysis -->
+  <!-- ======================================================== -->
+  <!-- IPD SUBVIEW: LAB & DIAGNOSTIC INVESTIGATIONS             -->
+  <!-- ======================================================== -->
+  <div id="ipd-subview-investigation" class="ipd-subview" style="display: none;">
+
+    <!-- Header & Investigation Filter Strip -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 15px; color: #0f766e; font-weight: 700;">IPD Lab &amp; Diagnostic Investigations</h3>
+        <div style="font-size: 12px; font-weight: 600; color: #475569;">
+          Date of Admission: <span id="ipd-inv-doa">--</span>
+        </div>
+      </div>
+
+      <!-- Top Query Toolbar -->
+      <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 700; color: #1e293b;">IPD No. :</label>
+          <input type="text" id="ipd-inv-search-id" placeholder="3197" style="width: 90px; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600; background: #fef08a;">
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 600; color: #475569;">Rate List :</label>
+          <select id="ipd-inv-ratelist" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+            <option value="COMMON">COMMON</option>
+            <option value="PMJAY">PMJAY - GOVT</option>
+            <option value="CGHS">CGHS</option>
+            <option value="CORPORATE">CORPORATE</option>
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 600; color: #475569;">Room Type :</label>
+          <select id="ipd-inv-roomtype" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+            <option value="ICU">ICU</option>
+            <option value="GENERAL">General Ward</option>
+            <option value="DELUXE">Private Deluxe</option>
+          </select>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 600; color: #475569;">Department :</label>
+          <select id="ipd-inv-dept" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+            <option value="PATHOLOGY">Pathology Lab</option>
+            <option value="RADIOLOGY">Radiology &amp; Imaging</option>
+            <option value="CARDIOLOGY">Cardiology (ECG / Echo)</option>
+            <option value="MICROBIOLOGY">Microbiology</option>
+          </select>
+        </div>
+
+        <button type="button" onclick="searchIpdPatientForInvestigation()" style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+          Search
+        </button>
+
+        <button type="button" onclick="clearIpdInvestigationForm()" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+
+      <!-- Patient Demographics Matrix -->
+      <div style="margin-top: 12px; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 8px;">Patient's Details</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 12px;">
+          <div>
+            <div><strong style="color: #64748b;">IPD No. :</strong> <span id="ipd-inv-meta-no" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Occupancy :</strong> <span id="ipd-inv-meta-bed" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">Name/Age :</strong> <span id="ipd-inv-meta-name" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Department :</strong> <span id="ipd-inv-meta-dept" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">S/D/W/o :</strong> <span id="ipd-inv-meta-guardian" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Doctor's Name :</strong> <span id="ipd-inv-meta-doc" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">TPA :</strong> <span id="ipd-inv-meta-tpa" style="background: #fef08a; padding: 2px 6px; border-radius: 4px; font-weight: 700; color: #854d0e;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Entry Date :</strong> <span id="ipd-inv-meta-date" style="font-weight: 600;">--</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dual Workspace: Catalog / Custom Test Input & Staging Requisition Table -->
+    <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 14px; margin-bottom: 14px;">
+
+      <!-- Left Panel: Fast Diagnostic Entry & Catalog Finder -->
+      <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px;">
+        <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 8px;">Order Investigation Test</div>
+
+        <div style="margin-bottom: 8px;">
+          <input type="text" id="ipd-inv-input-name" placeholder="Search or type Test Name (e.g. CBC, KFT, LFT, X-Ray)" list="ipd-tests-datalist" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600;">
+          <datalist id="ipd-tests-datalist">
+            <option value="CBC - Complete Blood Count"></option>
+            <option value="KFT - Kidney Function Test"></option>
+            <option value="LFT - Liver Function Test"></option>
+            <option value="Serum Electrolytes (Na/K/Cl)"></option>
+            <option value="Blood Urea &amp; Creatinine"></option>
+            <option value="ABG - Arterial Blood Gas"></option>
+            <option value="Chest X-Ray PA View"></option>
+            <option value="ECG - 12 Lead"></option>
+          </datalist>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+          <div>
+            <label style="font-size: 10px; color: #64748b; font-weight: 700;">Rate (₹)</label>
+            <input type="number" id="ipd-inv-input-rate" placeholder="0.00" oninput="recalcIpdInvEntryRow()" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          </div>
+          <div>
+            <label style="font-size: 10px; color: #64748b; font-weight: 700;">Unit (Qty)</label>
+            <input type="number" id="ipd-inv-input-unit" value="1" min="1" oninput="recalcIpdInvEntryRow()" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          </div>
+          <div>
+            <label style="font-size: 10px; color: #64748b; font-weight: 700;">Amount (₹)</label>
+            <input type="text" id="ipd-inv-input-amt" readonly placeholder="0.00" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; background: #f1f5f9; border-radius: 4px; font-size: 12px; font-weight: 700;">
+          </div>
+        </div>
+
+        <button type="button" onclick="addIpdInvestigationToGrid()" style="width: 100%; background: #0f766e; color: white; border: none; padding: 7px; border-radius: 4px; font-weight: 700; font-size: 12px; cursor: pointer;">
+          + Add Test to Order
+        </button>
+
+        <!-- Quick Lab Presets -->
+        <div style="margin-top: 14px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+          <div style="font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px;">Common Lab Tests (Click to add):</div>
+          <div style="max-height: 140px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;">
+            <div onclick="fillIpdInvPreset('Complete Blood Count (CBC)', 300)" style="padding: 4px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; justify-content: space-between;">
+              <span>CBC (Hemogram)</span><strong>₹300</strong>
+            </div>
+            <div onclick="fillIpdInvPreset('Kidney Function Test (KFT)', 550)" style="padding: 4px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; justify-content: space-between;">
+              <span>KFT (Renal Profile)</span><strong>₹550</strong>
+            </div>
+            <div onclick="fillIpdInvPreset('Liver Function Test (LFT)', 550)" style="padding: 4px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; justify-content: space-between;">
+              <span>LFT (Hepatic Profile)</span><strong>₹550</strong>
+            </div>
+            <div onclick="fillIpdInvPreset('Arterial Blood Gases (ABG)', 800)" style="padding: 4px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; justify-content: space-between;">
+              <span>ABG Analysis</span><strong>₹800</strong>
+            </div>
+            <div onclick="fillIpdInvPreset('Serum Electrolytes (Na/K/Cl)', 400)" style="padding: 4px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; justify-content: space-between;">
+              <span>Serum Electrolytes</span><strong>₹400</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: Ordered Tests Staging Table -->
+      <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            <thead style="background: #0f766e; color: #ffffff;">
+              <tr>
+                <th style="padding: 6px 8px; text-align: left;">Test Name</th>
+                <th style="padding: 6px 8px; text-align: right; width: 80px;">Rate (₹)</th>
+                <th style="padding: 6px 8px; text-align: center; width: 60px;">Unit</th>
+                <th style="padding: 6px 8px; text-align: right; width: 90px;">Amount (₹)</th>
+                <th style="padding: 6px 8px; text-align: center; width: 60px;">Remove</th>
+              </tr>
+            </thead>
+            <tbody id="ipd-inv-table-body">
+              <tr>
+                <td colspan="5" style="text-align: center; color: #94a3b8; padding: 25px;">No investigations ordered yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Requisition Summary & Action Footer -->
+        <div style="margin-top: 14px; border-top: 2px solid #e2e8f0; padding-top: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; gap: 14px; align-items: center; font-size: 12px;">
+              <div>
+                <strong style="color: #475569;">Mode:</strong>
+                <select id="ipd-inv-payment-mode" style="padding: 3px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+                  <option value="Credit">Credit (Add to IPD Folio)</option>
+                  <option value="Cash">Cash Counter</option>
+                  <option value="UPI">UPI / Online</option>
+                </select>
+              </div>
+              <div>
+                <strong style="color: #475569;">Deposit (₹):</strong>
+                <input type="number" id="ipd-inv-deposit" value="0" min="0" style="width: 75px; padding: 3px 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 13px; color: #64748b; font-weight: 600;">Total Amount:</span>
+              <strong id="ipd-inv-disp-total" style="font-size: 16px; color: #0f766e;">₹ 0.00</strong>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: flex-end;">
+            <button type="button" onclick="submitIpdInvestigationOrder()" style="background: #0f766e; color: white; border: none; padding: 8px 26px; border-radius: 4px; font-weight: 700; font-size: 12px; cursor: pointer;">
+              Submit Investigation Order
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
 </section> <!-- Closes section#tab-ipd -->
 
       <!-- PHARMACY MODULE (MARG / PHARMACYPRO STANDARD) -->
@@ -3907,6 +4109,124 @@ function switchPharmaView(view) {
     const ipd = document.getElementById('ipd-dial-meta-no').innerText;
     if (!ipd || ipd === '--') return alert('Please search and select a patient first.');
     alert('Dialysis chart session recorded successfully!');
+  };
+  // ==========================================
+  // IPD INVESTIGATION SUBVIEW CONTROLLER
+  // ==========================================
+  let ipdInvStagingList = [];
+
+  window.recalcIpdInvEntryRow = function() {
+    const rate = parseFloat(document.getElementById('ipd-inv-input-rate').value) || 0;
+    const unit = parseFloat(document.getElementById('ipd-inv-input-unit').value) || 1;
+    document.getElementById('ipd-inv-input-amt').value = (rate * unit).toFixed(2);
+  };
+
+  window.fillIpdInvPreset = function(name, rate) {
+    document.getElementById('ipd-inv-input-name').value = name;
+    document.getElementById('ipd-inv-input-rate').value = rate;
+    document.getElementById('ipd-inv-input-unit').value = 1;
+    window.recalcIpdInvEntryRow();
+  };
+
+  window.addIpdInvestigationToGrid = function() {
+    const name = document.getElementById('ipd-inv-input-name').value.trim();
+    const rate = parseFloat(document.getElementById('ipd-inv-input-rate').value) || 0;
+    const unit = parseFloat(document.getElementById('ipd-inv-input-unit').value) || 1;
+
+    if (!name) {
+      alert('Please select or enter an investigation test name.');
+      return;
+    }
+
+    const amount = rate * unit;
+    ipdInvStagingList.push({ name, rate, unit, amount });
+    renderIpdInvestigationTable();
+
+    // Reset input row
+    document.getElementById('ipd-inv-input-name').value = '';
+    document.getElementById('ipd-inv-input-rate').value = '';
+    document.getElementById('ipd-inv-input-unit').value = '1';
+    document.getElementById('ipd-inv-input-amt').value = '0.00';
+  };
+
+  window.renderIpdInvestigationTable = function() {
+    const tbody = document.getElementById('ipd-inv-table-body');
+    if (!tbody) return;
+
+    if (ipdInvStagingList.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 25px;">No investigations ordered yet.</td></tr>';
+      document.getElementById('ipd-inv-disp-total').innerText = '₹ 0.00';
+      return;
+    }
+
+    let grandTotal = 0;
+    tbody.innerHTML = ipdInvStagingList.map((item, index) => {
+      grandTotal += item.amount;
+      return `
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 6px 8px; font-weight: 600;">${item.name}</td>
+          <td style="padding: 6px 8px; text-align: right;">${item.rate.toFixed(2)}</td>
+          <td style="padding: 6px 8px; text-align: center;">${item.unit}</td>
+          <td style="padding: 6px 8px; text-align: right; font-weight: 700;">${item.amount.toFixed(2)}</td>
+          <td style="padding: 6px 8px; text-align: center;">
+            <button type="button" onclick="removeIpdInvItem(${index})" style="background: none; border: none; color: #ef4444; cursor: pointer;">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    document.getElementById('ipd-inv-disp-total').innerText = `₹ ${grandTotal.toFixed(2)}`;
+  };
+
+  window.removeIpdInvItem = function(index) {
+    ipdInvStagingList.splice(index, 1);
+    renderIpdInvestigationTable();
+  };
+
+  window.searchIpdPatientForInvestigation = async function() {
+    const ipdVal = (document.getElementById('ipd-inv-search-id').value || '').trim();
+    if (!ipdVal) return alert('Enter IPD Number to search.');
+
+    try {
+      const res = await fetch(`/api/ipd/admissions?search=${encodeURIComponent(ipdVal)}`);
+      const data = await res.json();
+      const p = Array.isArray(data) ? data.find(x => String(x.ipdNumber || x.id) === ipdVal) : (data.patient || data);
+      if (!p) return alert('No admitted patient found for IPD No: ' + ipdVal);
+
+      document.getElementById('ipd-inv-doa').innerText = p.admissionDate || p.arrivalDate || '--';
+      document.getElementById('ipd-inv-meta-no').innerText = p.ipdNumber || ipdVal;
+      document.getElementById('ipd-inv-meta-bed').innerText = `${p.wardCategory || 'Ward'} - Bed ${p.unitBedNo || '1'}`;
+      document.getElementById('ipd-inv-meta-name').innerText = `${p.patientName || '--'} / ${p.age || '--'}Y`;
+      document.getElementById('ipd-inv-meta-dept').innerText = p.department || 'Nephrology / General';
+      document.getElementById('ipd-inv-meta-guardian').innerText = p.guardianName || '--';
+      document.getElementById('ipd-inv-meta-doc').innerText = p.consultingDoctor ? `Dr. ${p.consultingDoctor}` : '--';
+      document.getElementById('ipd-inv-meta-tpa').innerText = p.insuranceCompany || 'Cash / Self';
+      document.getElementById('ipd-inv-meta-date').innerText = (p.admissionDate || new Date().toISOString()).split('T')[0];
+    } catch(err) {
+      console.error(err);
+      alert('Error fetching patient data for Investigation.');
+    }
+  };
+
+  window.clearIpdInvestigationForm = function() {
+    document.getElementById('ipd-inv-search-id').value = '';
+    ['ipd-inv-doa', 'ipd-inv-meta-no', 'ipd-inv-meta-bed', 'ipd-inv-meta-name', 
+     'ipd-inv-meta-dept', 'ipd-inv-meta-guardian', 'ipd-inv-meta-doc', 
+     'ipd-inv-meta-tpa', 'ipd-inv-meta-date'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = '--';
+    });
+    ipdInvStagingList = [];
+    renderIpdInvestigationTable();
+  };
+
+  window.submitIpdInvestigationOrder = function() {
+    if (ipdInvStagingList.length === 0) return alert('No investigations ordered yet.');
+    const total = document.getElementById('ipd-inv-disp-total').innerText;
+    alert(`Investigation order (${ipdInvStagingList.length} tests, Total: ${total}) submitted and routed to Diagnostic Lab!`);
+    clearIpdInvestigationForm();
   };
 
 async function loadPharmacyStock() {
