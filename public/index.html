@@ -1785,7 +1785,7 @@
         <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('dialysis', this)"><i class="fa-solid fa-droplet"></i> Dialysis</button>
         <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('payment', this)"><i class="fa-solid fa-money-bill-wave"></i> Payment</button>
         <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('ot', this)"><i class="fa-solid fa-heart-pulse"></i> O.T.</button>
-        <button type="button" class="ipd-sub-btn" onclick="alert('Opening Patient Discharge Clearance...')"><i class="fa-solid fa-door-open"></i> Discharge</button>
+        <button type="button" class="ipd-sub-btn" onclick="switchIpdSubView('discharge', this)"><i class="fa-solid fa-person-walking-arrow-right"></i> Discharge</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Interim/Final Billing...')"><i class="fa-solid fa-receipt"></i> Billing</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening Case Sheet File Manager...')"><i class="fa-solid fa-folder-open"></i> File</button>
         <button type="button" class="ipd-sub-btn" onclick="alert('Opening IPD Census & Bed Occupancy MIS...')"><i class="fa-solid fa-chart-pie"></i> MIS</button>
@@ -3356,6 +3356,296 @@
     </div>
 
   </div>
+  <!-- ======================================================== -->
+  <!-- IPD SUBVIEW: DISCHARGE SUMMARY & CLINICAL WORKFLOW       -->
+  <!-- ======================================================== -->
+  <div id="ipd-subview-discharge" class="ipd-subview" style="display: none;">
+
+    <!-- Top Card: Header & Discharge Details -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 15px; color: #0f766e; font-weight: 700;">IPD Details for Discharge &amp; Summary</h3>
+        <div style="font-size: 12px; font-weight: 600; color: #475569;">
+          Arrival Date: <span id="ipd-dis-arrival">--</span>
+        </div>
+      </div>
+
+      <!-- Search Toolbar & Template Selector -->
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0; gap: 10px;">
+        
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="font-size: 12px; font-weight: 700; color: #1e293b;">Enter IPD No. :</label>
+          <input type="text" id="ipd-dis-search-id" placeholder="3197" style="width: 100px; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600; background: #fef08a;">
+          <button type="button" onclick="searchIpdPatientForDischarge()" style="background: #0f766e; color: white; border: none; padding: 6px 18px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+            Search
+          </button>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <label style="font-size: 12px; font-weight: 600; color: #475569;">Choose Template :</label>
+          <select id="ipd-dis-template-select" onchange="applyIpdDischargeTemplate(this.value)" style="padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; min-width: 190px;">
+            <option value="">-- Select Template --</option>
+            <option value="hernia">Hernia-inguinal</option>
+            <option value="chole">Chole (Laparoscopic Cholecystectomy)</option>
+            <option value="femur">Femur Nail</option>
+            <option value="face_orif">Face Orif</option>
+            <option value="copd">COPD LRTI</option>
+            <option value="appendicitis">Appendicitis</option>
+            <option value="implant_removal">Implant Removal</option>
+            <option value="normal_delivery">Normal Vaginal Delivery</option>
+          </select>
+          <button type="button" onclick="clearIpdDischargeForm()" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Patient Demographics Matrix -->
+      <div style="margin-top: 12px; padding: 10px 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px;">
+        <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 8px;">Patient's Details</div>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; font-size: 12px;">
+          <div>
+            <div><strong style="color: #64748b;">IPD No. :</strong> <span id="ipd-dis-meta-no" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Occupancy :</strong> <span id="ipd-dis-meta-occu" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">Name :</strong> <span id="ipd-dis-meta-name" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Unit / Bed :</strong> <span id="ipd-dis-meta-bed" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">S/D/W/o :</strong> <span id="ipd-dis-meta-guardian" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Department :</strong> <span id="ipd-dis-meta-dept" style="font-weight: 600;">--</span></div>
+          </div>
+          <div>
+            <div><strong style="color: #64748b;">Age/Gender :</strong> <span id="ipd-dis-meta-age-gen" style="font-weight: 600;">--</span></div>
+            <div style="margin-top: 4px;"><strong style="color: #64748b;">Consultant :</strong> <span id="ipd-dis-meta-doc" style="font-weight: 600;">--</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Card: Discharge Summary Parameters -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <div style="background: #f1f5f9; padding: 6px 12px; border-radius: 4px; font-weight: 700; color: #0f766e; font-size: 13px; margin-bottom: 14px; border-left: 4px solid #0f766e;">
+        Discharge Summary
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 12px;">
+        
+        <!-- Left Column: Dates & Legal Records -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Date of Admission :</label>
+            <span id="ipd-dis-doa" style="font-weight: 600; color: #1e293b;">--</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Type of Discharge :</label>
+            <select id="ipd-dis-type" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+              <option value="Normal">-- Discharge Type (Routine) --</option>
+              <option value="LAMA">LAMA (Left Against Medical Advice)</option>
+              <option value="Absconded">Absconded</option>
+              <option value="Referred">Referred to Higher Center</option>
+              <option value="Expired">Expired / Deceased</option>
+              <option value="Transfer">Transferred to another unit</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">MLC No. :</label>
+            <input type="text" id="ipd-dis-mlc" placeholder="Medico-Legal Case No." style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">FIR No. :</label>
+            <input type="text" id="ipd-dis-fir" placeholder="FIR No. (if applicable)" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          </div>
+        </div>
+
+        <!-- Right Column: Discharge Timings & Diagnosis -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: grid; grid-template-columns: 130px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Date of Discharge :</label>
+            <input type="date" id="ipd-dis-date" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 130px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Time of Discharge :</label>
+            <input type="time" id="ipd-dis-time" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 130px 1fr; align-items: center;">
+            <label style="font-weight: 600; color: #475569;">Date of Surgery :</label>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="date" id="ipd-dis-surgery-date" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; flex: 1;">
+              <button type="button" onclick="document.getElementById('ipd-dis-surgery-date').value=''" style="background: none; border: none; color: #ef4444; cursor: pointer;" title="Clear date">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+              <span style="font-size: 10px; color: #ef4444;">*Keep blank if no surgery</span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 130px 1fr; gap: 6px;">
+            <label style="font-weight: 600; color: #475569;">
+              ICD Code-10 <i class="fa-solid fa-square-plus" style="color: #ef4444; margin-left: 2px;"></i> :
+            </label>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; gap: 4px;">
+                <input type="text" id="ipd-dis-icd" placeholder="Search ICD-10..." style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; flex: 1;">
+                <button type="button" onclick="alert('ICD Code search dialog opened')" style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </div>
+              <textarea id="ipd-dis-icd-desc" rows="2" placeholder="Primary Discharge Diagnosis / ICD Description..." style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; resize: vertical;"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bottom Clinical Evaluation Tabbed Container -->
+    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      
+      <!-- Sub-tabs Ribbon -->
+      <div style="display: flex; gap: 6px; border-bottom: 2px solid #0f766e; margin-bottom: 14px;">
+        <button type="button" class="ipd-distab-btn ipd-distab-active" onclick="switchDischargeTab('history', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; background: #0f766e; color: white; border-radius: 4px 4px 0 0;">History</button>
+        <button type="button" class="ipd-distab-btn" onclick="switchDischargeTab('examination', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; background: #e2e8f0; color: #334155; border-radius: 4px 4px 0 0;">Examination</button>
+        <button type="button" class="ipd-distab-btn" onclick="switchDischargeTab('prescription', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; background: #e2e8f0; color: #334155; border-radius: 4px 4px 0 0;">Prescription</button>
+        <button type="button" class="ipd-distab-btn" onclick="switchDischargeTab('process', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; background: #e2e8f0; color: #334155; border-radius: 4px 4px 0 0;">Process</button>
+        <button type="button" class="ipd-distab-btn" onclick="switchDischargeTab('comments', this)" style="padding: 6px 14px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; background: #e2e8f0; color: #334155; border-radius: 4px 4px 0 0;">Comments</button>
+      </div>
+
+      <!-- Tab Content 1: History -->
+      <div id="ipd-distab-history" class="ipd-distab-pane" style="display: block;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px;">
+          <div>
+            <div style="background: #0f766e; color: white; padding: 4px 8px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;">
+              <span>Past Medical</span>
+              <button type="button" onclick="document.getElementById('ipd-dis-past-medical').value=''" style="background: none; border: none; color: white; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            <textarea id="ipd-dis-past-medical" rows="3" placeholder="-- Select History / Hypertension, Diabetes, Thyroid..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; font-size: 12px; resize: vertical;"></textarea>
+          </div>
+
+          <div>
+            <div style="background: #0f766e; color: white; padding: 4px 8px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;">
+              <span>Surgical History</span>
+              <button type="button" onclick="document.getElementById('ipd-dis-surgical-history').value=''" style="background: none; border: none; color: white; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            <textarea id="ipd-dis-surgical-history" rows="3" placeholder="-- Select History / Previous operations, implants, allergies..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; font-size: 12px; resize: vertical;"></textarea>
+          </div>
+        </div>
+
+        <!-- Personal History Parameters Bar -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 4px;">
+          <div style="font-size: 12px; font-weight: 700; color: #0f766e; margin-bottom: 6px;">Personal History</div>
+          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; font-size: 11px;">
+            <div>
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Diet</label>
+              <select id="ipd-dis-diet" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Non-Vegetarian">Non-Vegetarian</option>
+                <option value="Diabetic Diet">Diabetic Diet</option>
+                <option value="Renal Diet (Low Salt/Protein)">Renal Diet</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Appetite</label>
+              <select id="ipd-dis-appetite" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <option value="Normal">Normal</option>
+                <option value="Reduced">Reduced / Poor</option>
+                <option value="Increased">Increased</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Sleep</label>
+              <select id="ipd-dis-sleep" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <option value="Normal">Normal</option>
+                <option value="Disturbed">Disturbed</option>
+                <option value="Insomnia">Insomnia</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Bladder</label>
+              <select id="ipd-dis-bladder" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <option value="Normal">Normal</option>
+                <option value="Catheterized">Catheterized</option>
+                <option value="Dysuria / Frequency">Dysuria / Frequency</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Bowel</label>
+              <select id="ipd-dis-bowel" style="width: 100%; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <option value="Normal">Normal</option>
+                <option value="Constipated">Constipated</option>
+                <option value="Loose Stools">Loose Stools</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 2: Examination -->
+      <div id="ipd-distab-examination" class="ipd-distab-pane" style="display: none;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 12px;">
+          <div>
+            <label style="font-weight: 700; color: #0f766e; display: block; margin-bottom: 4px;">Vitals at Discharge</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <input type="text" id="ipd-dis-bp" placeholder="BP (e.g. 120/80 mmHg)" style="padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px;">
+              <input type="text" id="ipd-dis-pulse" placeholder="Pulse (e.g. 78 bpm)" style="padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px;">
+              <input type="text" id="ipd-dis-temp" placeholder="Temp (e.g. 98.6 F)" style="padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px;">
+              <input type="text" id="ipd-dis-spo2" placeholder="SpO2 (e.g. 99% on RA)" style="padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px;">
+            </div>
+          </div>
+          <div>
+            <label style="font-weight: 700; color: #0f766e; display: block; margin-bottom: 4px;">Systemic &amp; Local Examination</label>
+            <textarea id="ipd-dis-exam-notes" rows="3" placeholder="Chest clear, P/A soft non-tender, surgical wound clean and dry..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; resize: vertical;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 3: Prescription -->
+      <div id="ipd-distab-prescription" class="ipd-distab-pane" style="display: none;">
+        <div style="font-size: 12px; margin-bottom: 6px; font-weight: 700; color: #0f766e;">Discharge Medication / Rx Advice :</div>
+        <textarea id="ipd-dis-rx" rows="4" placeholder="Tab Augmentin 625mg (1-0-1) x 5 days&#10;Tab Pantop 40mg (1-0-0) OD empty stomach&#10;Tab Combiflam (1-0-1) SOS for pain..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical;"></textarea>
+      </div>
+
+      <!-- Tab Content 4: Process -->
+      <div id="ipd-distab-process" class="ipd-distab-pane" style="display: none;">
+        <div style="font-size: 12px; margin-bottom: 6px; font-weight: 700; color: #0f766e;">Hospital Course &amp; Treatment Summary :</div>
+        <textarea id="ipd-dis-course" rows="4" placeholder="Patient was admitted with acute symptoms. Underwent successful procedure on scheduled date. Post-operative period uneventful. Hemodynamically stable at the time of discharge..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical;"></textarea>
+      </div>
+
+      <!-- Tab Content 5: Comments -->
+      <div id="ipd-distab-comments" class="ipd-distab-pane" style="display: none;">
+        <div style="font-size: 12px; margin-bottom: 6px; font-weight: 700; color: #0f766e;">Follow-Up Advice, Review Date &amp; Emergency Warnings :</div>
+        <textarea id="ipd-dis-comments" rows="4" placeholder="Review in OPD after 5 days with Dr. Consultant for suture removal. Report immediately to emergency in case of fever, acute pain, bleeding, or wound soakage..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical;"></textarea>
+      </div>
+
+      <!-- Save As Template & Submit Row -->
+      <div style="margin-top: 14px; border-top: 1px solid #e2e8f0; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px;">
+          <label style="font-weight: 700; color: #0f766e;">Save as Template :</label>
+          <input type="text" id="ipd-dis-new-template-name" placeholder="Template Name (e.g. Lap Chole Routine)" style="width: 240px; padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+          <button type="button" onclick="saveIpdDischargeCustomTemplate()" style="background: #e2e8f0; color: #1e293b; border: 1px solid #cbd5e1; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 11px;">
+            Save Template
+          </button>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="button" onclick="printDischargeSummarySheet()" style="background: none; border: 1px solid #0f766e; color: #0f766e; padding: 8px 18px; border-radius: 4px; font-weight: 700; font-size: 12px; cursor: pointer;">
+            <i class="fa-solid fa-print"></i> Print Summary
+          </button>
+          <button type="button" onclick="submitIpdDischargeRecord()" style="background: #0f766e; color: white; border: none; padding: 8px 32px; border-radius: 4px; font-weight: 700; font-size: 13px; cursor: pointer;">
+            Submit Discharge
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
 </section> <!-- Closes section#tab-ipd -->
 
       <!-- PHARMACY MODULE (MARG / PHARMACYPRO STANDARD) -->
@@ -3542,6 +3832,176 @@
     const API = "/api";
     let currentUser = null;
     let authToken = localStorage.getItem("token") || null;
+    // ==========================================
+  // IPD DISCHARGE SUMMARY CONTROLLER
+  // ==========================================
+  const ipdDischargeTemplates = {
+    hernia: {
+      type: 'Normal',
+      icd: 'K40.90',
+      icdDesc: 'Unilateral inguinal hernia, without obstruction or gangrene',
+      pastMedical: 'No history of Hypertension / Diabetes Mellitus.',
+      surgicalHistory: 'Lichtenstein Mesh Repair performed.',
+      rx: 'Tab Cefuroxime 500mg 1-0-1 x 5 days\nTab Zerodol-SP 1-0-1 after food x 3 days\nTab Pantocid 40mg 1-0-0 empty stomach x 5 days',
+      course: 'Patient admitted with right groin swelling. Underwent mesh repair under spinal anaesthesia. Mobilized on Day 1. Vitals stable. Tolerating normal diet.',
+      comments: 'Review in OPD after 7 days for suture check. Avoid heavy lifting for 6 weeks.'
+    },
+    chole: {
+      type: 'Normal',
+      icd: 'K80.20',
+      icdDesc: 'Calculus of gallbladder without cholecystitis without obstruction',
+      pastMedical: 'Known hypertensive on regular medication.',
+      surgicalHistory: 'Laparoscopic Cholecystectomy performed.',
+      rx: 'Tab Augmentin 625mg 1-0-1 x 5 days\nTab Ultracet 1-0-1 x 3 days SOS\nCap Pan-D 1-0-0 empty stomach x 7 days',
+      course: 'Underwent elective laparoscopic cholecystectomy. Drain removed on post-op day 1. Wound healthy. Discharged in stable condition.',
+      comments: 'Low fat diet advised. Follow up in Surgical OPD after 5 days.'
+    },
+    appendicitis: {
+      type: 'Normal',
+      icd: 'K35.80',
+      icdDesc: 'Acute appendicitis, uncomplicated',
+      pastMedical: 'Nil significant.',
+      surgicalHistory: 'Appendectomy performed.',
+      rx: 'Tab Cefixime 200mg 1-0-1 x 5 days\nTab Metrogyl 400mg 1-1-1 x 5 days\nTab Paracetamol 650mg SOS',
+      course: 'Admitted with acute lower quadrant pain. Emergency appendectomy done. Post-op recovery satisfactory.',
+      comments: 'Suture removal on Day 8 in Surgical OPD.'
+    },
+    copd: {
+      type: 'Normal',
+      icd: 'J44.1',
+      icdDesc: 'Chronic obstructive pulmonary disease with acute exacerbation',
+      pastMedical: 'Known case of COPD / Chronic Bronchitis x 8 years.',
+      surgicalHistory: 'Nil previous surgeries.',
+      rx: 'Inhaler Budecort 200mcg (2 puffs twice daily)\nInhaler Asthalin (2 puffs SOS)\nTab Deriphyllin 150mg 1-0-1 x 10 days\nTab Azithromycin 500mg OD x 3 days',
+      course: 'Treated with nebulization, IV hydrocortisone, antibiotics, and oxygen support. Wheezing cleared. SpO2 96% on room air.',
+      comments: 'Avoid exposure to dust and smoke. Chest physio advised. Review in Pulmonology OPD after 1 week.'
+    }
+  };
+
+  window.switchDischargeTab = function(tabName, btn) {
+    document.querySelectorAll('.ipd-distab-pane').forEach(p => p.style.display = 'none');
+    document.querySelectorAll('.ipd-distab-btn').forEach(b => {
+      b.style.background = '#e2e8f0';
+      b.style.color = '#334155';
+    });
+
+    const target = document.getElementById('ipd-distab-' + tabName);
+    if (target) target.style.display = 'block';
+    if (btn) {
+      btn.style.background = '#0f766e';
+      btn.style.color = 'white';
+    }
+  };
+
+  function initIpdDischargeTimestamps() {
+    const today = new Date();
+    const dStr = today.toISOString().split('T')[0];
+    const tStr = today.toTimeString().substring(0, 5);
+
+    const dD = document.getElementById('ipd-dis-date');
+    const dT = document.getElementById('ipd-dis-time');
+    if (dD && !dD.value) dD.value = dStr;
+    if (dT && !dT.value) dT.value = tStr;
+  }
+
+  window.searchIpdPatientForDischarge = async function() {
+    const ipdVal = (document.getElementById('ipd-dis-search-id').value || '').trim();
+    if (!ipdVal) return alert('Enter IPD Number to search.');
+
+    try {
+      const res = await fetch(`/api/ipd/admissions?search=${encodeURIComponent(ipdVal)}`);
+      const data = await res.json();
+      const p = Array.isArray(data) ? data.find(x => String(x.ipdNumber || x.id) === ipdVal) : (data.patient || data);
+      if (!p) return alert('No admitted patient found for IPD: ' + ipdVal);
+
+      document.getElementById('ipd-dis-arrival').innerText = p.admissionDate || p.arrivalDate || '--';
+      document.getElementById('ipd-dis-doa').innerText = p.admissionDate || p.arrivalDate || '--';
+      document.getElementById('ipd-dis-meta-no').innerText = p.ipdNumber || ipdVal;
+      document.getElementById('ipd-dis-meta-occu').innerText = `${p.wardCategory || 'Ward'} - Bed ${p.unitBedNo || '1'}`;
+      document.getElementById('ipd-dis-meta-name').innerText = p.patientName || '--';
+      document.getElementById('ipd-dis-meta-bed').innerText = `${p.wardCategory || '--'} / ${p.unitBedNo || '--'}`;
+      document.getElementById('ipd-dis-meta-guardian').innerText = p.guardianName || p.relativeName || '--';
+      document.getElementById('ipd-dis-meta-dept').innerText = p.department || '--';
+      document.getElementById('ipd-dis-meta-age-gen').innerText = `${p.age || '--'}Y / ${p.gender || '--'}`;
+      document.getElementById('ipd-dis-meta-doc').innerText = p.consultingDoctor ? `Dr. ${p.consultingDoctor}` : '--';
+
+      initIpdDischargeTimestamps();
+    } catch(err) {
+      console.error(err);
+      alert('Error fetching patient data for Discharge.');
+    }
+  };
+
+  window.applyIpdDischargeTemplate = function(key) {
+    if (!key || !ipdDischargeTemplates[key]) return;
+    const t = ipdDischargeTemplates[key];
+
+    document.getElementById('ipd-dis-type').value = t.type || 'Normal';
+    document.getElementById('ipd-dis-icd').value = t.icd || '';
+    document.getElementById('ipd-dis-icd-desc').value = t.icdDesc || '';
+    document.getElementById('ipd-dis-past-medical').value = t.pastMedical || '';
+    document.getElementById('ipd-dis-surgical-history').value = t.surgicalHistory || '';
+    document.getElementById('ipd-dis-rx').value = t.rx || '';
+    document.getElementById('ipd-dis-course').value = t.course || '';
+    document.getElementById('ipd-dis-comments').value = t.comments || '';
+  };
+
+  window.saveIpdDischargeCustomTemplate = function() {
+    const tName = (document.getElementById('ipd-dis-new-template-name').value || '').trim();
+    if (!tName) return alert('Enter a template name to save.');
+
+    const newKey = 'custom_' + Date.now();
+    ipdDischargeTemplates[newKey] = {
+      type: document.getElementById('ipd-dis-type').value,
+      icd: document.getElementById('ipd-dis-icd').value,
+      icdDesc: document.getElementById('ipd-dis-icd-desc').value,
+      pastMedical: document.getElementById('ipd-dis-past-medical').value,
+      surgicalHistory: document.getElementById('ipd-dis-surgical-history').value,
+      rx: document.getElementById('ipd-dis-rx').value,
+      course: document.getElementById('ipd-dis-course').value,
+      comments: document.getElementById('ipd-dis-comments').value
+    };
+
+    const sel = document.getElementById('ipd-dis-template-select');
+    const opt = document.createElement('option');
+    opt.value = newKey;
+    opt.innerText = tName;
+    sel.appendChild(opt);
+    sel.value = newKey;
+
+    document.getElementById('ipd-dis-new-template-name').value = '';
+    alert(`Discharge template "${tName}" saved successfully!`);
+  };
+
+  window.clearIpdDischargeForm = function() {
+    document.getElementById('ipd-dis-search-id').value = '';
+    ['ipd-dis-arrival', 'ipd-dis-doa', 'ipd-dis-meta-no', 'ipd-dis-meta-occu', 'ipd-dis-meta-name', 
+     'ipd-dis-meta-bed', 'ipd-dis-meta-guardian', 'ipd-dis-meta-dept', 'ipd-dis-meta-age-gen', 'ipd-dis-meta-doc'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = '--';
+    });
+
+    document.querySelectorAll('#ipd-subview-discharge input:not([type="button"])').forEach(i => i.value = '');
+    document.querySelectorAll('#ipd-subview-discharge textarea').forEach(t => t.value = '');
+    document.getElementById('ipd-dis-template-select').value = '';
+  };
+
+  window.submitIpdDischargeRecord = function() {
+    const pName = document.getElementById('ipd-dis-meta-name').innerText;
+    const ipd = document.getElementById('ipd-dis-meta-no').innerText;
+    if (!pName || pName === '--') return alert('Please search and select an admitted patient first.');
+
+    const dType = document.getElementById('ipd-dis-type').value;
+    const dDate = document.getElementById('ipd-dis-date').value || new Date().toISOString().split('T')[0];
+
+    alert(`Discharge summary generated successfully!\nPatient: ${pName} (IPD: ${ipd})\nType: ${dType}\nDate: ${dDate}`);
+  };
+
+  window.printDischargeSummarySheet = function() {
+    const pName = document.getElementById('ipd-dis-meta-name').innerText;
+    if (!pName || pName === '--') return alert('Please load a patient before printing discharge summary.');
+    alert(`Printing Discharge Summary for ${pName}...`);
+  };
 
     function showToast(msg, isError = false) {
       const toast = document.getElementById("toast");
