@@ -3220,6 +3220,65 @@ function switchPharmaView(view) {
     const amtField = document.getElementById('ipd-item-amt');
     if (amtField) amtField.value = (rate * qty).toFixed(2);
   };
+  // --- IPD PATIENT SEARCH FOR MEDICINES INDENT ---
+  window.searchIpdPatientForMedicines = async function() {
+    const ipdInput = document.getElementById('ipd-med-search-id');
+    const ipdVal = ipdInput ? ipdInput.value.trim() : '';
+
+    if (!ipdVal) {
+      alert('Please enter an IPD Number to search.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/ipd/admissions?search=${encodeURIComponent(ipdVal)}`);
+      const data = await res.json();
+      
+      const patient = Array.isArray(data) 
+        ? data.find(p => String(p.ipdNumber || p.ipdNo || p.id) === String(ipdVal)) 
+        : (data.patient || data);
+
+      if (!patient) {
+        alert('No admitted patient found with IPD No: ' + ipdVal);
+        return;
+      }
+
+      // Populate display matrix
+      document.getElementById('ipd-disp-doa').innerText = patient.admissionDate || patient.arrivalDate || new Date().toLocaleDateString();
+      document.getElementById('ipd-med-meta-no').innerText = patient.ipdNumber || ipdVal;
+      document.getElementById('ipd-med-meta-bed').innerText = (patient.bedNo || patient.wardCategory || 'General') + ' - ' + (patient.unitBedNo || '1');
+      document.getElementById('ipd-med-meta-name').innerText = `${patient.patientName || patient.name || '--'} / ${patient.age || '--'}Y`;
+      document.getElementById('ipd-med-meta-dept').innerText = patient.department || 'General Medicine';
+      document.getElementById('ipd-med-meta-guardian').innerText = patient.guardianName || patient.relativeName || '--';
+      document.getElementById('ipd-med-meta-doc').innerText = patient.consultingDoctor || patient.doctorName || '--';
+      document.getElementById('ipd-med-meta-tpa').innerText = patient.insuranceCompany || patient.billingMode || 'Cash / Self';
+      document.getElementById('ipd-med-meta-date').innerText = (patient.admissionDate || new Date().toISOString()).split('T')[0];
+
+    } catch (err) {
+      console.error('Error fetching IPD record:', err);
+      alert('Failed to fetch patient details.');
+    }
+  };
+
+  // --- RESET / CLEAR BUTTON ---
+  window.clearIpdMedicineForm = function() {
+    const ids = ['ipd-disp-doa', 'ipd-med-meta-no', 'ipd-med-meta-bed', 'ipd-med-meta-name', 
+                 'ipd-med-meta-dept', 'ipd-med-meta-guardian', 'ipd-med-meta-doc', 
+                 'ipd-med-meta-tpa', 'ipd-med-meta-date'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerText = '--';
+    });
+    
+    const ipdSearch = document.getElementById('ipd-med-search-id');
+    if (ipdSearch) ipdSearch.value = '';
+
+    const tbody = document.getElementById('ipd-med-table-body');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #94a3b8; padding: 20px;">No items added to this indent.</td></tr>';
+    
+    const total = document.getElementById('ipd-med-grand-total');
+    if (total) total.value = '0.00';
+  };
 
 async function loadPharmacyStock() {
   try {
