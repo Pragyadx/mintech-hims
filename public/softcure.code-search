@@ -1,0 +1,8 @@
+# Query: softcure
+
+3 results - 1 file
+
+controllers\opdController.js:
+    5: // 1. SOFTCURE: Direct OPD Registration (Front Desk Walk-in)
+  108:     console.error("So OPD registration error:", error);
+  117: // 2. SOFTCURE: Live OPD Queue Table (Today's Outpatients)

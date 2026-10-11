@@ -3946,12 +3946,33 @@
     document.getElementById('ipd-dis-comments').value = t.comments || '';
   };
 
+  // Initialize and load any hospital-saved templates from browser storage
+  function loadHospitalDischargeTemplates() {
+    const sel = document.getElementById('ipd-dis-template-select');
+    if (!sel) return;
+
+    const saved = JSON.parse(localStorage.getItem('hims_discharge_templates') || '{}');
+    Object.assign(ipdDischargeTemplates, saved);
+
+    // Populate dropdown with custom saved templates
+    Object.keys(saved).forEach(key => {
+      if (!Array.from(sel.options).some(o => o.value === key)) {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.innerText = saved[key].displayName || key;
+        sel.appendChild(opt);
+      }
+    });
+  }
+
+  // Save new custom template locally so any hospital can configure their own list
   window.saveIpdDischargeCustomTemplate = function() {
     const tName = (document.getElementById('ipd-dis-new-template-name').value || '').trim();
-    if (!tName) return alert('Enter a template name to save.');
+    if (!tName) return alert('Enter a template name to save (e.g., Arthroscopy, Dengue Routine).');
 
     const newKey = 'custom_' + Date.now();
-    ipdDischargeTemplates[newKey] = {
+    const templateData = {
+      displayName: tName,
       type: document.getElementById('ipd-dis-type').value,
       icd: document.getElementById('ipd-dis-icd').value,
       icdDesc: document.getElementById('ipd-dis-icd-desc').value,
@@ -3962,6 +3983,14 @@
       comments: document.getElementById('ipd-dis-comments').value
     };
 
+    ipdDischargeTemplates[newKey] = templateData;
+
+    // Persist to localStorage
+    const saved = JSON.parse(localStorage.getItem('hims_discharge_templates') || '{}');
+    saved[newKey] = templateData;
+    localStorage.setItem('hims_discharge_templates', JSON.stringify(saved));
+
+    // Append to select box
     const sel = document.getElementById('ipd-dis-template-select');
     const opt = document.createElement('option');
     opt.value = newKey;
@@ -3970,8 +3999,11 @@
     sel.value = newKey;
 
     document.getElementById('ipd-dis-new-template-name').value = '';
-    alert(`Discharge template "${tName}" saved successfully!`);
+    alert(`Template "${tName}" saved! Any doctor in this hospital can now select it.`);
   };
+
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', loadHospitalDischargeTemplates);
 
   window.clearIpdDischargeForm = function() {
     document.getElementById('ipd-dis-search-id').value = '';
