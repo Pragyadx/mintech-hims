@@ -4186,43 +4186,76 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
   }
 
     function switchTab(tabId, targetBtn) {
-  // 1. Hide ALL tab panels and remove active classes
-  document.querySelectorAll(".tab-content").forEach(el => {
-    el.classList.remove("active");
-    el.style.display = "none";
-  });
-  document.querySelectorAll(".nav-btn").forEach(el => el.classList.remove("active"));
+    const cleanId = tabId.startsWith('tab-') ? tabId.replace('tab-', '') : tabId;
+    const targetSectionId = 'tab-' + cleanId;
+    const isOpd = (cleanId === 'opd');
 
-  // Explicit safety hides for the main views
-  const opdTab = document.getElementById("tab-opd");
-  const regTab = document.getElementById("tab-registration");
-  if (opdTab && tabId !== "opd") opdTab.style.display = "none";
-  if (regTab && tabId !== "registration") regTab.style.display = "none";
+    // 1. Hide ALL tab panels
+    document.querySelectorAll('.tab-content, main > section').forEach(el => {
+      el.classList.remove('active');
+      el.style.display = 'none';
+    });
 
-  // 2. Reveal and activate only the selected tab
-  const target = document.getElementById(`tab-${tabId}`);
-  if (target) {
-    target.classList.add("active");
-    target.style.display = "block";
-  }
-  if (targetBtn) targetBtn.classList.add("active");
+    // 2. Hide or show ANY loose direct children divs inside <main>
+    document.querySelectorAll('main > div').forEach(d => {
+      if (d.id === targetSectionId) {
+        d.style.display = 'block';
+      } else if (!d.closest('#tab-ipd') && !d.closest('#tab-dashboard')) {
+        // Loose OPD elements: show ONLY if current tab is OPD
+        d.style.display = isOpd ? 'block' : 'none';
+      }
+    });
 
-  // 3. Update title
-  if (document.getElementById("view-title") && tabMeta[tabId]) {
-    document.getElementById("view-title").innerText = tabMeta[tabId].title;
-  }
+    // 3. Deactivate all navigation buttons
+    document.querySelectorAll('.nav-btn, .nav-item').forEach(el => el.classList.remove('active'));
 
-  // 4. Trigger module-specific data loaders
-  if (tabId === 'ipd' && typeof loadIpdCensus === 'function') {
-    loadIpdCensus();
+    // 4. Reveal and activate only the selected tab
+    const target = document.getElementById(targetSectionId);
+    if (target) {
+      target.classList.add('active');
+      target.style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+
+    // 5. Activate the clicked button
+    if (targetBtn) {
+      targetBtn.classList.add('active');
+    }
+
+    // 6. Update view title safely
+    const titleEl = document.getElementById('view-title');
+    if (titleEl) {
+      if (typeof tabMeta !== 'undefined' && tabMeta[cleanId]) {
+        titleEl.innerText = tabMeta[cleanId].title || tabMeta[cleanId].label;
+      } else {
+        const titles = {
+          dashboard: "Hospital's Dashboard",
+          registration: "Reception & Intake",
+          opd: "OPD Consultation & Queue",
+          billing: "Cashier Billing",
+          lab: "Diagnostic Lab",
+          ipd: "Inpatient Wards & Beds",
+          pharmacy: "Pharmacy Store",
+          abdm: "ABDM & FHIR"
+        };
+        if (titles[cleanId]) titleEl.innerText = titles[cleanId];
+      }
+    }
+
+    // 7. Trigger module loaders
+    if (cleanId === 'dashboard' && typeof loadDashboardMetrics === 'function') {
+      loadDashboardMetrics();
+    }
+    if (cleanId === 'ipd' && typeof loadIpdCensus === 'function') {
+      loadIpdCensus();
+    }
+    if (cleanId === 'pharmacy' && typeof loadPharmacyStock === 'function') {
+      loadPharmacyStock();
+    }
+    if (cleanId === 'opd' && typeof loadOpdQueue === 'function') {
+      loadOpdQueue();
+    }
   }
-  if (tabId === 'pharmacy' && typeof loadPharmacyStock === 'function') {
-    loadPharmacyStock();
-  }
-  if (tabId === 'opd' && typeof loadOpdQueue === 'function') {
-    loadOpdQueue();
-  }
-}
 
     async function registerPatient() {
       const payload = {
