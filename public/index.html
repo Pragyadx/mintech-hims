@@ -450,11 +450,11 @@
           <i class="fa-solid fa-arrow-left"></i> Exit to Website
         </button>
       </header>
-
+<section id="tab-dashboard" class="tab-content active" ...></section>
       <!-- OPD Tab Opens HERE (Line 454) -->
 
         <!-- OPD SECTION (MINTECH STANDARD) -->
-    <section id="tab-opd" class="tab-content" style="padding: 10px; background: #f1f5f9;">
+    <section id="tab-opd" class="tab-content" style="display: none; padding: 10px; background: #f1f5f9;"></section>
       
       <!-- MINTECH CLINICAL SUB-NAVIGATION BAR (LIGHT TEAL PALETTE) -->
 <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 6px 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(15, 118, 110, 0.05);">
@@ -4113,8 +4113,8 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
   document.getElementById("print-modal").style.display = "block";
 }
     const roleRoutes = {
-    admin: ["registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
-    doctor: ["opd", "pharmacy", "lab"],
+    admin: ["dashbaord","registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
+    doctor: ["dashboard", "opd", "pharmacy", "lab"],
     receptionist: ["registration", "billing"],
     pharmacist: ["pharmacy", "billing"],
     pharmacy: ["pharmacy", "billing"],
@@ -4124,6 +4124,7 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
   };
 
     const tabMeta = {
+      dashboard: { label: "Hospital Dashboard", icon: "fa-gauge-high", title: "Executive Operations & Intelligence Cockpit" },
       registration: { label: "Reception & Intake", icon: "fa-address-card", title: "Patient Registration & MPI" },
       opd: { label: "OPD Consultation", icon: "fa-stethoscope", title: "OPD Consultation & Queue" },
       billing: { label: "Cashier Billing", icon: "fa-receipt", title: "Cashier Invoicing & Payments" },
