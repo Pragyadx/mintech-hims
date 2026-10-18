@@ -4113,15 +4113,19 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
   document.getElementById("print-modal").style.display = "block";
 }
     const roleRoutes = {
-    admin: ["dashbaord","registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
-    doctor: ["dashboard", "opd", "pharmacy", "lab"],
-    receptionist: ["registration", "billing"],
-    pharmacist: ["pharmacy", "billing"],
-    pharmacy: ["pharmacy", "billing"],
-    PHARMACIST: ["pharmacy", "billing"],
-    cashier: ["billing", "pharmacy"],
-    labtech: ["lab"]
-  };
+      admin: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
+      ADMIN: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
+      super_admin: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
+      SUPER_ADMIN: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
+      doctor: ["dashboard", "opd", "pharmacy", "lab", "ipd"],
+      DOCTOR: ["dashboard", "opd", "pharmacy", "lab", "ipd"],
+      receptionist: ["registration", "opd", "billing"],
+      pharmacist: ["pharmacy", "billing"],
+      pharmacy: ["pharmacy", "billing"],
+      PHARMACIST: ["pharmacy", "billing"],
+      cashier: ["billing", "pharmacy"],
+      labtech: ["lab"]
+    };
 
     const tabMeta = {
       dashboard: { label: "Hospital Dashboard", icon: "fa-gauge-high", title: "Executive Operations & Intelligence Cockpit" },
