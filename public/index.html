@@ -517,33 +517,63 @@
             </button>
           </div>
         </div>
-
-        <!-- Right Side: User Account Information Card -->
+<!-- Right Side: Hospital Master Profile (Editable by Super Admin Only) -->
         <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-            <div style="width: 48px; height: 48px; border-radius: 50%; background: #e6fffa; border: 1px solid #99f6e4; display: flex; align-items: center; justify-content: center; color: #0f766e; font-size: 20px; flex-shrink: 0;">
-              <i class="fa-solid fa-user-shield"></i>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 44px; height: 44px; border-radius: 50%; background: #e6fffa; border: 1px solid #99f6e4; display: flex; align-items: center; justify-content: center; color: #0f766e; font-size: 18px;">
+                <i class="fa-solid fa-user-shield"></i>
+              </div>
+              <div>
+                <div id="dash-user-name" style="font-size: 15px; font-weight: 700; color: #0f172a;">Hospital Administrator</div>
+                <div id="dash-user-role" style="font-size: 11px; font-weight: 600; color: #0f766e; text-transform: uppercase;">ADMIN (MANAGEMENT)</div>
+              </div>
             </div>
-            <div>
-              <div id="dash-user-name" style="font-size: 15px; font-weight: 700; color: #0f172a;">Super Administrator</div>
-              <div id="dash-user-role" style="font-size: 11px; font-weight: 600; color: #0f766e; text-transform: uppercase;">ADMIN (MANAGEMENT)</div>
-            </div>
+            <!-- Edit Button: visible only to the Master Super Admin -->
+            <button id="btn-edit-admin-profile" onclick="toggleAdminProfileEdit()" type="button" style="display: none; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 10px; font-size: 11px; font-weight: 600; color: #0f766e; cursor: pointer;">
+              <i class="fa-solid fa-pen-to-square"></i> Edit
+            </button>
           </div>
 
-          <div style="font-size: 12px; color: #64748b; display: flex; flex-direction: column; gap: 8px;">
+          <!-- Display Mode (Default: Shows blanks if not yet configured) -->
+          <div id="admin-profile-view" style="font-size: 12px; color: #64748b; display: flex; flex-direction: column; gap: 10px;">
             <div style="display: flex; justify-content: space-between;">
               <span style="font-weight: 500;">Member Since:</span>
-              <strong id="dash-user-membersince" style="color: #334155;">04/04/2026</strong>
+              <strong id="dash-user-membersince" style="color: #334155;">__________</strong>
             </div>
             <div style="display: flex; justify-content: space-between;">
               <span style="font-weight: 500;">Email:</span>
-              <strong id="dash-user-email" style="color: #334155;">admin@hospital.com</strong>
+              <strong id="dash-user-email" style="color: #334155;">__________</strong>
             </div>
             <div style="display: flex; justify-content: space-between;">
               <span style="font-weight: 500;">Mobile:</span>
-              <strong id="dash-user-mobile" style="color: #334155;">7678681815</strong>
+              <strong id="dash-user-mobile" style="color: #334155;">__________</strong>
             </div>
           </div>
+
+          <!-- Master Admin Edit Mode (Hidden until master clicks Edit) -->
+          <form id="admin-profile-form" onsubmit="saveAdminProfile(event)" style="display: none; font-size: 12px; flex-direction: column; gap: 8px;">
+            <div>
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Administrator Name</label>
+              <input type="text" id="edit-admin-name" placeholder="Enter Full Name" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Member Since</label>
+              <input type="date" id="edit-admin-membersince" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Email Address</label>
+              <input type="email" id="edit-admin-email" placeholder="e.g. admin@yourhospital.com" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div>
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 2px;">Mobile Number</label>
+              <input type="text" id="edit-admin-mobile" placeholder="e.g. 9876543210" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 6px;">
+              <button type="submit" style="flex: 1; background: #0f766e; color: white; border: none; padding: 6px; border-radius: 4px; font-weight: 600; cursor: pointer;">Save</button>
+              <button type="button" onclick="toggleAdminProfileEdit()" style="flex: 1; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px; border-radius: 4px; cursor: pointer;">Cancel</button>
+            </div>
+          </form>
         </div>
 
       </div>
@@ -4355,11 +4385,60 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       loadOpdQueue();
     }
   }
-window.loadDashboardMetrics = async function() {
-    // 1. Populate the logged-in user's profile card
+// Toggle the edit form (restricted strictly to Master Super Administrator)
+  window.toggleAdminProfileEdit = function() {
+    const viewEl = document.getElementById('admin-profile-view');
+    const formEl = document.getElementById('admin-profile-form');
+    if (!viewEl || !formEl) return;
+
+    const isEditing = formEl.style.display === 'flex';
+    formEl.style.display = isEditing ? 'none' : 'flex';
+    viewEl.style.display = isEditing ? 'flex' : 'none';
+
+    if (!isEditing) {
+      const savedInfo = JSON.parse(localStorage.getItem('hospital_master_profile') || '{}');
+      document.getElementById('edit-admin-name').value = savedInfo.name || '';
+      document.getElementById('edit-admin-membersince').value = savedInfo.memberSince || '';
+      document.getElementById('edit-admin-email').value = savedInfo.email || '';
+      document.getElementById('edit-admin-mobile').value = savedInfo.mobile || '';
+    }
+  };
+
+  // Save the master profile changes directly into storage
+  window.saveAdminProfile = function(e) {
+    e.preventDefault();
+    const profile = {
+      name: document.getElementById('edit-admin-name').value.trim(),
+      memberSince: document.getElementById('edit-admin-membersince').value,
+      email: document.getElementById('edit-admin-email').value.trim(),
+      mobile: document.getElementById('edit-admin-mobile').value.trim()
+    };
+    localStorage.setItem('hospital_master_profile', JSON.stringify(profile));
+    toggleAdminProfileEdit();
+    loadDashboardMetrics();
+  };
+
+  // Load metrics and populate master admin personal info
+  window.loadDashboardMetrics = async function() {
     const user = (typeof currentUser !== 'undefined' && currentUser) 
       ? currentUser 
       : JSON.parse(localStorage.getItem('user') || '{}');
+
+    // Only the Master Super Admin gets access to configure these details
+    const roleStr = (user.role || '').toUpperCase();
+    const isMaster = roleStr === 'SUPER_ADMIN' || roleStr === 'ADMIN' || (user.name && user.name.toLowerCase().includes('administrator'));
+
+    const editBtn = document.getElementById('btn-edit-admin-profile');
+    if (editBtn) editBtn.style.display = isMaster ? 'inline-block' : 'none';
+
+    // Pull custom hospital configuration; show blank placeholders if unset
+    const saved = JSON.parse(localStorage.getItem('hospital_master_profile') || '{}');
+    const adminName = saved.name || user.name || "Hospital Administrator";
+    const adminEmail = saved.email || "__________";
+    const adminMobile = saved.mobile || "__________";
+    const adminSince = saved.memberSince 
+      ? new Date(saved.memberSince).toLocaleDateString('en-GB') 
+      : "__________";
 
     const nameEl = document.getElementById('dash-user-name');
     const roleEl = document.getElementById('dash-user-role');
@@ -4367,17 +4446,13 @@ window.loadDashboardMetrics = async function() {
     const mobileEl = document.getElementById('dash-user-mobile');
     const memberSinceEl = document.getElementById('dash-user-membersince');
 
-    if (nameEl) nameEl.innerText = user.name || "Super Administrator";
+    if (nameEl) nameEl.innerText = adminName;
     if (roleEl) roleEl.innerText = (user.role || "ADMIN") + " (MANAGEMENT)";
-    if (emailEl) emailEl.innerText = user.email || "admin@hospital.com";
-    if (mobileEl) mobileEl.innerText = user.phone || user.mobile || "7678681815";
-    if (memberSinceEl) {
-      memberSinceEl.innerText = user.createdAt 
-        ? new Date(user.createdAt).toLocaleDateString('en-GB') 
-        : "04/04/2026";
-    }
+    if (emailEl) emailEl.innerText = adminEmail;
+    if (mobileEl) mobileEl.innerText = adminMobile;
+    if (memberSinceEl) memberSinceEl.innerText = adminSince;
 
-    // 2. Fetch live metrics from endpoints
+    // Fetch live system metrics
     try {
       const resOpd = await fetch('/api/opd/queue');
       if (resOpd.ok) {
@@ -4385,21 +4460,18 @@ window.loadDashboardMetrics = async function() {
         const opdEl = document.getElementById('dash-opd-count');
         if (opdEl) opdEl.innerText = Array.isArray(data) ? data.length : (data.queue ? data.queue.length : 0);
       }
-
       const resIpd = await fetch('/api/ipd/admissions/active');
       if (resIpd.ok) {
         const ipdData = await resIpd.json();
         const ipdEl = document.getElementById('dash-ipd-count');
         if (ipdEl) ipdEl.innerText = Array.isArray(ipdData) ? ipdData.length : (ipdData.admissions ? ipdData.admissions.length : 0);
       }
-
       const resRev = await fetch('/api/billing/stats/today');
       if (resRev.ok) {
         const revData = await resRev.json();
         const revEl = document.getElementById('dash-revenue-count');
         if (revEl && revData.total) revEl.innerText = '₹ ' + Number(revData.total).toLocaleString('en-IN');
       }
-
       const resLab = await fetch('/api/lab/orders');
       if (resLab.ok) {
         const labData = await resLab.json();
@@ -4407,7 +4479,7 @@ window.loadDashboardMetrics = async function() {
         if (labEl) labEl.innerText = Array.isArray(labData) ? labData.length : 0;
       }
     } catch (err) {
-      console.warn("Dashboard sync completed with default values:", err);
+      console.warn("Metric sync:", err);
     }
   };
     async function registerPatient() {
