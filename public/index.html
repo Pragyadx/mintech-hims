@@ -451,188 +451,98 @@
           <i class="fa-solid fa-arrow-left"></i> Exit to Website
         </button>
       </header>
-<section id="tab-dashboard" class="tab-content active" style="padding: 16px 20px; background: #eef2f6; min-height: 100vh;">
+<section id="tab-dashboard" class="tab-content active" style="padding: 24px 28px; background: #f8fafc; min-height: 100vh;">
       
-      <!-- Top Grid: Profile + Chart (Left 75%) and Right Metric Stack (25%) -->
-      <div style="display: grid; grid-template-columns: 3fr 1fr; gap: 16px; margin-bottom: 16px;">
+      <!-- Top 4 Clean Metric Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 24px;">
         
-        <!-- Hospital's Dashboard Profile & Chart Card -->
-        <div style="background: white; border: 1px solid #dcdfe6; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden;">
-          <div style="border-top: 3px solid #2e7d32; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0;">
-            <span style="font-weight: 700; color: #333; font-size: 15px;">Hospital 's Dashboard</span>
-            <div style="color: #999; font-size: 12px; cursor: pointer;">
-              <i class="fa-solid fa-minus" style="margin-right: 8px;"></i>
-              <i class="fa-solid fa-xmark"></i>
-            </div>
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase;">Today's OPD Queue</span>
+            <i class="fa-solid fa-stethoscope" style="color: #0f766e; font-size: 18px;"></i>
           </div>
-
-          <div style="padding: 16px; display: grid; grid-template-columns: 240px 1fr; gap: 20px; align-items: center;">
-            <!-- User Profile Box -->
-            <div style="display: flex; gap: 12px; align-items: flex-start;">
-              <div style="width: 70px; height: 70px; border-radius: 50%; background: #e0f2fe; border: 2px solid #bae6fd; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;">
-                <i class="fa-solid fa-user-tie" style="font-size: 38px; color: #0284c7;"></i>
-              </div>
-              <div style="font-size: 12px; color: #475569; line-height: 1.5;">
-                <div id="dash-user-name" style="font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">Arvind Shama</div>
-                <div><strong>Member Since:</strong> <span id="dash-user-membersince">04/04/2026</span></div>
-                <div><strong>Email:</strong> <span id="dash-user-email">user@spiralshealth.com</span></div>
-                <div><strong>Mobile:</strong> <span id="dash-user-mobile">9876543210</span></div>
-              </div>
-            </div>
-
-            <!-- Patient's Chart This Week -->
-            <div>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Patient's Chart &bull; <span style="color: #0f766e;">This Week</span></span>
-              </div>
-              <!-- Weekly Trend Line Chart Canvas -->
-              <div style="height: 130px; width: 100%;">
-                <canvas id="patientWeeklyChart"></canvas>
-              </div>
-            </div>
-          </div>
+          <div id="dash-opd-count" style="font-size: 30px; font-weight: 800; color: #0f766e; margin-top: 10px;">0</div>
+          <div style="font-size: 12px; color: #10b981; margin-top: 4px; font-weight: 500;">Registered outpatients</div>
         </div>
 
-        <!-- Right Side Stat Tiles -->
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <!-- Prescription Tile (Orange) -->
-          <div style="background: #e67e22; border-radius: 4px; padding: 12px 16px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <div>
-              <div style="font-size: 12px; font-weight: 600; opacity: 0.9;">Prescription</div>
-              <div id="dash-prescription-count" style="font-size: 22px; font-weight: 800; margin: 2px 0;">608</div>
-              <div style="font-size: 10px; opacity: 0.85;">20.39% Increase in 30 Days</div>
-            </div>
-            <i class="fa-solid fa-book-medical" style="font-size: 32px; opacity: 0.9;"></i>
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase;">Active Inpatients (IPD)</span>
+            <i class="fa-solid fa-bed" style="color: #1e40af; font-size: 18px;"></i>
           </div>
+          <div id="dash-ipd-count" style="font-size: 30px; font-weight: 800; color: #1e40af; margin-top: 10px;">0</div>
+          <div style="font-size: 12px; color: #64748b; margin-top: 4px; font-weight: 500;">Currently admitted</div>
+        </div>
 
-          <!-- Medicine Tile (Green) -->
-          <div style="background: #27ae60; border-radius: 4px; padding: 12px 16px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <div>
-              <div style="font-size: 12px; font-weight: 600; opacity: 0.9;">Medicine</div>
-              <div id="dash-medicine-count" style="font-size: 22px; font-weight: 800; margin: 2px 0;">30859</div>
-              <div style="font-size: 10px; opacity: 0.85;">9.08% Increase in 30 Days</div>
-            </div>
-            <i class="fa-solid fa-briefcase-medical" style="font-size: 32px; opacity: 0.9;"></i>
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase;">Today's Collections</span>
+            <i class="fa-solid fa-indian-rupee-sign" style="color: #15803d; font-size: 18px;"></i>
           </div>
+          <div id="dash-revenue-count" style="font-size: 30px; font-weight: 800; color: #15803d; margin-top: 10px;">₹ 0</div>
+          <div style="font-size: 12px; color: #15803d; margin-top: 4px; font-weight: 500;">Cashier receipts</div>
+        </div>
 
-          <!-- Tests Tile (Red) -->
-          <div style="background: #e74c3c; border-radius: 4px; padding: 12px 16px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <div>
-              <div style="font-size: 12px; font-weight: 600; opacity: 0.9;">Tests</div>
-              <div id="dash-tests-count" style="font-size: 22px; font-weight: 800; margin: 2px 0;">2821</div>
-              <div style="font-size: 10px; opacity: 0.85;">0.04% Increase in 30 Days</div>
-            </div>
-            <i class="fa-solid fa-stethoscope" style="font-size: 32px; opacity: 0.9;"></i>
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase;">Pending Lab Orders</span>
+            <i class="fa-solid fa-flask-vial" style="color: #b45309; font-size: 18px;"></i>
           </div>
-
-          <!-- Frequencies Tile (Cyan) -->
-          <div style="background: #00bcd4; border-radius: 4px; padding: 12px 16px; color: white; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <div>
-              <div style="font-size: 12px; font-weight: 600; opacity: 0.9;">Frequencies</div>
-              <div id="dash-freq-count" style="font-size: 22px; font-weight: 800; margin: 2px 0;">233</div>
-              <div style="font-size: 10px; opacity: 0.85;">48.93% Increase in 30 Days</div>
-            </div>
-            <i class="fa-solid fa-chart-column" style="font-size: 32px; opacity: 0.9;"></i>
-          </div>
+          <div id="dash-lab-count" style="font-size: 30px; font-weight: 800; color: #b45309; margin-top: 10px;">0</div>
+          <div style="font-size: 12px; color: #b45309; margin-top: 4px; font-weight: 500;">Awaiting results</div>
         </div>
 
       </div>
 
-      <!-- Row 2: 3 Income & Due Donut Report Cards -->
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">
+      <!-- Lower Grid: Left (Operational Shortcuts) + Right (Logged-in User Profile) -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;">
         
-        <!-- IPD Income Report -->
-        <div style="background: white; border: 1px solid #dcdfe6; border-radius: 4px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: grid; grid-template-columns: 1fr 1fr; align-items: center;">
-          <div>
-            <div style="font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">IPD Income Report</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 3px;"><span style="display: inline-block; width: 10px; height: 10px; background: #c0392b; margin-right: 6px;"></span> Today</div>
-            <div style="font-size: 11px; color: #64748b;"><span style="display: inline-block; width: 10px; height: 10px; background: #16a085; margin-right: 6px;"></span> 7 Days</div>
-            <div style="margin-top: 10px; font-size: 12px; color: #333;">
-              <strong>IPD Income</strong>
-              <div>Today: 0</div>
-              <div>7 Days: ₹3,22,583</div>
+        <!-- Left: Operational Shortcuts -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <h3 style="margin: 0 0 6px 0; font-size: 15px; color: #0f172a; font-weight: 700;">Operational Shortcuts</h3>
+          <p style="margin: 0 0 18px 0; font-size: 13px; color: #64748b;">Direct navigation to key hospital operations desk modules:</p>
+
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button type="button" onclick="switchTab('opd')" style="background: #f0fdfa; border: 1px solid #99f6e4; color: #0f766e; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+              <i class="fa-solid fa-stethoscope"></i> OPD Consultation
+            </button>
+            <button type="button" onclick="switchTab('ipd')" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+              <i class="fa-solid fa-bed"></i> Inpatient (IPD)
+            </button>
+            <button type="button" onclick="switchTab('billing')" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+              <i class="fa-solid fa-receipt"></i> Cashier Billing
+            </button>
+            <button type="button" onclick="switchTab('pharmacy')" style="background: #faf5ff; border: 1px solid #e9d5ff; color: #7e22ce; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+              <i class="fa-solid fa-pills"></i> Pharmacy Inventory
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Side: User Account Information Card -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
+            <div style="width: 48px; height: 48px; border-radius: 50%; background: #e6fffa; border: 1px solid #99f6e4; display: flex; align-items: center; justify-content: center; color: #0f766e; font-size: 20px; flex-shrink: 0;">
+              <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <div>
+              <div id="dash-user-name" style="font-size: 15px; font-weight: 700; color: #0f172a;">Super Administrator</div>
+              <div id="dash-user-role" style="font-size: 11px; font-weight: 600; color: #0f766e; text-transform: uppercase;">ADMIN (MANAGEMENT)</div>
             </div>
           </div>
-          <div style="height: 100px; display: flex; align-items: center; justify-content: center;">
-            <canvas id="ipdIncomePie" width="90" height="90"></canvas>
-          </div>
-        </div>
 
-        <!-- OPD Income Report -->
-        <div style="background: white; border: 1px solid #dcdfe6; border-radius: 4px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: grid; grid-template-columns: 1fr 1fr; align-items: center;">
-          <div>
-            <div style="font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">OPD Income Report</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 3px;"><span style="display: inline-block; width: 10px; height: 10px; background: #c0392b; margin-right: 6px;"></span> Today</div>
-            <div style="font-size: 11px; color: #64748b;"><span style="display: inline-block; width: 10px; height: 10px; background: #16a085; margin-right: 6px;"></span> 7 Days</div>
-            <div style="margin-top: 10px; font-size: 12px; color: #333;">
-              <strong>OPD Income</strong>
-              <div>Today: 0</div>
-              <div>7 Days: ₹12,600</div>
+          <div style="font-size: 12px; color: #64748b; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-weight: 500;">Member Since:</span>
+              <strong id="dash-user-membersince" style="color: #334155;">04/04/2026</strong>
             </div>
-          </div>
-          <div style="height: 100px; display: flex; align-items: center; justify-content: center;">
-            <canvas id="opdIncomePie" width="90" height="90"></canvas>
-          </div>
-        </div>
-
-        <!-- OPD Dues Report -->
-        <div style="background: white; border: 1px solid #dcdfe6; border-radius: 4px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: grid; grid-template-columns: 1fr 1fr; align-items: center;">
-          <div>
-            <div style="font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">OPD Dues Report</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 3px;"><span style="display: inline-block; width: 10px; height: 10px; background: #c0392b; margin-right: 6px;"></span> Today</div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 3px;"><span style="display: inline-block; width: 10px; height: 10px; background: #16a085; margin-right: 6px;"></span> 7 Days</div>
-            <div style="font-size: 11px; color: #64748b;"><span style="display: inline-block; width: 10px; height: 10px; background: #2980b9; margin-right: 6px;"></span> All Time</div>
-            <div style="margin-top: 6px; font-size: 12px; color: #333;">
-              <strong>OPD Dues</strong>
-              <div>Today: 0 | 7D: ₹1,500</div>
-              <div>All: ₹2,63,182.7</div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-weight: 500;">Email:</span>
+              <strong id="dash-user-email" style="color: #334155;">admin@hospital.com</strong>
             </div>
-          </div>
-          <div style="height: 100px; display: flex; align-items: center; justify-content: center;">
-            <canvas id="opdDuesPie" width="90" height="90"></canvas>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Row 3: Patients, Appointments, Diagnosis Counter Tiles -->
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
-        
-        <!-- Patients -->
-        <div style="background: white; border: 1px solid #dcdfe6; border-radius: 4px; display: flex; align-items: center; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-          <div style="background: #f39c12; width: 80px; min-height: 80px; display: flex; align-items: center; justify-content: center; color: white;">
-            <i class="fa-solid fa-wheelchair" style="font-size: 32px;"></i>
-          </div>
-          <div style="padding: 10px 16px; font-size: 12px; color: #475569;">
-            <div style="font-size: 14px; font-weight: 700; color: #1e293b;">Patients</div>
-            <div>Today: <strong>0</strong></div>
-            <div>This Week: <strong>6</strong></div>
-            <div>This Month: <strong>24</strong></div>
-          </div>
-        </div>
-
-        <!-- Appointments -->
-        <div style="background: white; border: 1px solid #dcdfe6; border-radius: 4px; display: flex; align-items: center; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-          <div style="background: #27ae60; width: 80px; min-height: 80px; display: flex; align-items: center; justify-content: center; color: white;">
-            <i class="fa-solid fa-calendar-days" style="font-size: 32px;"></i>
-          </div>
-          <div style="padding: 10px 16px; font-size: 12px; color: #475569;">
-            <div style="font-size: 14px; font-weight: 700; color: #1e293b;">Appointments</div>
-            <div>Today: <strong>0</strong></div>
-            <div>All: <strong>882</strong></div>
-          </div>
-        </div>
-
-        <!-- Diagnosis -->
-        <div style="background: white; border: 1px solid #dcdfe6; border-radius: 4px; display: flex; align-items: center; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
-          <div style="background: #2980b9; width: 80px; min-height: 80px; display: flex; align-items: center; justify-content: center; color: white;">
-            <i class="fa-solid fa-briefcase-medical" style="font-size: 32px;"></i>
-          </div>
-          <div style="padding: 10px 16px; font-size: 12px; color: #475569;">
-            <div style="font-size: 14px; font-weight: 700; color: #1e293b;">Diagnosis</div>
-            <div>Total: <strong>12</strong></div>
-            <div>Last Week: <strong>0</strong></div>
-            <div>Last Month: <strong>0</strong></div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-weight: 500;">Mobile:</span>
+              <strong id="dash-user-mobile" style="color: #334155;">7678681815</strong>
+            </div>
           </div>
         </div>
 
@@ -4445,19 +4355,21 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       loadOpdQueue();
     }
   }
-window.loadDashboardMetrics = function() {
-    // 1. Populate the logged-in user's personal info
+window.loadDashboardMetrics = async function() {
+    // 1. Populate the logged-in user's profile card
     const user = (typeof currentUser !== 'undefined' && currentUser) 
       ? currentUser 
       : JSON.parse(localStorage.getItem('user') || '{}');
 
     const nameEl = document.getElementById('dash-user-name');
+    const roleEl = document.getElementById('dash-user-role');
     const emailEl = document.getElementById('dash-user-email');
     const mobileEl = document.getElementById('dash-user-mobile');
     const memberSinceEl = document.getElementById('dash-user-membersince');
 
-    if (nameEl) nameEl.innerText = user.name || "Arvind Sharma";
-    if (emailEl) emailEl.innerText = user.email || "7678681815@gmail.com";
+    if (nameEl) nameEl.innerText = user.name || "Super Administrator";
+    if (roleEl) roleEl.innerText = (user.role || "ADMIN") + " (MANAGEMENT)";
+    if (emailEl) emailEl.innerText = user.email || "admin@hospital.com";
     if (mobileEl) mobileEl.innerText = user.phone || user.mobile || "7678681815";
     if (memberSinceEl) {
       memberSinceEl.innerText = user.createdAt 
@@ -4465,75 +4377,38 @@ window.loadDashboardMetrics = function() {
         : "04/04/2026";
     }
 
-    // 2. Render Patient's Chart - This Week
-    const chartCanvas = document.getElementById('patientWeeklyChart');
-    if (chartCanvas && typeof Chart !== 'undefined') {
-      if (window.dashboardChartInstance) {
-        window.dashboardChartInstance.destroy();
+    // 2. Fetch live metrics from endpoints
+    try {
+      const resOpd = await fetch('/api/opd/queue');
+      if (resOpd.ok) {
+        const data = await resOpd.json();
+        const opdEl = document.getElementById('dash-opd-count');
+        if (opdEl) opdEl.innerText = Array.isArray(data) ? data.length : (data.queue ? data.queue.length : 0);
       }
-      const chartCtx = chartCanvas.getContext('2d');
-      window.dashboardChartInstance = new Chart(chartCtx, {
-        type: 'line',
-        data: {
-          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          datasets: [{
-            label: 'Patients',
-            data: [6, 7, 3, 9, 3, 5, 1],
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.08)',
-            borderWidth: 1.5,
-            pointBackgroundColor: '#1d4ed8',
-            pointRadius: 3.5,
-            fill: true,
-            tension: 0.1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: 10,
-              ticks: { stepSize: 2, font: { size: 10 } },
-              grid: { color: '#f1f5f9' }
-            },
-            x: {
-              ticks: { font: { size: 10 } },
-              grid: { display: false }
-            }
-          }
-        }
-      });
+
+      const resIpd = await fetch('/api/ipd/admissions/active');
+      if (resIpd.ok) {
+        const ipdData = await resIpd.json();
+        const ipdEl = document.getElementById('dash-ipd-count');
+        if (ipdEl) ipdEl.innerText = Array.isArray(ipdData) ? ipdData.length : (ipdData.admissions ? ipdData.admissions.length : 0);
+      }
+
+      const resRev = await fetch('/api/billing/stats/today');
+      if (resRev.ok) {
+        const revData = await resRev.json();
+        const revEl = document.getElementById('dash-revenue-count');
+        if (revEl && revData.total) revEl.innerText = '₹ ' + Number(revData.total).toLocaleString('en-IN');
+      }
+
+      const resLab = await fetch('/api/lab/orders');
+      if (resLab.ok) {
+        const labData = await resLab.json();
+        const labEl = document.getElementById('dash-lab-count');
+        if (labEl) labEl.innerText = Array.isArray(labData) ? labData.length : 0;
+      }
+    } catch (err) {
+      console.warn("Dashboard sync completed with default values:", err);
     }
-
-    // 3. Render Income & Dues Donut Charts
-    const drawMiniPie = (canvasId, colors, data) => {
-      const canvas = document.getElementById(canvasId);
-      if (!canvas || typeof Chart === 'undefined') return;
-      if (canvas._chartInstance) canvas._chartInstance.destroy();
-      const ctx = canvas.getContext('2d');
-      canvas._chartInstance = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          datasets: [{
-            data: data,
-            backgroundColor: colors,
-            borderWidth: 0
-          }]
-        },
-        options: {
-          cutout: '65%',
-          responsive: false,
-          plugins: { legend: { display: false }, tooltip: { enabled: false } }
-        }
-      });
-    };
-
-    drawMiniPie('ipdIncomePie', ['#16a085', '#c0392b'], [95, 5]);
-    drawMiniPie('opdIncomePie', ['#16a085', '#c0392b'], [90, 10]);
-    drawMiniPie('opdDuesPie', ['#2980b9', '#16a085', '#c0392b'], [75, 20, 5]);
   };
     async function registerPatient() {
       const payload = {
