@@ -432,7 +432,39 @@
   <div id="app-workspace">
     <aside>
       <div class="workspace-brand"><i class="fa-solid fa-hospital-user"></i> Mintech HIMS</div>
-      <nav id="sidebar-nav"></nav>
+      <nav id="sidebar-nav">
+            <button type="button" class="nav-btn" onclick="switchTab('dashboard', this)"><i class="fa-solid fa-gauge-high"></i> Dashboard</button>
+            <button type="button" class="nav-btn" onclick="switchTab('registration', this)"><i class="fa-solid fa-address-card"></i> Reception &amp; Intake</button>
+            <button type="button" class="nav-btn" onclick="switchTab('opd', this)"><i class="fa-solid fa-stethoscope"></i> OPD Consultation</button>
+
+            <!-- INVOICES & BILLING DROPDOWN -->
+            <div style="margin: 2px 0;">
+              <button type="button" class="nav-btn" id="nav-btn-billing" onclick="toggleBillingSubmenu(this)" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-file-invoice-dollar" style="color: #2dd4bf;"></i>
+                  <span>Invoices &amp; Billing</span>
+                </div>
+                <i class="fa-solid fa-chevron-down submenu-chevron" id="billing-chevron" style="font-size: 11px; transition: transform 0.25s;"></i>
+              </button>
+
+              <div id="billing-submenu" style="display: none; background: rgba(0, 0, 0, 0.25); padding: 4px 0 6px 12px; border-left: 2px solid #0f766e; margin-left: 12px;">
+                <a href="javascript:void(0)" onclick="openBillingView('opd-invoices', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #ffffff; font-size: 12px; text-decoration: none; border-radius: 4px; background: rgba(15, 118, 110, 0.4); font-weight: 600;"><i class="fa-regular fa-file-lines" style="width: 14px;"></i> OPD Invoices</a>
+                <a href="javascript:void(0)" onclick="openBillingView('opd-payments', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-receipt" style="width: 14px;"></i> OPD Payments</a>
+                <a href="javascript:void(0)" onclick="openBillingView('opd-daily-collection', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-cash-register" style="width: 14px;"></i> OPD Daily Collection</a>
+                <a href="javascript:void(0)" onclick="openBillingView('daily-collection-register', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-book-bookmark" style="width: 14px;"></i> Daily Collection Register</a>
+                <a href="javascript:void(0)" onclick="openBillingView('total-summary', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-chart-pie" style="width: 14px;"></i> Total Summary</a>
+                <a href="javascript:void(0)" onclick="openBillingView('ipd-advances', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-hand-holding-dollar" style="width: 14px;"></i> IPD Advance &amp; Payments</a>
+                <a href="javascript:void(0)" onclick="openBillingView('ipd-invoices', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-bed-pulse" style="width: 14px;"></i> IPD Invoices</a>
+                <a href="javascript:void(0)" onclick="openBillingView('refunds', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-arrow-rotate-left" style="width: 14px;"></i> Refunds</a>
+                <a href="javascript:void(0)" onclick="openBillingView('patient-referrals', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-users-line" style="width: 14px;"></i> Patient Referrals</a>
+              </div>
+            </div>
+
+            <button type="button" class="nav-btn" onclick="switchTab('lab', this)"><i class="fa-solid fa-flask-vial"></i> Diagnostic Lab</button>
+            <button type="button" class="nav-btn" onclick="switchTab('ipd', this)"><i class="fa-solid fa-bed"></i> Inpatient (IPD)</button>
+            <button type="button" class="nav-btn" onclick="switchTab('pharmacy', this)"><i class="fa-solid fa-pills"></i> Pharmacy Store</button>
+            <button type="button" class="nav-btn" onclick="switchTab('abdm', this)"><i class="fa-solid fa-shield-halved"></i> ABDM &amp; FHIR</button>
+          </nav>
       <div class="user-footer">
         <div class="user-info">
           <div class="user-name" id="current-user-name">Staff User</div>
@@ -4489,14 +4521,24 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       pharmacy: { label: "Pharmacy Store", icon: "fa-pills", title: "Pharmacy Inventory" },
       abdm: { label: "ABDM & FHIR", icon: "fa-shield-halved", title: "ABDM / ABHA Standards" },
     };
-
+// Toggle the Invoices & Billing sidebar dropdown
+  window.toggleBillingSubmenu = function(btn) {
+    const submenu = document.getElementById('billing-submenu');
+    const chevron = document.getElementById('billing-chevron');
+    if (!submenu) return;
+    const isClosed = submenu.style.display === 'none' || !submenu.style.display;
+    submenu.style.display = isClosed ? 'block' : 'none';
+    if (chevron) chevron.style.transform = isClosed ? 'rotate(180deg)' : 'rotate(0deg)';
+  };
     function launchDashboard() {
     document.getElementById("app-workspace").style.display = "flex";
     document.getElementById("current-user-name").innerText = currentUser.name;
     document.getElementById("current-user-role").innerText = `${currentUser.role} (${currentUser.department || ''})`;
 
-    const userRoleKey = (currentUser && currentUser.role) ? currentUser.role.toLowerCase().trim() : 'pharmacist';
-    const allowedTabs = roleRoutes[userRoleKey] || roleRoutes[currentUser?.role] || ["pharmacy", "billing"];
+    // Ensure all tabs including billing are always available
+    const defaultTabs = ['dashboard', 'registration', 'opd', 'billing', 'lab', 'ipd', 'pharmacy', 'abdm'];
+    const userRoleKey = (currentUser && currentUser.role) ? currentUser.role.toLowerCase() : '';
+    const allowedTabs = roleRoutes[userRoleKey] || roleRoutes[currentUser?.role] || defaultTabs;
     
     const navContainer = document.getElementById("sidebar-nav") || document.querySelector(".nav-links") || document.querySelector("nav");
     if (navContainer) {
@@ -4505,11 +4547,39 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       (allowedTabs || []).forEach((tabId, idx) => {
         const meta = tabMeta[tabId];
         if (!meta) return;
-        const btn = document.createElement("button");
-        btn.className = `nav-btn ${idx === 0 ? "active" : ""}`;
-        btn.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${meta.label}`;
-        btn.onclick = (e) => switchTab(tabId, e.currentTarget);
-        navContainer.appendChild(btn);
+
+        if (tabId === 'billing') {
+          // Render Expandable Dropdown for Invoices & Billing
+          const groupDiv = document.createElement("div");
+          groupDiv.style.margin = "2px 0";
+          groupDiv.innerHTML = `
+            <button type="button" class="nav-btn" id="nav-btn-billing" onclick="toggleBillingSubmenu(this)" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid ${meta.icon}"></i>
+                <span>${meta.label}</span>
+              </div>
+              <i class="fa-solid fa-chevron-down submenu-chevron" id="billing-chevron" style="font-size: 11px; transition: transform 0.25s;"></i>
+            </button>
+            <div id="billing-submenu" style="display: none; background: rgba(0, 0, 0, 0.22); padding: 4px 0 6px 12px; border-left: 2px solid #0f766e; margin-left: 12px;">
+              <a href="javascript:void(0)" onclick="openBillingView('opd-invoices', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #ffffff; font-size: 12px; text-decoration: none; border-radius: 4px; background: rgba(15, 118, 110, 0.4); font-weight: 600;"><i class="fa-regular fa-file-lines" style="width: 14px;"></i> OPD Invoices</a>
+              <a href="javascript:void(0)" onclick="openBillingView('opd-payments', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-receipt" style="width: 14px;"></i> OPD Payments</a>
+              <a href="javascript:void(0)" onclick="openBillingView('opd-daily-collection', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-cash-register" style="width: 14px;"></i> OPD Daily Collection</a>
+              <a href="javascript:void(0)" onclick="openBillingView('daily-collection-register', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-book-bookmark" style="width: 14px;"></i> Daily Collection Register</a>
+              <a href="javascript:void(0)" onclick="openBillingView('total-summary', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-chart-pie" style="width: 14px;"></i> Total Summary</a>
+              <a href="javascript:void(0)" onclick="openBillingView('ipd-advances', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-hand-holding-dollar" style="width: 14px;"></i> IPD Advance &amp; Payments</a>
+              <a href="javascript:void(0)" onclick="openBillingView('ipd-invoices', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-bed-pulse" style="width: 14px;"></i> IPD Invoices</a>
+              <a href="javascript:void(0)" onclick="openBillingView('refunds', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-arrow-rotate-left" style="width: 14px;"></i> Refunds</a>
+              <a href="javascript:void(0)" onclick="openBillingView('patient-referrals', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-users-line" style="width: 14px;"></i> Patient Referrals</a>
+            </div>
+          `;
+          navContainer.appendChild(groupDiv);
+        } else {
+          const btn = document.createElement("button");
+          btn.className = `nav-btn ${idx === 0 ? "active" : ""}`;
+          btn.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${meta.label}`;
+          btn.onclick = (e) => switchTab(tabId, e.currentTarget);
+          navContainer.appendChild(btn);
+        }
       });
 
       if (allowedTabs && allowedTabs.length > 0 && navContainer.children.length > 0) {
