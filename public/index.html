@@ -791,10 +791,49 @@
                 </div>
               </div>
 
-              <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center;">
-                <label style="font-weight: 600; color: #b91c1c;">Age (Y) *:</label>
-                <input type="number" id="opd-age" required min="0" max="120" placeholder="Years" style="width: 100px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px;">
+              <!-- Patient Age: Years, Months, Days + Height (cm) -->
+          <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <label style="font-weight: 600; color: #b91c1c;">Age / Height *:</label>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: center;">
+              
+              <!-- Age: Y, M, D Inputs -->
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <div style="display: flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 6px; flex: 1;">
+                  <input type="number" id="opd-age-y" placeholder="0" min="0" max="130" style="width: 100%; border: none; outline: none; font-size: 13px; padding: 5px 0;" oninput="syncOpdAge()">
+                  <span style="font-size: 11px; font-weight: 700; color: #64748b;">Y</span>
+                </div>
+                <div style="display: flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 6px; flex: 1;">
+                  <input type="number" id="opd-age-m" placeholder="0" min="0" max="11" style="width: 100%; border: none; outline: none; font-size: 13px; padding: 5px 0;" oninput="syncOpdAge()">
+                  <span style="font-size: 11px; font-weight: 700; color: #64748b;">M</span>
+                </div>
+                <div style="display: flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 6px; flex: 1;">
+                  <input type="number" id="opd-age-d" placeholder="0" min="0" max="30" style="width: 100%; border: none; outline: none; font-size: 13px; padding: 5px 0;" oninput="syncOpdAge()">
+                  <span style="font-size: 11px; font-weight: 700; color: #64748b;">D</span>
+                </div>
+                <!-- Preserves existing id="opd-age" for existing API calls -->
+                <input type="hidden" id="opd-age" name="age" value="0">
               </div>
+
+              <!-- Height (cm) Field (Non-mandatory) -->
+              <div style="display: flex; align-items: center; background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 0 8px;">
+                <input type="number" id="opd-height" placeholder="Height" min="10" max="250" style="width: 100%; border: none; outline: none; font-size: 13px; padding: 5px 0;">
+                <span style="font-size: 11px; font-weight: 700; color: #64748b;">cm</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Non-Mandatory Initial Vitals & Token Control -->
+          <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <label style="font-weight: 600; color: #475569;">Vitals / Token:</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1.2fr; gap: 6px;">
+              <input type="text" id="opd-vital-bp" placeholder="BP (120/80)" style="padding: 5px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+              <input type="number" id="opd-vital-pulse" placeholder="Pulse" style="padding: 5px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+              <input type="number" step="0.1" id="opd-vital-temp" placeholder="Temp °F" style="padding: 5px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+              <input type="number" id="opd-vital-spo2" placeholder="SpO2 %" style="padding: 5px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+              <input type="number" id="opd-token-no" placeholder="Token #" style="padding: 5px 6px; border: 1px solid #0f766e; border-radius: 4px; font-size: 12px; font-weight: 700; color: #0f766e;">
+            </div>
+          </div>
 
               <div style="display: grid; grid-template-columns: 120px 1fr; align-items: center;">
                 <label style="font-weight: 600;">Fee (₹) / Mode:</label>
@@ -5839,6 +5878,18 @@ function switchPharmaView(viewName) {
 // ==========================================
 // OPD MINTECH QUEUE & REGISTRATION FUNCTIONS
 // (Paste right here before <script>)
+// Synchronize Years, Months, and Days into single age string
+  window.syncOpdAge = function() {
+    const y = parseInt(document.getElementById('opd-age-y')?.value || 0, 10);
+    const m = parseInt(document.getElementById('opd-age-m')?.value || 0, 10);
+    const d = parseInt(document.getElementById('opd-age-d')?.value || 0, 10);
+    const ageEl = document.getElementById('opd-age');
+    if (ageEl) {
+      if (y > 0) ageEl.value = y;
+      else if (m > 0) ageEl.value = `${m}M`;
+      else ageEl.value = `${d}D`;
+    }
+  };  
 // ==========================================
 let currentOpdQueue = [];
 
@@ -5924,7 +5975,15 @@ async function handleOpdRegister(e) {
     email: document.getElementById("opd-email").value.trim(),
     guardianRelation: document.getElementById("opd-rel-type").value,
     guardianName: document.getElementById("opd-guardian-name").value.trim(),
-    ageYears: Number(document.getElementById("opd-age").value),
+    ageYears: Number(document.getElementById("opd-age-y")?.value || document.getElementById("opd-age")?.value || 0),
+      ageMonths: Number(document.getElementById("opd-age-m")?.value || 0),
+      ageDays: Number(document.getElementById("opd-age-d")?.value || 0),
+      heightCm: Number(document.getElementById("opd-height")?.value || 0) || null,
+      vitalBp: document.getElementById("opd-vital-bp")?.value?.trim() || null,
+      vitalPulse: Number(document.getElementById("opd-vital-pulse")?.value || 0) || null,
+      vitalTemp: Number(document.getElementById("opd-vital-temp")?.value || 0) || null,
+      vitalSpo2: Number(document.getElementById("opd-vital-spo2")?.value || 0) || null,
+      tokenNumber: Number(document.getElementById("opd-token-no")?.value || 0) || null,
     address: document.getElementById("opd-address").value.trim(),
     referredBy: document.getElementById("opd-referred").value.trim(),
     panelTpa: document.getElementById("opd-panel").value,
