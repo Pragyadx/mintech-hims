@@ -4519,7 +4519,7 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       dashboard: { label: "Dashboard", icon: "fa-gauge-high", title: "Dashboard" },
       registration: { label: "Reception & Intake", icon: "fa-address-card", title: "Patient Registration & MPI" },
       opd: { label: "OPD Consultation", icon: "fa-stethoscope", title: "OPD Consultation & Queue" },
-      billing: { label: "Invoices & Billing", icon: "fa-file-invoice-dollar", title: "Invoices & Billing Ledger" },
+      billing: { label: "Invoices & Billing", icon: "fa-file-invoice-dollar", title: "Invoices & Billing" },
       lab: { label: "Diagnostic Lab", icon: "fa-flask-vial", title: "Diagnostic Laboratory & LIS" },
       ipd: { label: "Inpatient (IPD)", icon: "fa-bed", title: "Inpatient Wards & Beds" },
       pharmacy: { label: "Pharmacy Store", icon: "fa-pills", title: "Pharmacy Inventory" },
@@ -4527,13 +4527,13 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     };
 // Toggle the Invoices & Billing sidebar dropdown
   window.toggleBillingSubmenu = function(btn) {
-    const submenu = document.getElementById('billing-submenu');
-    const chevron = document.getElementById('billing-chevron');
-    if (!submenu) return;
-    const isClosed = submenu.style.display === 'none' || !submenu.style.display;
-    submenu.style.display = isClosed ? 'block' : 'none';
-    if (chevron) chevron.style.transform = isClosed ? 'rotate(180deg)' : 'rotate(0deg)';
-  };
+  const submenu = document.getElementById('billing-submenu');
+  const chevron = document.getElementById('billing-chevron');
+  if (!submenu) return;
+  const isClosed = (submenu.style.display === 'none' || !submenu.style.display);
+  submenu.style.display = isClosed ? 'block' : 'none';
+  if (chevron) chevron.style.transform = isClosed ? 'rotate(180deg)' : 'rotate(0deg)';
+};
   // Open Drawer
   window.openNewInvoiceDrawer = function() {
     const drawer = document.getElementById('drawer-new-invoice');
