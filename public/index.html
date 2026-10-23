@@ -2002,133 +2002,136 @@
       </div>
 
         
-<!-- Slide-Out Drawer: Create OPD Invoice -->
-<div id="drawer-new-invoice" style="display: none !important; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 9999; justify-content: flex-end;"></div>
-      <div style="background: white; width: 100%; max-width: 900px; height: 100vh; display: flex; flex-direction: column; box-shadow: -4px 0 20px rgba(0,0,0,0.25);">
-        
-        <div style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #0f766e; color: white;">
-          <div>
-            <h3 style="margin: 0; font-size: 15px; font-weight: 700;">New OPD Invoice &amp; Settlement</h3>
-            <span style="font-size: 11px; opacity: 0.9;">Select patient, add investigation/services, and collect payment</span>
-          </div>
-          <button type="button" onclick="document.getElementById('drawer-new-invoice').style.setProperty('display', 'none', 'important');" style="background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; padding: 4px 10px;">&times;</button>
+<!-- ======================================================== -->
+    <!-- FULL-SCREEN MODAL: CREATE OPD INVOICE & SETTLEMENT       -->
+    <!-- ======================================================== -->
+    <div id="drawer-new-invoice" style="display: none !important; position: fixed; inset: 0; width: 100vw; height: 100vh; background: #ffffff; z-index: 999999; flex-direction: column; overflow: hidden;">
+      
+      <!-- Modal Header -->
+      <div style="padding: 14px 24px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #0f766e; color: white;">
+        <div>
+          <h3 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 0.3px;">New OPD Invoice &amp; Settlement</h3>
+          <span style="font-size: 11px; opacity: 0.9;">Patient lookup, itemized billing services, and payment collection</span>
         </div>
+        <button type="button" onclick="document.getElementById('drawer-new-invoice').style.setProperty('display', 'none', 'important');" style="background: rgba(255,255,255,0.15); border: none; color: white; font-size: 20px; cursor: pointer; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; line-height: 1;">&times;</button>
+      </div>
 
-        <div style="display: flex; flex: 1; overflow: hidden;">
-          <!-- Left: Catalog & Items -->
-          <div style="flex: 1; padding: 18px; overflow-y: auto; border-right: 1px solid #e2e8f0;">
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; margin-bottom: 14px;">
-              <label style="display: block; font-size: 10px; font-weight: 700; color: #475569; margin-bottom: 4px;">FIND PATIENT (UHID / Mobile) *</label>
+      <!-- Main Body Container -->
+      <div style="display: flex; flex: 1; overflow: hidden; background: #f8fafc;">
+        
+        <!-- Left Column: Patient Info & Service Entry -->
+        <div style="flex: 1; padding: 24px; overflow-y: auto; border-right: 1px solid #e2e8f0; background: white;">
+          
+          <!-- Patient Lookup & Doctor Input -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px;">
+              <label style="display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px;">PATIENT (UHID / Mobile / Name) *</label>
               <div style="display: flex; gap: 6px;">
-                <input type="text" id="newinv-patient-search" placeholder="Type UHID or Mobile..." style="flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
-                <button type="button" onclick="searchPatientForInvoice()" style="background: #0f766e; color: white; border: none; border-radius: 4px; padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer;">Find</button>
+                <input type="text" id="newinv-patient-search" placeholder="Enter UHID, phone number, or patient name..." style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+                <button type="button" onclick="searchPatientForInvoice()" style="background: #0f766e; color: white; border: none; border-radius: 4px; padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">Find</button>
               </div>
-              <div id="newinv-patient-card" style="margin-top: 8px; display: none; background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px 10px; font-size: 11px;">
+              <div id="newinv-patient-card" style="margin-top: 8px; display: none; background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 8px 10px; font-size: 12px;">
                 <div style="font-weight: 700; color: #0f766e;" id="newinv-p-name">-</div>
-                <div style="color: #64748b;" id="newinv-p-info">UHID: -</div>
+                <div style="color: #64748b; font-size: 11px;" id="newinv-p-info">UHID: -</div>
                 <input type="hidden" id="newinv-uhid" value="">
               </div>
             </div>
 
-            <div style="margin-bottom: 14px;">
-              <label style="display: block; font-size: 10px; font-weight: 700; color: #475569; margin-bottom: 4px;">CONSULTING / REFERRAL DOCTOR</label>
-              <select id="newinv-doctor" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
-                <option value="Dr. EMO (Emergency)">Dr. EMO (Emergency)</option>
-                <option value="Dr. Prakhar Rastogi">Dr. Prakhar Rastogi</option>
-                <option value="Dr. Satyam Mishra">Dr. Satyam Mishra</option>
-                <option value="Dr. Ayush Rastogi">Dr. Ayush Rastogi</option>
-              </select>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px;">
+              <label style="display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px;">DOCTOR / CONSULTANT / REFERRAL SOURCE</label>
+              <input type="text" id="newinv-doctor" placeholder="Enter consulting doctor or referral name..." style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
             </div>
+          </div>
 
-            <div style="margin-bottom: 14px;">
-              <label style="display: block; font-size: 10px; font-weight: 700; color: #475569; margin-bottom: 6px;">QUICK ADD TESTS &amp; SERVICES</label>
-              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 6px;">
-                <button type="button" onclick="addInvoiceItem('Consultation Fee', 200)" style="padding: 6px; border: 1px solid #cbd5e1; background: white; border-radius: 4px; text-align: left; cursor: pointer;">
-                  <div style="font-weight: 600; font-size: 11px;">Consultation</div>
-                  <div style="color: #0f766e; font-size: 11px; font-weight: 700;">₹200</div>
-                </button>
-                <button type="button" onclick="addInvoiceItem('CBC (Hemogram)', 300)" style="padding: 6px; border: 1px solid #cbd5e1; background: white; border-radius: 4px; text-align: left; cursor: pointer;">
-                  <div style="font-weight: 600; font-size: 11px;">CBC Test</div>
-                  <div style="color: #0f766e; font-size: 11px; font-weight: 700;">₹300</div>
-                </button>
-                <button type="button" onclick="addInvoiceItem('KFT Profile', 550)" style="padding: 6px; border: 1px solid #cbd5e1; background: white; border-radius: 4px; text-align: left; cursor: pointer;">
-                  <div style="font-weight: 600; font-size: 11px;">KFT Profile</div>
-                  <div style="color: #0f766e; font-size: 11px; font-weight: 700;">₹550</div>
-                </button>
-                <button type="button" onclick="addInvoiceItem('ECG Routine', 250)" style="padding: 6px; border: 1px solid #cbd5e1; background: white; border-radius: 4px; text-align: left; cursor: pointer;">
-                  <div style="font-weight: 600; font-size: 11px;">ECG Routine</div>
-                  <div style="color: #0f766e; font-size: 11px; font-weight: 700;">₹250</div>
-                </button>
-              </div>
+          <!-- Free-Form Service/Test/Procedure Input -->
+          <div style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 14px; margin-bottom: 20px;">
+            <div style="font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 8px; text-transform: uppercase;">Add Service / Test / Procedure</div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="text" id="custom-item-name" placeholder="Item description (e.g., Consultation, Blood Test, Dressing, USG)..." style="flex: 3; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+              <input type="number" id="custom-item-qty" placeholder="Qty" value="1" min="1" style="width: 70px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; text-align: center; background: white;">
+              <input type="number" id="custom-item-rate" placeholder="₹ Rate" min="0" style="width: 110px; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+              <button type="button" onclick="addCustomInvoiceItem()" style="background: #0f766e; color: white; border: none; border-radius: 4px; padding: 8px 18px; font-size: 12px; font-weight: 700; cursor: pointer;">
+                <i class="fa-solid fa-plus"></i> Add Item
+              </button>
             </div>
+          </div>
 
-            <!-- Custom item input -->
-            <div style="display: flex; gap: 6px; margin-bottom: 14px;">
-              <input type="text" id="custom-item-name" placeholder="Custom item / procedure name..." style="flex: 2; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
-              <input type="number" id="custom-item-rate" placeholder="₹ Rate" style="width: 80px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
-              <button type="button" onclick="addCustomInvoiceItem()" style="background: #334155; color: white; border: none; border-radius: 4px; padding: 6px 12px; font-size: 11px; font-weight: 600; cursor: pointer;">Add</button>
-            </div>
-
-            <!-- Items Table -->
-            <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+          <!-- Line Items Table -->
+          <div>
+            <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 8px;">INVOICE LINE ITEMS</div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
               <thead>
-                <tr style="border-bottom: 1px solid #e2e8f0; color: #64748b;">
-                  <th style="padding: 6px 0; text-align: left;">Item</th>
-                  <th style="padding: 6px 0; text-align: center; width: 50px;">Qty</th>
-                  <th style="padding: 6px 0; text-align: right; width: 70px;">Rate</th>
-                  <th style="padding: 6px 0; text-align: right; width: 70px;">Total</th>
-                  <th style="padding: 6px 0; text-align: center; width: 30px;"></th>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #64748b;">
+                  <th style="padding: 10px; text-align: left;">Item Description</th>
+                  <th style="padding: 10px; text-align: center; width: 70px;">Qty</th>
+                  <th style="padding: 10px; text-align: right; width: 110px;">Unit Rate (₹)</th>
+                  <th style="padding: 10px; text-align: right; width: 120px;">Amount (₹)</th>
+                  <th style="padding: 10px; text-align: center; width: 50px;">Action</th>
                 </tr>
               </thead>
               <tbody id="newinv-items-body">
-                <tr><td colspan="5" style="text-align: center; padding: 14px; color: #94a3b8;">No items added yet.</td></tr>
+                <tr>
+                  <td colspan="5" style="text-align: center; padding: 24px; color: #94a3b8;">No items added yet. Enter an item description and rate above.</td>
+                </tr>
               </tbody>
             </table>
           </div>
 
-          <!-- Right: Summary & Pay -->
-          <div style="width: 300px; background: #f8fafc; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-              <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
-                <span style="color: #64748b;">Subtotal:</span>
-                <span id="newinv-subtotal" style="font-weight: 600;">₹0.00</span>
-              </div>
-              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 10px;">
-                <span style="color: #64748b;">Discount (₹):</span>
-                <input type="number" id="newinv-discount" value="0" min="0" oninput="calculateInvoiceTotals()" style="width: 70px; text-align: right; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
-              </div>
-              <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; margin-bottom: 14px;">
-                <div style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;">Payable Total</div>
-                <div id="newinv-payable" style="font-size: 20px; font-weight: 800; color: #0f766e;">₹0.00</div>
-              </div>
+        </div>
 
-              <!-- Payment Mode -->
-              <div style="margin-bottom: 10px;">
-                <label style="display: block; font-size: 10px; font-weight: 700; color: #475569; margin-bottom: 4px;">PAYMENT MODE</label>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
-                  <button type="button" class="paymode-chip" onclick="setPayMode('Cash', this)" style="padding: 6px; border: 1px solid #0f766e; background: #0f766e; color: white; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Cash</button>
-                  <button type="button" class="paymode-chip" onclick="setPayMode('UPI', this)" style="padding: 6px; border: 1px solid #cbd5e1; background: white; color: #334155; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">UPI / QR</button>
-                  <button type="button" class="paymode-chip" onclick="setPayMode('Card', this)" style="padding: 6px; border: 1px solid #cbd5e1; background: white; color: #334155; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Card</button>
-                  <button type="button" class="paymode-chip" onclick="setPayMode('Credit', this)" style="padding: 6px; border: 1px solid #cbd5e1; background: white; color: #334155; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">Credit (Due)</button>
-                </div>
-                <input type="hidden" id="newinv-paymode" value="Cash">
-              </div>
+        <!-- Right Column: Settlement Panel -->
+        <div style="width: 360px; background: #f8fafc; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; border-left: 1px solid #e2e8f0;">
+          <div>
+            <h4 style="margin: 0 0 16px 0; font-size: 14px; font-weight: 700; color: #0f172a;">Settlement &amp; Payment</h4>
+            
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px;">
+              <span style="color: #64748b;">Subtotal:</span>
+              <span id="newinv-subtotal" style="font-weight: 700; color: #0f172a;">₹0.00</span>
+            </div>
 
-              <!-- Paid vs Due -->
-              <div style="display: flex; gap: 6px; margin-bottom: 8px;">
-                <div style="flex: 1;">
-                  <label style="display: block; font-size: 9px; font-weight: 700; color: #64748b;">PAID (₹)</label>
-                  <input type="number" id="newinv-paid" value="0" min="0" oninput="calculateInvoiceTotals()" style="width: 100%; padding: 5px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; font-weight: 700; box-sizing: border-box;">
-                </div>
-                <div style="flex: 1;">
-                  <label style="display: block; font-size: 9px; font-weight: 700; color: #64748b;">BALANCE DUE</label>
-                  <input type="text" id="newinv-due" value="₹0.00" readonly style="width: 100%; padding: 5px; border: 1px solid #e2e8f0; background: #e2e8f0; border-radius: 4px; font-size: 11px; font-weight: 700; color: #b91c1c; box-sizing: border-box;">
-                </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 14px;">
+              <span style="color: #64748b;">Discount (₹):</span>
+              <input type="number" id="newinv-discount" value="0" min="0" oninput="calculateInvoiceTotals()" style="width: 90px; text-align: right; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; font-weight: 600;">
+            </div>
+
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 14px; margin-bottom: 18px;">
+              <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Total Payable Amount</div>
+              <div id="newinv-payable" style="font-size: 24px; font-weight: 800; color: #0f766e; margin-top: 2px;">₹0.00</div>
+            </div>
+
+            <!-- Collection Mode -->
+            <div style="margin-bottom: 14px;">
+              <label style="display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 6px;">COLLECTION MODE *</label>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <button type="button" class="paymode-chip" onclick="setPayMode('Cash', this)" style="padding: 8px; border: 1px solid #0f766e; background: #0f766e; color: white; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Cash</button>
+                <button type="button" class="paymode-chip" onclick="setPayMode('UPI', this)" style="padding: 8px; border: 1px solid #cbd5e1; background: white; color: #334155; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">UPI / Online</button>
+                <button type="button" class="paymode-chip" onclick="setPayMode('Card', this)" style="padding: 8px; border: 1px solid #cbd5e1; background: white; color: #334155; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Card</button>
+                <button type="button" class="paymode-chip" onclick="setPayMode('Credit', this)" style="padding: 8px; border: 1px solid #cbd5e1; background: white; color: #334155; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Credit (Due)</button>
+              </div>
+              <input type="hidden" id="newinv-paymode" value="Cash">
+            </div>
+
+            <!-- Paid vs Balance Due -->
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <div style="flex: 1;">
+                <label style="display: block; font-size: 10px; font-weight: 700; color: #64748b; margin-bottom: 3px;">COLLECTED (₹)</label>
+                <input type="number" id="newinv-paid" value="0" min="0" oninput="calculateInvoiceTotals()" style="width: 100%; box-sizing: border-box; padding: 7px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px; font-weight: 700;">
+              </div>
+              <div style="flex: 1;">
+                <label style="display: block; font-size: 10px; font-weight: 700; color: #64748b; margin-bottom: 3px;">BALANCE DUE (₹)</label>
+                <input type="text" id="newinv-due" value="₹0.00" readonly style="width: 100%; box-sizing: border-box; padding: 7px; border: 1px solid #e2e8f0; background: #e2e8f0; border-radius: 4px; font-size: 13px; font-weight: 700; color: #b91c1c;">
               </div>
             </div>
 
-            <button type="button" onclick="submitCreateOpdInvoice()" style="width: 100%; padding: 10px; background: #059669; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer;">
-              <i class="fa-solid fa-check"></i> Generate Invoice
+            <div>
+              <label style="display: block; font-size: 10px; font-weight: 700; color: #64748b; margin-bottom: 3px;">REFERENCE / TRANSACTION NOTE (OPTIONAL)</label>
+              <input type="text" id="newinv-txnid" placeholder="Txn ID, UTR, or remarks..." style="width: 100%; box-sizing: border-box; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
+            </div>
+          </div>
+
+          <div>
+            <button type="button" onclick="submitCreateOpdInvoice()" style="width: 100%; padding: 12px; background: #059669; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 4px rgba(5,150,105,0.25);">
+              <i class="fa-solid fa-check"></i> Generate &amp; Settle Invoice
             </button>
           </div>
         </div>
@@ -4545,6 +4548,85 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     if (drawer) {
       drawer.style.setProperty('display', 'none', 'important');
     }
+  };
+  // --- INVOICE LINE ITEMS & TOTALS CALCULATION ---
+  let currentInvoiceItems = [];
+
+  window.addCustomInvoiceItem = function() {
+    const nameInput = document.getElementById('custom-item-name');
+    const qtyInput = document.getElementById('custom-item-qty');
+    const rateInput = document.getElementById('custom-item-rate');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const qty = Number(qtyInput?.value || 1);
+    const rate = Number(rateInput?.value || 0);
+
+    if (!name) {
+      alert('Please enter a description for the service/test.');
+      return;
+    }
+    if (isNaN(rate) || rate < 0) {
+      alert('Please enter a valid rate.');
+      return;
+    }
+
+    currentInvoiceItems.push({ name, qty: qty > 0 ? qty : 1, rate });
+    renderInvoiceItems();
+
+    if (nameInput) nameInput.value = '';
+    if (rateInput) rateInput.value = '';
+    if (qtyInput) qtyInput.value = '1';
+  };
+
+  window.removeInvoiceItem = function(idx) {
+    currentInvoiceItems.splice(idx, 1);
+    renderInvoiceItems();
+  };
+
+  window.renderInvoiceItems = function() {
+    const tbody = document.getElementById('newinv-items-body');
+    if (!tbody) return;
+
+    if (currentInvoiceItems.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 24px; color: #94a3b8;">No items added yet. Enter an item description and rate above.</td></tr>`;
+      calculateInvoiceTotals();
+      return;
+    }
+
+    tbody.innerHTML = currentInvoiceItems.map((item, idx) => `
+      <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 10px; font-weight: 600; color: #0f172a;">${item.name}</td>
+        <td style="padding: 10px; text-align: center;">${item.qty}</td>
+        <td style="padding: 10px; text-align: right;">₹${item.rate.toFixed(2)}</td>
+        <td style="padding: 10px; text-align: right; font-weight: 700; color: #0f766e;">₹${(item.rate * item.qty).toFixed(2)}</td>
+        <td style="padding: 10px; text-align: center;">
+          <button type="button" onclick="removeInvoiceItem(${idx})" style="background: none; border: none; color: #ef4444; font-size: 16px; cursor: pointer; line-height: 1;" title="Remove Item">&times;</button>
+        </td>
+      </tr>
+    `).join('');
+
+    calculateInvoiceTotals();
+  };
+
+  window.calculateInvoiceTotals = function() {
+    const subtotal = currentInvoiceItems.reduce((acc, item) => acc + (item.rate * item.qty), 0);
+    const discount = Number(document.getElementById('newinv-discount')?.value || 0);
+    const payable = Math.max(0, subtotal - discount);
+
+    const subtotalEl = document.getElementById('newinv-subtotal');
+    const payableEl = document.getElementById('newinv-payable');
+    if (subtotalEl) subtotalEl.innerText = `₹${subtotal.toFixed(2)}`;
+    if (payableEl) payableEl.innerText = `₹${payable.toFixed(2)}`;
+
+    const paidInput = document.getElementById('newinv-paid');
+    if (paidInput && (!paidInput.dataset.touched || Number(paidInput.value) > payable)) {
+      paidInput.value = payable;
+    }
+
+    const paid = Number(paidInput?.value || 0);
+    const dues = Math.max(0, payable - paid);
+    const dueEl = document.getElementById('newinv-due');
+    if (dueEl) dueEl.value = `₹${dues.toFixed(2)}`;
   };
     function launchDashboard() {
     document.getElementById("app-workspace").style.display = "flex";
