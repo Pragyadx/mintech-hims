@@ -2001,7 +2001,7 @@
         </div>
       </div>
 
-        </section>
+        
 <!-- Slide-Out Drawer: Create OPD Invoice -->
 <div id="drawer-new-invoice" style="display: none !important; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 9999; justify-content: flex-end;"></div>
       <div style="background: white; width: 100%; max-width: 900px; height: 100vh; display: flex; flex-direction: column; box-shadow: -4px 0 20px rgba(0,0,0,0.25);">
@@ -2011,7 +2011,7 @@
             <h3 style="margin: 0; font-size: 15px; font-weight: 700;">New OPD Invoice &amp; Settlement</h3>
             <span style="font-size: 11px; opacity: 0.9;">Select patient, add investigation/services, and collect payment</span>
           </div>
-          <button type="button" onclick="closeNewInvoiceDrawer()" style="background: transparent; border: none; color: white; font-size: 22px; cursor: pointer; line-height: 1;">&times;</button>
+          <button type="button" onclick="document.getElementById('drawer-new-invoice').style.setProperty('display', 'none', 'important');" style="background: transparent; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; padding: 4px 10px;">&times;</button>
         </div>
 
         <div style="display: flex; flex: 1; overflow: hidden;">
@@ -2135,6 +2135,7 @@
 
       </div>
     </div>
+    </section>
         <!-- LAB SECTION -->
         <section id="tab-lab" class="tab-content">
           <div class="card">
