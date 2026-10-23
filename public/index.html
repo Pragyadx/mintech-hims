@@ -4777,6 +4777,33 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       document.getElementById('drawer-new-invoice').style.setProperty('display', 'none', 'important');
     }
   };
+  // Open any billing sub-view and automatically switch to billing tab
+  window.openBillingView = function(viewId, linkEl) {
+    // 1. Switch active screen tab to 'billing'
+    if (typeof switchTab === 'function') {
+      switchTab('billing');
+    }
+
+    // 2. Highlight clicked link
+    document.querySelectorAll('#billing-submenu a').forEach(a => {
+      a.style.color = '#94a3b8';
+      a.style.background = 'transparent';
+      a.style.fontWeight = 'normal';
+    });
+    if (linkEl) {
+      linkEl.style.color = '#ffffff';
+      linkEl.style.background = 'rgba(15, 118, 110, 0.4)';
+      linkEl.style.fontWeight = '600';
+    }
+
+    // 3. Switch subview if present
+    const subviews = document.querySelectorAll('.billing-subview');
+    if (subviews.length > 0) {
+      subviews.forEach(v => v.style.display = 'none');
+      const target = document.getElementById('billing-view-' + viewId);
+      if (target) target.style.display = 'block';
+    }
+  };
     function launchDashboard() {
     document.getElementById("app-workspace").style.display = "flex";
     document.getElementById("current-user-name").innerText = currentUser.name;
@@ -4808,15 +4835,15 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
               <i class="fa-solid fa-chevron-down submenu-chevron" id="billing-chevron" style="font-size: 11px; transition: transform 0.25s;"></i>
             </button>
             <div id="billing-submenu" style="display: none; background: rgba(0, 0, 0, 0.22); padding: 4px 0 6px 12px; border-left: 2px solid #0f766e; margin-left: 12px;">
-              <a href="javascript:void(0)" onclick="openBillingView('opd-invoices', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #ffffff; font-size: 12px; text-decoration: none; border-radius: 4px; background: rgba(15, 118, 110, 0.4); font-weight: 600;"><i class="fa-regular fa-file-lines" style="width: 14px;"></i> OPD Invoices</a>
-              <a href="javascript:void(0)" onclick="openBillingView('opd-payments', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-receipt" style="width: 14px;"></i> OPD Payments</a>
-              <a href="javascript:void(0)" onclick="openBillingView('opd-daily-collection', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-cash-register" style="width: 14px;"></i> OPD Daily Collection</a>
-              <a href="javascript:void(0)" onclick="openBillingView('daily-collection-register', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-book-bookmark" style="width: 14px;"></i> Daily Collection Register</a>
-              <a href="javascript:void(0)" onclick="openBillingView('total-summary', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-chart-pie" style="width: 14px;"></i> Total Summary</a>
-              <a href="javascript:void(0)" onclick="openBillingView('ipd-advances', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-hand-holding-dollar" style="width: 14px;"></i> IPD Advance &amp; Payments</a>
-              <a href="javascript:void(0)" onclick="openBillingView('ipd-invoices', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-bed-pulse" style="width: 14px;"></i> IPD Invoices</a>
-              <a href="javascript:void(0)" onclick="openBillingView('refunds', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-arrow-rotate-left" style="width: 14px;"></i> Refunds</a>
-              <a href="javascript:void(0)" onclick="openBillingView('patient-referrals', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-users-line" style="width: 14px;"></i> Patient Referrals</a>
+              <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('opd-invoices', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-regular fa-file-lines" style="width: 14px;"></i> OPD Invoices</a>
+              <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('opd-payments', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-receipt" style="width: 14px;"></i> OPD Payments</a>
+              <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('opd-daily-collection', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-cash-register" style="width: 14px;"></i> OPD Daily Collection</a>
+              <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('daily-collection-register', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-book" style="width: 14px;"></i> Daily Collection Register</a>
+              <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('total-summary', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-pie-chart" style="width: 14px;"></i> Total Summary</a>
+              <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('ipd-advances', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-hand-holding-dollar" style="width: 14px;"></i> IPD Advance & Payments</a>
+              <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('ipd-invoices', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-file-invoice" style="width: 14px;"></i> IPD Invoices</a>
+              <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('refunds', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-rotate-left" style="width: 14px;"></i> Refunds</a>
+              <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('patient-referrals', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-users" style="width: 14px;"></i> Patient Referrals</a>
             </div>
           `;
           navContainer.appendChild(groupDiv);
