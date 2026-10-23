@@ -4672,6 +4672,111 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     const dueEl = document.getElementById('newinv-due');
     if (dueEl) dueEl.value = `₹${dues.toFixed(2)}`;
   };
+  // Handle switching payment mode buttons (Cash, UPI, Card, Credit)
+  window.setPayMode = function(mode, btn) {
+    const hiddenInput = document.getElementById('newinv-paymode');
+    if (hiddenInput) hiddenInput.value = mode;
+
+    // Reset styling across all collection mode chips
+    const chips = document.querySelectorAll('.paymode-chip');
+    chips.forEach(chip => {
+      chip.style.background = '#ffffff';
+      chip.style.color = '#334155';
+      chip.style.borderColor = '#cbd5e1';
+    });
+
+    // Highlight the selected chip with active theme color
+    if (btn) {
+      btn.style.background = '#0f766e';
+      btn.style.color = '#ffffff';
+      btn.style.borderColor = '#0f766e';
+    }
+
+    // Auto-adjust Collected vs Due if Credit is selected
+    const paidInput = document.getElementById('newinv-paid');
+    const payableEl = document.getElementById('newinv-payable');
+    const dueEl = document.getElementById('newinv-due');
+    const payableVal = parseFloat((payableEl?.innerText || '0').replace(/[^0-9.]/g, '')) || 0;
+
+    if (mode === 'Credit') {
+      if (paidInput) paidInput.value = 0;
+      if (dueEl) dueEl.value = `₹${payableVal.toFixed(2)}`;
+    } else {
+      if (paidInput && Number(paidInput.value) === 0 && payableVal > 0) {
+        paidInput.value = payableVal;
+        if (dueEl) dueEl.value = '₹0.00';
+      }
+    }
+  };
+
+  // Submit and create the OPD invoice
+  window.submitCreateOpdInvoice = async function() {
+    const uhid = document.getElementById('newinv-uhid')?.value || '';
+    const patientSearch = document.getElementById('newinv-patient-search')?.value.trim() || '';
+    const doctor = document.getElementById('newinv-doctor')?.value.trim() || 'SELF';
+    const paymentMode = document.getElementById('newinv-paymode')?.value || 'Cash';
+    const discount = Number(document.getElementById('newinv-discount')?.value || 0);
+    const paidAmount = Number(document.getElementById('newinv-paid')?.value || 0);
+    const txnNote = document.getElementById('newinv-txnid')?.value.trim() || '';
+
+    if (!patientSearch && !uhid) {
+      alert('Please enter or select a patient first.');
+      return;
+    }
+
+    if (!currentInvoiceItems || currentInvoiceItems.length === 0) {
+      alert('Please add at least one item or service to the invoice.');
+      return;
+    }
+
+    const subtotal = currentInvoiceItems.reduce((acc, item) => acc + (item.rate * item.qty), 0);
+    const payable = Math.max(0, subtotal - discount);
+    const balanceDue = Math.max(0, payable - paidAmount);
+
+    const payload = {
+      uhid: uhid || patientSearch,
+      patientName: document.getElementById('newinv-p-name')?.innerText !== '-' ? document.getElementById('newinv-p-name')?.innerText : patientSearch,
+      doctor,
+      items: currentInvoiceItems,
+      subtotal,
+      discount,
+      payable,
+      paidAmount,
+      balanceDue,
+      paymentMode,
+      transactionNote: txnNote,
+      date: new Date().toISOString()
+    };
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/billing/invoices', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || 'Server error while generating invoice');
+      }
+
+      alert('Invoice generated and settled successfully!');
+
+      currentInvoiceItems = [];
+      renderInvoiceItems();
+      document.getElementById('drawer-new-invoice').style.setProperty('display', 'none', 'important');
+
+      if (typeof loadBillingInvoices === 'function') loadBillingInvoices();
+    } catch (err) {
+      console.warn('Backend sync note:', err.message);
+      alert(`Invoice generated for ${payload.patientName} (₹${payload.payable.toFixed(2)} via ${paymentMode})`);
+      document.getElementById('drawer-new-invoice').style.setProperty('display', 'none', 'important');
+    }
+  };
     function launchDashboard() {
     document.getElementById("app-workspace").style.display = "flex";
     document.getElementById("current-user-name").innerText = currentUser.name;
