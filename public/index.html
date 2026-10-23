@@ -4549,6 +4549,50 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       drawer.style.setProperty('display', 'none', 'important');
     }
   };
+  // Patient lookup for invoice creation
+  window.searchPatientForInvoice = async function() {
+    const q = document.getElementById('newinv-patient-search')?.value.trim();
+    if (!q) {
+      alert('Please enter a UHID, Mobile number, or Name.');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/patients/search?q=${encodeURIComponent(q)}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      
+      const patient = Array.isArray(data) ? data[0] : (data.patients?.[0] || data.data?.[0]);
+
+      if (!patient) {
+        alert('No patient found matching: ' + q);
+        return;
+      }
+
+      // Display patient summary badge
+      const card = document.getElementById('newinv-patient-card');
+      const nameEl = document.getElementById('newinv-p-name');
+      const infoEl = document.getElementById('newinv-p-info');
+      const uhidInput = document.getElementById('newinv-uhid');
+
+      if (card) card.style.display = 'block';
+      if (nameEl) nameEl.innerText = patient.name || 'Unnamed Patient';
+      if (infoEl) infoEl.innerText = `UHID: ${patient.uhid || '-'} | Age/Sex: ${patient.age || '-'} / ${patient.gender || '-'} | Phone: ${patient.mobile || patient.phone || '-'}`;
+      if (uhidInput) uhidInput.value = patient.uhid || '';
+
+      // Auto-fill doctor if assigned in patient profile
+      const doctorInput = document.getElementById('newinv-doctor');
+      const assignedDoc = patient.doctor || patient.consultingDoctor || patient.attendingDoctor;
+      if (doctorInput && assignedDoc) {
+        doctorInput.value = assignedDoc;
+      }
+    } catch (err) {
+      console.error('Error finding patient:', err);
+      alert('Could not search patient. Please check server connection.');
+    }
+  };
   // --- INVOICE LINE ITEMS & TOTALS CALCULATION ---
   let currentInvoiceItems = [];
 
