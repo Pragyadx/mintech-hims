@@ -2003,7 +2003,7 @@
 
         </section>
 <!-- Slide-Out Drawer: Create OPD Invoice -->
-    <div id="drawer-new-invoice" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 9999; justify-content: flex-end;">
+<div id="drawer-new-invoice" style="display: none !important; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 9999; justify-content: flex-end;"></div>
       <div style="background: white; width: 100%; max-width: 900px; height: 100vh; display: flex; flex-direction: column; box-shadow: -4px 0 20px rgba(0,0,0,0.25);">
         
         <div style="padding: 14px 18px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #0f766e; color: white;">
@@ -4529,6 +4529,21 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     const isClosed = submenu.style.display === 'none' || !submenu.style.display;
     submenu.style.display = isClosed ? 'block' : 'none';
     if (chevron) chevron.style.transform = isClosed ? 'rotate(180deg)' : 'rotate(0deg)';
+  };
+  // Open Drawer
+  window.openNewInvoiceDrawer = function() {
+    const drawer = document.getElementById('drawer-new-invoice');
+    if (drawer) {
+      drawer.style.setProperty('display', 'flex', 'important');
+    }
+  };
+
+  // Close Drawer
+  window.closeNewInvoiceDrawer = function() {
+    const drawer = document.getElementById('drawer-new-invoice');
+    if (drawer) {
+      drawer.style.setProperty('display', 'none', 'important');
+    }
   };
     function launchDashboard() {
     document.getElementById("app-workspace").style.display = "flex";
