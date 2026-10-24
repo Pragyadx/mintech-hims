@@ -2109,6 +2109,197 @@
   </div>
 
 </div>
+<!-- ======================================================== -->
+      <!-- SUB-VIEW: OPD DAILY COLLECTION REPORT                   -->
+      <!-- ======================================================== -->
+      <div id="billing-view-opd-daily-collection" class="billing-subview" style="display: none;">
+        
+        <!-- Top Filter Bar -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;">OPD Daily Collection Report</h3>
+            <span style="font-size: 11px; color: #64748b;">Daily financial aggregations, collections, discounts, and mode audit</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <!-- Date Filter -->
+            <div style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; background: #f8fafc;">
+              <span style="background: #f1f5f9; padding: 6px 10px; font-size: 12px; font-weight: 600; color: #475569; border-right: 1px solid #cbd5e1;">Date</span>
+              <input type="date" id="dcr-start-date" style="border: none; padding: 6px 8px; font-size: 12px; outline: none; background: transparent;">
+              <span style="font-size: 11px; color: #94a3b8; padding: 0 4px;">to</span>
+              <input type="date" id="dcr-end-date" style="border: none; padding: 6px 8px; font-size: 12px; outline: none; background: transparent;">
+              <button type="button" onclick="loadOpdDailyCollection()" style="background: #0284c7; color: white; border: none; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">Show</button>
+            </div>
+
+            <!-- Patient Filter Dropdown -->
+            <select id="dcr-patient-filter" onchange="loadOpdDailyCollection()" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; max-width: 170px;">
+              <option value="">Select Patient</option>
+            </select>
+
+            <!-- Payment Mode Filter Dropdown -->
+            <select id="dcr-mode-filter" onchange="loadOpdDailyCollection()" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+              <option value="">Select Mode</option>
+              <option value="Cash">Cash</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="Debit Card">Debit Card</option>
+              <option value="Online">Online</option>
+              <option value="Wallet">Wallet</option>
+              <option value="Credit">Credit</option>
+              <option value="BPL">BPL</option>
+              <option value="RGHS">RGHS</option>
+              <option value="CGHS">CGHS</option>
+              <option value="ECHS">ECHS</option>
+              <option value="MAA-YOJANA">MAA-YOJANA</option>
+              <option value="UPI">UPI</option>
+            </select>
+
+            <!-- Quick Preset Dropdown -->
+            <select id="dcr-preset-filter" onchange="applyDcrDatePreset(this.value)" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+              <option value="Today">Today</option>
+              <option value="1 Week">1 Week</option>
+              <option value="1 Month">1 Month</option>
+              <option value="Last 60 Days">Last 60 Days</option>
+              <option value="Lifetime">Lifetime</option>
+            </select>
+
+            <button type="button" onclick="exportDcrExcel()" style="background: #0284c7; color: white; border: none; border-radius: 4px; padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">Export Excel</button>
+            <button type="button" onclick="window.print()" style="background: #0284c7; color: white; border: none; border-radius: 4px; padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">Print</button>
+          </div>
+        </div>
+
+        <!-- 8 Metric KPI Cards Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 20px;">
+          <div style="background: #0284c7; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
+            <div id="dcr-kpi-invoices" style="font-size: 26px; font-weight: 800;">0</div>
+            <div style="font-size: 12px; opacity: 0.9;">Billed Invoices</div>
+            <i class="fa-regular fa-file-lines" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          </div>
+
+          <div style="background: #0284c7; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
+            <div id="dcr-kpi-gross" style="font-size: 26px; font-weight: 800;">0.00</div>
+            <div style="font-size: 12px; opacity: 0.9;">Gross Billed</div>
+            <i class="fa-solid fa-indian-rupee-sign" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          </div>
+
+          <div style="background: #f59e0b; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
+            <div id="dcr-kpi-discount" style="font-size: 26px; font-weight: 800;">0.00</div>
+            <div style="font-size: 12px; opacity: 0.9;">Total Discount</div>
+            <i class="fa-solid fa-percent" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          </div>
+
+          <div style="background: #475569; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
+            <div id="dcr-kpi-netbilled" style="font-size: 26px; font-weight: 800;">0.00</div>
+            <div style="font-size: 12px; opacity: 0.9;">Net Billed</div>
+            <i class="fa-regular fa-credit-card" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          </div>
+
+          <div style="background: #10b981; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
+            <div id="dcr-kpi-collected" style="font-size: 26px; font-weight: 800;">0.00</div>
+            <div id="dcr-kpi-collected-sub" style="font-size: 12px; opacity: 0.9;">Collected (0 invoices)</div>
+            <i class="fa-regular fa-circle-check" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          </div>
+
+          <div style="background: #ef4444; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
+            <div id="dcr-kpi-refunded" style="font-size: 26px; font-weight: 800;">0.00</div>
+            <div style="font-size: 12px; opacity: 0.9;">Refunded</div>
+            <i class="fa-solid fa-rotate-left" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          </div>
+
+          <div style="background: #14b8a6; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
+            <div id="dcr-kpi-netcollection" style="font-size: 26px; font-weight: 800;">0.00</div>
+            <div style="font-size: 12px; opacity: 0.9;">Net Collection</div>
+            <i class="fa-solid fa-indian-rupee-sign" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          </div>
+
+          <div style="background: #e11d48; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
+            <div id="dcr-kpi-outstanding" style="font-size: 26px; font-weight: 800;">0.00</div>
+            <div style="font-size: 12px; opacity: 0.9;">Outstanding (Dues)</div>
+            <i class="fa-regular fa-hourglass-half" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          </div>
+        </div>
+
+        <!-- Section 1: Date Wise Collection Summary Table -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #475569;">Date Wise Collection Summary</h4>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b;">
+                  <th style="padding: 8px 10px;">Date</th>
+                  <th style="padding: 8px 10px;">Invoices Billed</th>
+                  <th style="padding: 8px 10px;">Gross Billed</th>
+                  <th style="padding: 8px 10px;">Discount</th>
+                  <th style="padding: 8px 10px;">Net Billed</th>
+                  <th style="padding: 8px 10px;">Collected</th>
+                  <th style="padding: 8px 10px;">Refunded</th>
+                  <th style="padding: 8px 10px;">Net Collection</th>
+                  <th style="padding: 8px 10px;">Outstanding</th>
+                  <th style="padding: 8px 10px; text-align: center;">Details</th>
+                </tr>
+              </thead>
+              <tbody id="dcr-datewise-tbody">
+                <tr><td colspan="10" style="text-align: center; padding: 20px; color: #94a3b8;">No collection records found.</td></tr>
+              </tbody>
+              <tfoot id="dcr-datewise-tfoot" style="font-weight: 700; border-top: 2px solid #e2e8f0;"></tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 2: Payment Mode Summary Table -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #475569;">Payment Mode Summary</h4>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; max-width: 650px; border-collapse: collapse; font-size: 12px; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b;">
+                  <th style="padding: 8px 10px;">Payment Mode</th>
+                  <th style="padding: 8px 10px;">Payments</th>
+                  <th style="padding: 8px 10px;">Invoices</th>
+                  <th style="padding: 8px 10px; text-align: right;">Amount</th>
+                </tr>
+              </thead>
+              <tbody id="dcr-modewise-tbody">
+                <tr><td colspan="4" style="text-align: center; padding: 16px; color: #94a3b8;">No payment mode records.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MODAL: DAY DETAILS BREAKDOWN -->
+      <div id="modal-dcr-details" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999999; align-items: center; justify-content: center;">
+        <div style="background: white; width: 90%; max-width: 900px; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; display: flex; flex-direction: column;">
+          <div style="background: #0284c7; color: white; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="margin: 0; font-size: 15px; font-weight: 700;">Day Details</h4>
+            <button type="button" onclick="document.getElementById('modal-dcr-details').style.display = 'none'" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">&times;</button>
+          </div>
+          <div style="padding: 18px; overflow-y: auto; flex: 1;">
+            <h5 id="modal-dcr-date-title" style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #334155;">Collection Details</h5>
+            <div style="font-weight: 700; font-size: 12px; color: #475569; margin-bottom: 6px;">Payments</div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 18px;">
+              <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b;">
+                  <th style="padding: 6px;">Invoice ID</th>
+                  <th style="padding: 6px;">Patient Name</th>
+                  <th style="padding: 6px;">Doctor Name</th>
+                  <th style="padding: 6px;">Payment Mode</th>
+                  <th style="padding: 6px; text-align: right;">Amount</th>
+                  <th style="padding: 6px;">Transaction ID</th>
+                </tr>
+              </thead>
+              <tbody id="modal-dcr-payments-tbody"></tbody>
+            </table>
+
+            <div style="display: flex; justify-content: flex-end; font-size: 13px; font-weight: 700; color: #0f172a; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+              <span>Net Collection: </span><span id="modal-dcr-net-collection" style="margin-left: 8px; color: #0284c7;">0.00</span>
+            </div>
+          </div>
+          <div style="padding: 10px 18px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: right;">
+            <button type="button" onclick="document.getElementById('modal-dcr-details').style.display = 'none'" style="background: #e2e8f0; border: none; padding: 6px 14px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Close</button>
+          </div>
+        </div>
+      </div>
         
 <!-- ======================================================== -->
     <!-- FULL-SCREEN MODAL: CREATE OPD INVOICE & SETTLEMENT       -->
@@ -5046,6 +5237,274 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     link.click();
     document.body.removeChild(link);
   };
+  // --- OPD DAILY COLLECTION REGISTER (DCR) LOGIC ---
+  let dcrRawInvoices = [];
+
+  // Populate dynamic patient dropdown
+  window.populateDcrPatients = function(invoices) {
+    const sel = document.getElementById('dcr-patient-filter');
+    if (!sel) return;
+    const currentVal = sel.value;
+    const uniquePatients = new Map();
+
+    (invoices || []).forEach(inv => {
+      const name = inv.patientName || inv.name;
+      const phone = inv.mobile || inv.phone || '';
+      if (name && !uniquePatients.has(name)) {
+        uniquePatients.set(name, phone ? `${name} (${phone})` : name);
+      }
+    });
+
+    sel.innerHTML = '<option value="">Select Patient</option>' + 
+      Array.from(uniquePatients.entries()).map(([name, label]) => `<option value="${name}">${label}</option>`).join('');
+    if (currentVal) sel.value = currentVal;
+  };
+
+  // Date range presets matching Screenshot 760
+  window.applyDcrDatePreset = function(preset) {
+    const startInput = document.getElementById('dcr-start-date');
+    const endInput = document.getElementById('dcr-end-date');
+    if (!startInput || !endInput) return;
+
+    const today = new Date();
+    const formatDate = d => d.toISOString().split('T')[0];
+    endInput.value = formatDate(today);
+
+    if (preset === 'Today') {
+      startInput.value = formatDate(today);
+    } else if (preset === '1 Week') {
+      const d = new Date();
+      d.setDate(d.getDate() - 7);
+      startInput.value = formatDate(d);
+    } else if (preset === '1 Month') {
+      const d = new Date();
+      d.setMonth(d.getMonth() - 1);
+      startInput.value = formatDate(d);
+    } else if (preset === 'Last 60 Days') {
+      const d = new Date();
+      d.setDate(d.getDate() - 60);
+      startInput.value = formatDate(d);
+    } else if (preset === 'Lifetime') {
+      startInput.value = '2020-01-01';
+    }
+    loadOpdDailyCollection();
+  };
+
+  // Main loader and aggregator
+  window.loadOpdDailyCollection = async function() {
+    const start = document.getElementById('dcr-start-date')?.value;
+    const end = document.getElementById('dcr-end-date')?.value;
+    const patFilter = document.getElementById('dcr-patient-filter')?.value;
+    const modeFilter = document.getElementById('dcr-mode-filter')?.value;
+
+    try {
+      const token = localStorage.getItem('token');
+      let url = '/api/billing/invoices?type=opd';
+      if (start) url += `&startDate=${start}`;
+      if (end) url += `&endDate=${end}`;
+
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+      const data = await res.json();
+      dcrRawInvoices = Array.isArray(data) ? data : (data.invoices || data.payments || []);
+
+      populateDcrPatients(dcrRawInvoices);
+
+      // Apply client-side filters
+      let filtered = [...dcrRawInvoices];
+      if (patFilter) {
+        filtered = filtered.filter(i => (i.patientName || i.name) === patFilter);
+      }
+      if (modeFilter) {
+        filtered = filtered.filter(i => (i.paymentMode || 'Cash').toLowerCase() === modeFilter.toLowerCase());
+      }
+
+      renderDcrViews(filtered);
+    } catch (err) {
+      console.warn('DCR load fallback:', err);
+      renderDcrViews([]);
+    }
+  };
+
+  window.renderDcrViews = function(invoices) {
+    let billedCount = invoices.length;
+    let grossBilled = 0;
+    let totalDiscount = 0;
+    let netBilled = 0;
+    let collected = 0;
+    let refunded = 0;
+    let outstanding = 0;
+
+    const dateMap = {};
+    const modeMap = {};
+
+    invoices.forEach(inv => {
+      const subtotal = Number(inv.subtotal ?? inv.total ?? 0);
+      const discount = Number(inv.discount ?? 0);
+      const payable = Number(inv.payable ?? (subtotal - discount));
+      const paid = Number(inv.paidAmount ?? inv.paid ?? 0);
+      const due = Number(inv.balanceDue ?? (payable - paid));
+      const mode = inv.paymentMode || 'Cash';
+      const dateStr = (inv.createdAt || inv.date || new Date().toISOString()).split('T')[0];
+
+      grossBilled += subtotal;
+      totalDiscount += discount;
+      netBilled += payable;
+      collected += paid;
+      outstanding += due;
+
+      // Group by date
+      if (!dateMap[dateStr]) {
+        dateMap[dateStr] = { date: dateStr, count: 0, gross: 0, discount: 0, net: 0, collected: 0, refunded: 0, dues: 0, records: [] };
+      }
+      dateMap[dateStr].count += 1;
+      dateMap[dateStr].gross += subtotal;
+      dateMap[dateStr].discount += discount;
+      dateMap[dateStr].net += payable;
+      dateMap[dateStr].collected += paid;
+      dateMap[dateStr].dues += due;
+      dateMap[dateStr].records.push(inv);
+
+      // Group by mode
+      if (!modeMap[mode]) {
+        modeMap[mode] = { count: 0, invoices: 0, amount: 0 };
+      }
+      modeMap[mode].count += 1;
+      modeMap[mode].invoices += 1;
+      modeMap[mode].amount += paid;
+    });
+
+    const netCollection = collected - refunded;
+
+    // Update 8 Metric Cards
+    const elInvoices = document.getElementById('dcr-kpi-invoices');
+    const elGross = document.getElementById('dcr-kpi-gross');
+    const elDiscount = document.getElementById('dcr-kpi-discount');
+    const elNetBilled = document.getElementById('dcr-kpi-netbilled');
+    const elCollected = document.getElementById('dcr-kpi-collected');
+    const elCollectedSub = document.getElementById('dcr-kpi-collected-sub');
+    const elRefunded = document.getElementById('dcr-kpi-refunded');
+    const elNetCollection = document.getElementById('dcr-kpi-netcollection');
+    const elOutstanding = document.getElementById('dcr-kpi-outstanding');
+
+    if (elInvoices) elInvoices.innerText = billedCount;
+    if (elGross) elGross.innerText = grossBilled.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    if (elDiscount) elDiscount.innerText = totalDiscount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    if (elNetBilled) elNetBilled.innerText = netBilled.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    if (elCollected) elCollected.innerText = collected.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    if (elCollectedSub) elCollectedSub.innerText = `Collected (${billedCount} invoices)`;
+    if (elRefunded) elRefunded.innerText = refunded.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    if (elNetCollection) elNetCollection.innerText = netCollection.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    if (elOutstanding) elOutstanding.innerText = outstanding.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
+    // Render Datewise Summary Table
+    const dateTbody = document.getElementById('dcr-datewise-tbody');
+    const dateTfoot = document.getElementById('dcr-datewise-tfoot');
+    const dateRows = Object.values(dateMap);
+
+    if (dateTbody) {
+      if (dateRows.length === 0) {
+        dateTbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 20px; color: #94a3b8;">No collection records found.</td></tr>`;
+        if (dateTfoot) dateTfoot.innerHTML = '';
+      } else {
+        dateTbody.innerHTML = dateRows.map(d => `
+          <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 8px 10px;">${d.date}</td>
+            <td style="padding: 8px 10px;">${d.count}</td>
+            <td style="padding: 8px 10px;">${d.gross.toFixed(2)}</td>
+            <td style="padding: 8px 10px;">${d.discount.toFixed(2)}</td>
+            <td style="padding: 8px 10px;">${d.net.toFixed(2)}</td>
+            <td style="padding: 8px 10px;">${d.collected.toFixed(2)}</td>
+            <td style="padding: 8px 10px;">0.00</td>
+            <td style="padding: 8px 10px;">${d.collected.toFixed(2)}</td>
+            <td style="padding: 8px 10px;">${d.dues.toFixed(2)}</td>
+            <td style="padding: 8px 10px; text-align: center;">
+              <button type="button" onclick="openDcrDayModal('${d.date}')" style="background: #0284c7; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">
+                <i class="fa-solid fa-eye"></i> View
+              </button>
+            </td>
+          </tr>
+        `).join('');
+
+        if (dateTfoot) {
+          dateTfoot.innerHTML = `
+            <tr style="background: #f8fafc;">
+              <td style="padding: 8px 10px;">Total</td>
+              <td style="padding: 8px 10px;">${billedCount}</td>
+              <td style="padding: 8px 10px;">${grossBilled.toFixed(2)}</td>
+              <td style="padding: 8px 10px;">${totalDiscount.toFixed(2)}</td>
+              <td style="padding: 8px 10px;">${netBilled.toFixed(2)}</td>
+              <td style="padding: 8px 10px;">${collected.toFixed(2)}</td>
+              <td style="padding: 8px 10px;">0.00</td>
+              <td style="padding: 8px 10px;">${netCollection.toFixed(2)}</td>
+              <td style="padding: 8px 10px;">${outstanding.toFixed(2)}</td>
+              <td></td>
+            </tr>
+          `;
+        }
+      }
+    }
+
+    // Render Payment Mode Summary Table
+    const modeTbody = document.getElementById('dcr-modewise-tbody');
+    const modeRows = Object.entries(modeMap);
+    if (modeTbody) {
+      if (modeRows.length === 0) {
+        modeTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 16px; color: #94a3b8;">No payment mode records.</td></tr>`;
+      } else {
+        modeTbody.innerHTML = modeRows.map(([mode, data]) => `
+          <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 8px 10px; font-weight: 600;">${mode}</td>
+            <td style="padding: 8px 10px;">${data.count}</td>
+            <td style="padding: 8px 10px;">${data.invoices}</td>
+            <td style="padding: 8px 10px; text-align: right; font-weight: 700; color: #0f766e;">${data.amount.toFixed(2)}</td>
+          </tr>
+        `).join('');
+      }
+    }
+  };
+
+  // Day Details Modal Handler
+  window.openDcrDayModal = function(dateStr) {
+    const modal = document.getElementById('modal-dcr-details');
+    const tbody = document.getElementById('modal-dcr-payments-tbody');
+    const title = document.getElementById('modal-dcr-date-title');
+    const netEl = document.getElementById('modal-dcr-net-collection');
+    if (!modal) return;
+
+    if (title) title.innerText = `Collection Details - ${dateStr}`;
+    const dayRecords = dcrRawInvoices.filter(i => (i.createdAt || i.date || '').startsWith(dateStr));
+    let totalAmt = 0;
+
+    if (tbody) {
+      tbody.innerHTML = dayRecords.map(r => {
+        const invId = r.invoiceId || r.billNo || r._id?.substring(0, 6) || '-';
+        const patName = r.patientName || r.name || '-';
+        const doc = r.doctor || 'SELF';
+        const mode = r.paymentMode || 'Cash';
+        const amt = Number(r.paidAmount ?? r.paid ?? 0);
+        const txn = r.transactionNote || r.txnId || '-';
+        totalAmt += amt;
+
+        return `
+          <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 6px; font-weight: 600; color: #0284c7;">${invId}</td>
+            <td style="padding: 6px;">${patName}</td>
+            <td style="padding: 6px;">${doc}</td>
+            <td style="padding: 6px;">${mode}</td>
+            <td style="padding: 6px; text-align: right; font-weight: 600;">${amt.toFixed(2)}</td>
+            <td style="padding: 6px; color: #64748b;">${txn}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    if (netEl) netEl.innerText = totalAmt.toFixed(2);
+    modal.style.display = 'flex';
+  };
+
+  window.exportDcrExcel = function() {
+    alert('Exporting DCR to Excel...');
+  };
   // Open any billing sub-view and automatically switch to billing tab
   window.openBillingView = function(viewId, linkEl) {
     // 1. Switch active screen tab to 'billing'
@@ -5076,6 +5535,9 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     // 4. Load dynamic data for the active sub-view
     if (viewId === 'opd-payments' && typeof loadOpdPaymentReport === 'function') {
       loadOpdPaymentReport();
+    }
+    if (viewId === 'opd-daily-collection' && typeof applyDcrDatePreset === 'function') {
+      applyDcrDatePreset('Today');
     }
   };
     function launchDashboard() {
