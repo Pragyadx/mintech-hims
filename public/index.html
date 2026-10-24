@@ -2167,55 +2167,98 @@
           </div>
         </div>
 
-        <!-- 8 Metric KPI Cards Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 20px;">
-          <div style="background: #0284c7; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
-            <div id="dcr-kpi-invoices" style="font-size: 26px; font-weight: 800;">0</div>
-            <div style="font-size: 12px; opacity: 0.9;">Billed Invoices</div>
-            <i class="fa-regular fa-file-lines" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+        <!-- ======================================================== -->
+        <!-- MINTECH EXECUTIVE FINANCIAL KPI DECK                     -->
+        <!-- ======================================================== -->
+        <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 14px; margin-bottom: 22px;">
+          
+          <!-- Hero Card: Realized Net Cashflow -->
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 18px 22px; color: white; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <span style="display: inline-flex; align-items: center; gap: 5px; background: rgba(45, 212, 191, 0.15); border: 1px solid rgba(45, 212, 191, 0.3); color: #2dd4bf; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #2dd4bf; display: inline-block;"></span> Mintech Treasury
+                </span>
+                <div style="font-size: 11px; opacity: 0.8; margin-top: 8px; font-weight: 600;">NET REALIZED CASHFLOW</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.08); width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #2dd4bf;">
+                <i class="fa-solid fa-vault"></i>
+              </div>
+            </div>
+
+            <div style="margin: 14px 0 6px 0;">
+              <div style="font-size: 32px; font-weight: 900; letter-spacing: -0.5px; color: #ffffff; display: flex; align-items: baseline; gap: 4px;">
+                <span style="font-size: 20px; font-weight: 600; color: #2dd4bf;">₹</span>
+                <span id="dcr-kpi-netcollection">0.00</span>
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; display: flex; justify-content: space-between; font-size: 11px;">
+              <span style="color: #99f6e4;">Invoices Settled: <strong id="dcr-kpi-invoices" style="color: white;">0</strong></span>
+              <span id="dcr-kpi-collected-sub" style="color: #99f6e4; opacity: 0.9;">Gross: ₹<span id="dcr-kpi-gross-mini">0.00</span></span>
+            </div>
           </div>
 
-          <div style="background: #0284c7; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
-            <div id="dcr-kpi-gross" style="font-size: 26px; font-weight: 800;">0.00</div>
-            <div style="font-size: 12px; opacity: 0.9;">Gross Billed</div>
-            <i class="fa-solid fa-indian-rupee-sign" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          <!-- Card 2: Revenue Pipeline (Gross & Net Billed) -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Billing Pipeline</span>
+              <span style="background: #f1f5f9; color: #0284c7; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+              </span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #94a3b8; font-weight: 600; margin-top: 4px;">Net Payable Generated</div>
+              <div style="font-size: 22px; font-weight: 800; color: #0f172a; margin-top: 2px;">
+                ₹<span id="dcr-kpi-netbilled">0.00</span>
+              </div>
+            </div>
+            <div style="background: #f8fafc; border-radius: 6px; padding: 6px 10px; margin-top: 8px; font-size: 11px; display: flex; justify-content: space-between; color: #64748b;">
+              <span>Gross Billed:</span>
+              <strong style="color: #334155;">₹<span id="dcr-kpi-gross">0.00</span></strong>
+            </div>
           </div>
 
-          <div style="background: #f59e0b; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
-            <div id="dcr-kpi-discount" style="font-size: 26px; font-weight: 800;">0.00</div>
-            <div style="font-size: 12px; opacity: 0.9;">Total Discount</div>
-            <i class="fa-solid fa-percent" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          <!-- Card 3: Counter Realization (Collected vs Refunded) -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Counter Realization</span>
+              <span style="background: #ecfdf5; color: #059669; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+              </span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #94a3b8; font-weight: 600; margin-top: 4px;">Total Paid In</div>
+              <div style="font-size: 22px; font-weight: 800; color: #059669; margin-top: 2px;">
+                ₹<span id="dcr-kpi-collected">0.00</span>
+              </div>
+            </div>
+            <div style="background: #fef2f2; border-radius: 6px; padding: 6px 10px; margin-top: 8px; font-size: 11px; display: flex; justify-content: space-between; color: #991b1b;">
+              <span>Adjusted / Refunded:</span>
+              <strong>- ₹<span id="dcr-kpi-refunded">0.00</span></strong>
+            </div>
           </div>
 
-          <div style="background: #475569; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
-            <div id="dcr-kpi-netbilled" style="font-size: 26px; font-weight: 800;">0.00</div>
-            <div style="font-size: 12px; opacity: 0.9;">Net Billed</div>
-            <i class="fa-regular fa-credit-card" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
+          <!-- Card 4: Ledger Exposure (Discounts & Outstanding Dues) -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Unsettled / Concession</span>
+              <span style="background: #fff1f2; color: #e11d48; width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+              </span>
+            </div>
+            <div>
+              <div style="font-size: 11px; color: #94a3b8; font-weight: 600; margin-top: 4px;">Pending Patient Dues</div>
+              <div style="font-size: 22px; font-weight: 800; color: #e11d48; margin-top: 2px;">
+                ₹<span id="dcr-kpi-outstanding">0.00</span>
+              </div>
+            </div>
+            <div style="background: #fffbeb; border-radius: 6px; padding: 6px 10px; margin-top: 8px; font-size: 11px; display: flex; justify-content: space-between; color: #92400e;">
+              <span>Discounts Allowed:</span>
+              <strong>₹<span id="dcr-kpi-discount">0.00</span></strong>
+            </div>
           </div>
 
-          <div style="background: #10b981; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
-            <div id="dcr-kpi-collected" style="font-size: 26px; font-weight: 800;">0.00</div>
-            <div id="dcr-kpi-collected-sub" style="font-size: 12px; opacity: 0.9;">Collected (0 invoices)</div>
-            <i class="fa-regular fa-circle-check" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
-          </div>
-
-          <div style="background: #ef4444; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
-            <div id="dcr-kpi-refunded" style="font-size: 26px; font-weight: 800;">0.00</div>
-            <div style="font-size: 12px; opacity: 0.9;">Refunded</div>
-            <i class="fa-solid fa-rotate-left" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
-          </div>
-
-          <div style="background: #14b8a6; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
-            <div id="dcr-kpi-netcollection" style="font-size: 26px; font-weight: 800;">0.00</div>
-            <div style="font-size: 12px; opacity: 0.9;">Net Collection</div>
-            <i class="fa-solid fa-indian-rupee-sign" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
-          </div>
-
-          <div style="background: #e11d48; color: white; border-radius: 6px; padding: 14px 18px; position: relative; overflow: hidden;">
-            <div id="dcr-kpi-outstanding" style="font-size: 26px; font-weight: 800;">0.00</div>
-            <div style="font-size: 12px; opacity: 0.9;">Outstanding (Dues)</div>
-            <i class="fa-regular fa-hourglass-half" style="position: absolute; right: 12px; bottom: 8px; font-size: 40px; opacity: 0.18;"></i>
-          </div>
         </div>
 
         <!-- Section 1: Date Wise Collection Summary Table -->
@@ -5378,6 +5421,7 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     // Update 8 Metric Cards
     const elInvoices = document.getElementById('dcr-kpi-invoices');
     const elGross = document.getElementById('dcr-kpi-gross');
+    const elGrossMini = document.getElementById('dcr-kpi-gross-mini');
     const elDiscount = document.getElementById('dcr-kpi-discount');
     const elNetBilled = document.getElementById('dcr-kpi-netbilled');
     const elCollected = document.getElementById('dcr-kpi-collected');
@@ -5388,6 +5432,7 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
 
     if (elInvoices) elInvoices.innerText = billedCount;
     if (elGross) elGross.innerText = grossBilled.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+    if (elGrossMini) elGrossMini.innerText = grossBilled.toLocaleString('en-IN', { minimumFractionDigits: 2 });
     if (elDiscount) elDiscount.innerText = totalDiscount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
     if (elNetBilled) elNetBilled.innerText = netBilled.toLocaleString('en-IN', { minimumFractionDigits: 2 });
     if (elCollected) elCollected.innerText = collected.toLocaleString('en-IN', { minimumFractionDigits: 2 });
