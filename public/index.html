@@ -3197,19 +3197,25 @@
       <!-- ======================================================== -->
       <!-- MODAL: ADD REFUND                                        -->
       <!-- ======================================================== -->
-      <div id="modal-add-refund" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999999; align-items: center; justify-content: center;">
-        <div style="background: white; width: 90%; max-width: 620px; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.25);">
+      <div id="modal-add-refund" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999999; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
+        <div style="background: white; width: 90%; max-width: 620px; border-radius: 10px; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.3); border: 1px solid #115e59;">
           
-          <div style="background: #0284c7; color: white; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
-            <h4 style="margin: 0; font-size: 15px; font-weight: 700;">Add Refund</h4>
-            <button type="button" onclick="closeAddRefundModal()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">&times;</button>
+          <!-- Mintech Executive Forest/Emerald Header -->
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); color: white; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #115e59;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="background: rgba(45, 212, 191, 0.15); width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #2dd4bf; font-size: 13px;">
+                <i class="fa-solid fa-rotate-left"></i>
+              </span>
+              <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #ffffff; letter-spacing: 0.3px;">Add Refund Voucher</h4>
+            </div>
+            <button type="button" onclick="closeAddRefundModal()" style="background: none; border: none; color: #99f6e4; font-size: 20px; cursor: pointer; transition: 0.2s;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#99f6e4'">&times;</button>
           </div>
 
           <form id="form-add-refund" onsubmit="submitAddRefund(event)" style="padding: 20px;">
             <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 14px; margin-bottom: 14px;">
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Invoice Type</label>
-                <select id="refund-inv-type" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+                <select id="refund-inv-type" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; outline: none;">
                   <option value="OPD">OPD</option>
                   <option value="IPD">IPD</option>
                   <option value="LAB">LAB</option>
@@ -3218,13 +3224,13 @@
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Invoice ID</label>
                 <div style="display: flex; gap: 6px;">
-                  <input type="text" id="refund-inv-id" placeholder="Enter Invoice ID" required style="flex: 1; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px;">
-                  <button type="button" onclick="searchRefundInvoice()" style="background: #0284c7; color: white; border: none; border-radius: 4px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">Search</button>
+                  <input type="text" id="refund-inv-id" placeholder="Enter Invoice ID" required style="flex: 1; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; outline: none;">
+                  <button type="button" onclick="searchRefundInvoice()" style="background: #0f766e; color: white; border: none; border-radius: 4px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">Search</button>
                 </div>
               </div>
             </div>
 
-            <div id="refund-invoice-preview" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: #334155;">
+            <div id="refund-invoice-preview" style="display: none; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px 14px; margin-bottom: 14px; font-size: 12px; color: #166534;">
               <div style="display: flex; justify-content: space-between;">
                 <span>Patient: <strong id="refund-preview-patient">-</strong></span>
                 <span>Total Paid: <strong id="refund-preview-paid" style="color: #0f766e;">₹0.00</strong></span>
@@ -3234,18 +3240,18 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px;">
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Refund Amount</label>
-                <input type="number" id="refund-amount" step="0.01" min="1" placeholder="0.00" required style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; box-sizing: border-box;">
+                <input type="number" id="refund-amount" step="0.01" min="1" placeholder="0.00" required style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; box-sizing: border-box; outline: none;">
               </div>
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Refund Type</label>
-                <select id="refund-type" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; box-sizing: border-box;">
+                <select id="refund-type" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; box-sizing: border-box; outline: none;">
                   <option value="Partial">Partial</option>
                   <option value="Full">Full</option>
                 </select>
               </div>
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Refund Mode</label>
-                <select id="refund-mode" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; box-sizing: border-box;">
+                <select id="refund-mode" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; box-sizing: border-box; outline: none;">
                   <option value="Cash">Cash</option>
                   <option value="Online">Online</option>
                   <option value="Card">Card</option>
@@ -3257,11 +3263,11 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Refund Date</label>
-                <input type="datetime-local" id="refund-date" required style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; box-sizing: border-box;">
+                <input type="datetime-local" id="refund-date" required style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; box-sizing: border-box; outline: none;">
               </div>
               <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Status</label>
-                <select id="refund-status" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; box-sizing: border-box;">
+                <select id="refund-status" style="width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; box-sizing: border-box; outline: none;">
                   <option value="Processed">Processed</option>
                   <option value="Pending">Pending</option>
                 </select>
@@ -3270,11 +3276,11 @@
 
             <div style="margin-bottom: 18px;">
               <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Reason</label>
-              <textarea id="refund-reason" rows="3" placeholder="Enter reason for payment reversal..." required style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical; box-sizing: border-box;"></textarea>
+              <textarea id="refund-reason" rows="3" placeholder="Enter reason for payment reversal..." required style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; resize: vertical; box-sizing: border-box; outline: none;"></textarea>
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
-              <button type="submit" style="background: #059669; color: white; border: none; padding: 8px 18px; border-radius: 4px; font-size: 12px; font-weight: 700; cursor: pointer;">Save</button>
+              <button type="submit" style="background: #0f766e; color: white; border: none; padding: 8px 18px; border-radius: 4px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#115e59'" onmouseout="this.style.background='#0f766e'">Save Refund</button>
               <button type="button" onclick="closeAddRefundModal()" style="background: #e2e8f0; color: #334155; border: none; padding: 8px 16px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Close</button>
             </div>
           </form>
