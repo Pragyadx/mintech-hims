@@ -2336,6 +2336,249 @@
           </div>
         </div>
       </div>
+      <!-- ======================================================== -->
+      <!-- SUB-VIEW: DAILY COLLECTION REGISTER (DCR - ALL SOURCES)  -->
+      <!-- ======================================================== -->
+      <div id="billing-view-daily-collection-register" class="billing-subview" style="display: none;">
+        
+        <!-- Filter Bar -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;">Daily Collection Report</h3>
+            <span style="font-size: 11px; color: #64748b;">Consolidated OPD, IPD, and Lab cashier receipts, refunds, and counter settlements</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <!-- Date Filter -->
+            <div style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; background: #f8fafc;">
+              <span style="background: #f1f5f9; padding: 6px 10px; font-size: 12px; font-weight: 600; color: #475569; border-right: 1px solid #cbd5e1;">Date</span>
+              <input type="date" id="dcr-all-start-date" style="border: none; padding: 6px 8px; font-size: 12px; outline: none; background: transparent;">
+              <span style="font-size: 11px; color: #94a3b8; padding: 0 4px;">to</span>
+              <input type="date" id="dcr-all-end-date" style="border: none; padding: 6px 8px; font-size: 12px; outline: none; background: transparent;">
+              <button type="button" onclick="loadAllDailyCollectionReport()" style="background: #0284c7; color: white; border: none; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">Show</button>
+            </div>
+
+            <!-- Source Filter -->
+            <select id="dcr-all-source-filter" onchange="loadAllDailyCollectionReport()" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; color: #334155;">
+              <option value="">All Sources</option>
+              <option value="OPD">OPD</option>
+              <option value="IPD">IPD</option>
+              <option value="Lab">Lab</option>
+            </select>
+
+            <!-- Counter / Cashier Filter (Dynamic) -->
+            <select id="dcr-all-counter-filter" onchange="loadAllDailyCollectionReport()" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; color: #334155; max-width: 150px;">
+              <option value="">All Counters</option>
+            </select>
+
+            <!-- Payment Mode Filter -->
+            <select id="dcr-all-mode-filter" onchange="loadAllDailyCollectionReport()" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; color: #334155;">
+              <option value="">Select Mode</option>
+              <option value="Cash">Cash</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="Debit Card">Debit Card</option>
+              <option value="Online">Online</option>
+              <option value="Wallet">Wallet</option>
+              <option value="Credit">Credit</option>
+              <option value="BPL">BPL</option>
+              <option value="RGHS">RGHS</option>
+              <option value="CGHS">CGHS</option>
+              <option value="ECHS">ECHS</option>
+              <option value="MAA-YOJANA">MAA-YOJANA</option>
+              <option value="UPI">UPI</option>
+            </select>
+
+            <!-- Preset Filter -->
+            <select id="dcr-all-preset-filter" onchange="applyAllDcrPreset(this.value)" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; color: #334155;">
+              <option value="Today">Today</option>
+              <option value="1 Week">1 Week</option>
+              <option value="1 Month">1 Month</option>
+              <option value="Last 60 Days">Last 60 Days</option>
+              <option value="Lifetime">Lifetime</option>
+            </select>
+
+            <button type="button" onclick="exportAllDcrExcel()" style="background: #0284c7; color: white; border: none; border-radius: 4px; padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">Export Excel</button>
+            <button type="button" onclick="window.print()" style="background: #0284c7; color: white; border: none; border-radius: 4px; padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">Print</button>
+          </div>
+        </div>
+
+        <!-- 3x3 Metric Cards Deck in Dark Teal -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px;">
+          
+          <!-- Row 1: Collections by Department -->
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">OPD COLLECTED</span>
+              <i class="fa-regular fa-file-lines" style="color: #2dd4bf; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; margin-top: 10px; color: #ffffff;">
+              ₹<span id="dcr-all-kpi-opd">0.00</span>
+            </div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">IPD COLLECTED</span>
+              <i class="fa-solid fa-hospital" style="color: #38bdf8; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; margin-top: 10px; color: #ffffff;">
+              ₹<span id="dcr-all-kpi-ipd">0.00</span>
+            </div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">LAB COLLECTED</span>
+              <i class="fa-solid fa-flask-vial" style="color: #4ade80; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; margin-top: 10px; color: #ffffff;">
+              ₹<span id="dcr-all-kpi-lab">0.00</span>
+            </div>
+          </div>
+
+          <!-- Row 2: Refunds by Department -->
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">OPD REFUNDED</span>
+              <i class="fa-solid fa-rotate-left" style="color: #f87171; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; margin-top: 10px; color: #f87171;">
+              ₹<span id="dcr-all-kpi-opd-ref">0.00</span>
+            </div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">IPD REFUNDED</span>
+              <i class="fa-solid fa-rotate-left" style="color: #f87171; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; margin-top: 10px; color: #f87171;">
+              ₹<span id="dcr-all-kpi-ipd-ref">0.00</span>
+            </div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">LAB REFUNDED</span>
+              <i class="fa-solid fa-rotate-left" style="color: #f87171; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; margin-top: 10px; color: #f87171;">
+              ₹<span id="dcr-all-kpi-lab-ref">0.00</span>
+            </div>
+          </div>
+
+          <!-- Row 3: Grand Aggregations -->
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">TOTAL COLLECTED</span>
+              <i class="fa-solid fa-money-bill-wave" style="color: #2dd4bf; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; margin-top: 10px; color: #ffffff;">
+              ₹<span id="dcr-all-kpi-total-col">0.00</span>
+            </div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">TOTAL REFUNDED</span>
+              <i class="fa-solid fa-rotate-left" style="color: #fb7185; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; margin-top: 10px; color: #fb7185;">
+              ₹<span id="dcr-all-kpi-total-ref">0.00</span>
+            </div>
+          </div>
+
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">NET REALIZED COLLECTION</span>
+              <i class="fa-solid fa-vault" style="color: #34d399; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; margin-top: 10px; color: #34d399;">
+              ₹<span id="dcr-all-kpi-net-col">0.00</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Table 1: Date Wise Collection Summary -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #475569;">Date Wise Collection Summary</h4>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; background: #f8fafc;">
+                  <th style="padding: 10px;">Date</th>
+                  <th style="padding: 10px;">OPD Collected</th>
+                  <th style="padding: 10px;">IPD Collected</th>
+                  <th style="padding: 10px;">Lab Collected</th>
+                  <th style="padding: 10px; font-weight: 700;">Total Collected</th>
+                  <th style="padding: 10px;">OPD Refunded</th>
+                  <th style="padding: 10px;">IPD Refunded</th>
+                  <th style="padding: 10px;">Lab Refunded</th>
+                  <th style="padding: 10px;">Total Refunded</th>
+                  <th style="padding: 10px; font-weight: 700;">Net Collection</th>
+                  <th style="padding: 10px; text-align: center;">Details</th>
+                </tr>
+              </thead>
+              <tbody id="dcr-all-datewise-tbody">
+                <tr><td colspan="11" style="text-align: center; padding: 20px; color: #94a3b8;">No records found.</td></tr>
+              </tbody>
+              <tfoot id="dcr-all-datewise-tfoot" style="font-weight: 700; border-top: 2px solid #e2e8f0; background: #f8fafc;"></tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Table 2: Counter / Admin Wise Collection -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #475569;">Counter / Admin Wise Collection</h4>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; background: #f8fafc;">
+                  <th style="padding: 10px;">Counter / Cashier</th>
+                  <th style="padding: 10px;">OPD Collected</th>
+                  <th style="padding: 10px;">IPD Collected</th>
+                  <th style="padding: 10px;">Lab Collected</th>
+                  <th style="padding: 10px; font-weight: 700;">Total Collected</th>
+                  <th style="padding: 10px;">OPD Refunded</th>
+                  <th style="padding: 10px;">IPD Refunded</th>
+                  <th style="padding: 10px;">Lab Refunded</th>
+                  <th style="padding: 10px;">Total Refunded</th>
+                  <th style="padding: 10px; font-weight: 700;">Net Collection</th>
+                  <th style="padding: 10px; text-align: center;">Details</th>
+                </tr>
+              </thead>
+              <tbody id="dcr-all-counter-tbody">
+                <tr><td colspan="11" style="text-align: center; padding: 20px; color: #94a3b8;">No counter records.</td></tr>
+              </tbody>
+              <tfoot id="dcr-all-counter-tfoot" style="font-weight: 700; border-top: 2px solid #e2e8f0; background: #f8fafc;"></tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Table 3: Counter / Admin Wise Payment Mode Summary -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+          <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #475569;">Counter / Admin Wise Payment Mode Summary</h4>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+              <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; background: #f8fafc;">
+                  <th style="padding: 10px;">Counter</th>
+                  <th style="padding: 10px;">Payment Mode</th>
+                  <th style="padding: 10px; text-align: right;">OPD Amount</th>
+                  <th style="padding: 10px; text-align: right;">IPD Amount</th>
+                  <th style="padding: 10px; text-align: right;">Lab Amount</th>
+                  <th style="padding: 10px; text-align: right; font-weight: 700;">Total Amount</th>
+                </tr>
+              </thead>
+              <tbody id="dcr-all-mode-counter-tbody">
+                <tr><td colspan="6" style="text-align: center; padding: 16px; color: #94a3b8;">No payment mode records.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
         
 <!-- ======================================================== -->
     <!-- FULL-SCREEN MODAL: CREATE OPD INVOICE & SETTLEMENT       -->
@@ -5543,6 +5786,318 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
   window.exportDcrExcel = function() {
     alert('Exporting DCR to Excel...');
   };
+  // --- CONSOLIDATED DAILY COLLECTION REGISTER (DCR) ALL SOURCES ---
+  let allDcrRawRecords = [];
+
+  window.applyAllDcrPreset = function(preset) {
+    const startInput = document.getElementById('dcr-all-start-date');
+    const endInput = document.getElementById('dcr-all-end-date');
+    if (!startInput || !endInput) return;
+
+    const today = new Date();
+    const formatDate = d => d.toISOString().split('T')[0];
+    endInput.value = formatDate(today);
+
+    if (preset === 'Today') {
+      startInput.value = formatDate(today);
+    } else if (preset === '1 Week') {
+      const d = new Date();
+      d.setDate(d.getDate() - 7);
+      startInput.value = formatDate(d);
+    } else if (preset === '1 Month') {
+      const d = new Date();
+      d.setMonth(d.getMonth() - 1);
+      startInput.value = formatDate(d);
+    } else if (preset === 'Last 60 Days') {
+      const d = new Date();
+      d.setDate(d.getDate() - 60);
+      startInput.value = formatDate(d);
+    } else if (preset === 'Lifetime') {
+      startInput.value = '2020-01-01';
+    }
+    loadAllDailyCollectionReport();
+  };
+
+  window.loadAllDailyCollectionReport = async function() {
+    const start = document.getElementById('dcr-all-start-date')?.value;
+    const end = document.getElementById('dcr-all-end-date')?.value;
+    const sourceFilter = document.getElementById('dcr-all-source-filter')?.value;
+    const counterFilter = document.getElementById('dcr-all-counter-filter')?.value;
+    const modeFilter = document.getElementById('dcr-all-mode-filter')?.value;
+
+    try {
+      const token = localStorage.getItem('token');
+      let url = '/api/billing/invoices?allSources=true';
+      if (start) url += `&startDate=${start}`;
+      if (end) url += `&endDate=${end}`;
+
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+      const data = await res.json();
+      allDcrRawRecords = Array.isArray(data) ? data : (data.invoices || data.payments || []);
+
+      // Populate cashier counter dropdown dynamically
+      const counterSel = document.getElementById('dcr-all-counter-filter');
+      if (counterSel) {
+        const cur = counterSel.value;
+        const cashiers = new Set();
+        allDcrRawRecords.forEach(r => {
+          const c = r.createdBy || r.cashier || r.counter || 'Admin';
+          if (c) cashiers.add(c);
+        });
+        counterSel.innerHTML = '<option value="">All Counters</option>' +
+          Array.from(cashiers).map(c => `<option value="${c}">${c}</option>`).join('');
+        if (cur) counterSel.value = cur;
+      }
+
+      // Filter dataset
+      let filtered = [...allDcrRawRecords];
+      if (sourceFilter) {
+        filtered = filtered.filter(r => (r.source || r.department || 'OPD').toUpperCase() === sourceFilter.toUpperCase());
+      }
+      if (counterFilter) {
+        filtered = filtered.filter(r => (r.createdBy || r.cashier || r.counter || 'Admin') === counterFilter);
+      }
+      if (modeFilter) {
+        filtered = filtered.filter(r => (r.paymentMode || 'Cash').toLowerCase() === modeFilter.toLowerCase());
+      }
+
+      renderAllDcrDashboard(filtered);
+    } catch (err) {
+      console.warn('Consolidated DCR fallback:', err);
+      renderAllDcrDashboard([]);
+    }
+  };
+
+  window.renderAllDcrDashboard = function(records) {
+    let opdCol = 0, ipdCol = 0, labCol = 0;
+    let opdRef = 0, ipdRef = 0, labRef = 0;
+
+    const dateMap = {};
+    const counterMap = {};
+    const modeCounterMap = {};
+
+    records.forEach(r => {
+      const dept = (r.source || r.department || 'OPD').toUpperCase();
+      const paid = Number(r.paidAmount ?? r.paid ?? 0);
+      const refunded = Number(r.refundAmount ?? r.refunded ?? 0);
+      const dateStr = (r.createdAt || r.date || new Date().toISOString()).split('T')[0];
+      const counter = r.createdBy || r.cashier || r.counter || 'Admin';
+      const mode = r.paymentMode || 'Cash';
+
+      if (dept === 'IPD') {
+        ipdCol += paid;
+        ipdRef += refunded;
+      } else if (dept === 'LAB') {
+        labCol += paid;
+        labRef += refunded;
+      } else {
+        opdCol += paid;
+        opdRef += refunded;
+      }
+
+      // Datewise Grouping
+      if (!dateMap[dateStr]) {
+        dateMap[dateStr] = { date: dateStr, opd: 0, ipd: 0, lab: 0, opdRef: 0, ipdRef: 0, labRef: 0 };
+      }
+      if (dept === 'IPD') {
+        dateMap[dateStr].ipd += paid;
+        dateMap[dateStr].ipdRef += refunded;
+      } else if (dept === 'LAB') {
+        dateMap[dateStr].lab += paid;
+        dateMap[dateStr].labRef += refunded;
+      } else {
+        dateMap[dateStr].opd += paid;
+        dateMap[dateStr].opdRef += refunded;
+      }
+
+      // Counter Wise Grouping
+      if (!counterMap[counter]) {
+        counterMap[counter] = { counter, opd: 0, ipd: 0, lab: 0, opdRef: 0, ipdRef: 0, labRef: 0 };
+      }
+      if (dept === 'IPD') {
+        counterMap[counter].ipd += paid;
+        counterMap[counter].ipdRef += refunded;
+      } else if (dept === 'LAB') {
+        counterMap[counter].lab += paid;
+        counterMap[counter].labRef += refunded;
+      } else {
+        counterMap[counter].opd += paid;
+        counterMap[counter].opdRef += refunded;
+      }
+
+      // Counter x Mode Grouping
+      const cmKey = `${counter}_${mode}`;
+      if (!modeCounterMap[cmKey]) {
+        modeCounterMap[cmKey] = { counter, mode, opd: 0, ipd: 0, lab: 0 };
+      }
+      if (dept === 'IPD') modeCounterMap[cmKey].ipd += paid;
+      else if (dept === 'LAB') modeCounterMap[cmKey].lab += paid;
+      else modeCounterMap[cmKey].opd += paid;
+    });
+
+    const totalCol = opdCol + ipdCol + labCol;
+    const totalRef = opdRef + ipdRef + labRef;
+    const netCol = totalCol - totalRef;
+
+    // 9 KPI Badges
+    const elOpd = document.getElementById('dcr-all-kpi-opd');
+    const elIpd = document.getElementById('dcr-all-kpi-ipd');
+    const elLab = document.getElementById('dcr-all-kpi-lab');
+    const elOpdRef = document.getElementById('dcr-all-kpi-opd-ref');
+    const elIpdRef = document.getElementById('dcr-all-kpi-ipd-ref');
+    const elLabRef = document.getElementById('dcr-all-kpi-lab-ref');
+    const elTotalCol = document.getElementById('dcr-all-kpi-total-col');
+    const elTotalRef = document.getElementById('dcr-all-kpi-total-ref');
+    const elNetCol = document.getElementById('dcr-all-kpi-net-col');
+
+    if (elOpd) elOpd.innerText = opdCol.toFixed(2);
+    if (elIpd) elIpd.innerText = ipdCol.toFixed(2);
+    if (elLab) elLab.innerText = labCol.toFixed(2);
+    if (elOpdRef) elOpdRef.innerText = opdRef.toFixed(2);
+    if (elIpdRef) elIpdRef.innerText = ipdRef.toFixed(2);
+    if (elLabRef) elLabRef.innerText = labRef.toFixed(2);
+    if (elTotalCol) elTotalCol.innerText = totalCol.toFixed(2);
+    if (elTotalRef) elTotalRef.innerText = totalRef.toFixed(2);
+    if (elNetCol) elNetCol.innerText = netCol.toFixed(2);
+
+    // Table 1: Date Wise
+    const dateTbody = document.getElementById('dcr-all-datewise-tbody');
+    const dateTfoot = document.getElementById('dcr-all-datewise-tfoot');
+    const dateRows = Object.values(dateMap);
+
+    if (dateTbody) {
+      if (dateRows.length === 0) {
+        dateTbody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 20px; color: #94a3b8;">No records found.</td></tr>`;
+        if (dateTfoot) dateTfoot.innerHTML = '';
+      } else {
+        dateTbody.innerHTML = dateRows.map(d => {
+          const rowTotCol = d.opd + d.ipd + d.lab;
+          const rowTotRef = d.opdRef + d.ipdRef + d.labRef;
+          const rowNet = rowTotCol - rowTotRef;
+          return `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 10px;">${d.date}</td>
+              <td style="padding: 10px;">${d.opd.toFixed(2)}</td>
+              <td style="padding: 10px;">${d.ipd.toFixed(2)}</td>
+              <td style="padding: 10px;">${d.lab.toFixed(2)}</td>
+              <td style="padding: 10px; font-weight: 700;">${rowTotCol.toFixed(2)}</td>
+              <td style="padding: 10px;">${d.opdRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${d.ipdRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${d.labRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${rowTotRef.toFixed(2)}</td>
+              <td style="padding: 10px; font-weight: 700; color: #0f766e;">${rowNet.toFixed(2)}</td>
+              <td style="padding: 10px; text-align: center;">
+                <button type="button" onclick="openDcrDayModal('${d.date}')" style="background: #0284c7; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">
+                  <i class="fa-solid fa-eye"></i> View
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        if (dateTfoot) {
+          dateTfoot.innerHTML = `
+            <tr>
+              <td style="padding: 10px;">Total</td>
+              <td style="padding: 10px;">${opdCol.toFixed(2)}</td>
+              <td style="padding: 10px;">${ipdCol.toFixed(2)}</td>
+              <td style="padding: 10px;">${labCol.toFixed(2)}</td>
+              <td style="padding: 10px; font-weight: 700;">${totalCol.toFixed(2)}</td>
+              <td style="padding: 10px;">${opdRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${ipdRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${labRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${totalRef.toFixed(2)}</td>
+              <td style="padding: 10px; font-weight: 700; color: #0f766e;">${netCol.toFixed(2)}</td>
+              <td></td>
+            </tr>
+          `;
+        }
+      }
+    }
+
+    // Table 2: Counter / Admin Wise
+    const cTbody = document.getElementById('dcr-all-counter-tbody');
+    const cTfoot = document.getElementById('dcr-all-counter-tfoot');
+    const cRows = Object.values(counterMap);
+
+    if (cTbody) {
+      if (cRows.length === 0) {
+        cTbody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 20px; color: #94a3b8;">No counter records.</td></tr>`;
+        if (cTfoot) cTfoot.innerHTML = '';
+      } else {
+        cTbody.innerHTML = cRows.map(c => {
+          const rowTotCol = c.opd + c.ipd + c.lab;
+          const rowTotRef = c.opdRef + c.ipdRef + c.labRef;
+          const rowNet = rowTotCol - rowTotRef;
+          return `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 10px; font-weight: 600;">${c.counter}</td>
+              <td style="padding: 10px;">${c.opd.toFixed(2)}</td>
+              <td style="padding: 10px;">${c.ipd.toFixed(2)}</td>
+              <td style="padding: 10px;">${c.lab.toFixed(2)}</td>
+              <td style="padding: 10px; font-weight: 700;">${rowTotCol.toFixed(2)}</td>
+              <td style="padding: 10px;">${c.opdRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${c.ipdRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${c.labRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${rowTotRef.toFixed(2)}</td>
+              <td style="padding: 10px; font-weight: 700; color: #0f766e;">${rowNet.toFixed(2)}</td>
+              <td style="padding: 10px; text-align: center;">
+                <button type="button" style="background: #0284c7; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; cursor: pointer;">
+                  <i class="fa-solid fa-eye"></i> View
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        if (cTfoot) {
+          cTfoot.innerHTML = `
+            <tr>
+              <td style="padding: 10px;">Total</td>
+              <td style="padding: 10px;">${opdCol.toFixed(2)}</td>
+              <td style="padding: 10px;">${ipdCol.toFixed(2)}</td>
+              <td style="padding: 10px;">${labCol.toFixed(2)}</td>
+              <td style="padding: 10px; font-weight: 700;">${totalCol.toFixed(2)}</td>
+              <td style="padding: 10px;">${opdRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${ipdRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${labRef.toFixed(2)}</td>
+              <td style="padding: 10px;">${totalRef.toFixed(2)}</td>
+              <td style="padding: 10px; font-weight: 700; color: #0f766e;">${netCol.toFixed(2)}</td>
+              <td></td>
+            </tr>
+          `;
+        }
+      }
+    }
+
+    // Table 3: Counter x Mode
+    const cmTbody = document.getElementById('dcr-all-mode-counter-tbody');
+    const cmRows = Object.values(modeCounterMap);
+
+    if (cmTbody) {
+      if (cmRows.length === 0) {
+        cmTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 16px; color: #94a3b8;">No payment mode records.</td></tr>`;
+      } else {
+        cmTbody.innerHTML = cmRows.map(cm => {
+          const total = cm.opd + cm.ipd + cm.lab;
+          return `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 10px; font-weight: 600;">${cm.counter}</td>
+              <td style="padding: 10px;">${cm.mode}</td>
+              <td style="padding: 10px; text-align: right;">${cm.opd.toFixed(2)}</td>
+              <td style="padding: 10px; text-align: right;">${cm.ipd.toFixed(2)}</td>
+              <td style="padding: 10px; text-align: right;">${cm.lab.toFixed(2)}</td>
+              <td style="padding: 10px; text-align: right; font-weight: 700; color: #0f766e;">${total.toFixed(2)}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+  };
+
+  window.exportAllDcrExcel = function() {
+    alert('Exporting Consolidated Daily Collection Register to Excel...');
+  };
   // Open any billing sub-view and automatically switch to billing tab
   window.openBillingView = function(viewId, linkEl) {
     // 1. Switch active screen tab to 'billing'
@@ -5576,6 +6131,9 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     }
     if (viewId === 'opd-daily-collection' && typeof applyDcrDatePreset === 'function') {
       applyDcrDatePreset('Today');
+    }
+    if (viewId === 'daily-collection-register' && typeof applyAllDcrPreset === 'function') {
+      applyAllDcrPreset('Today');
     }
   };
     function launchDashboard() {
