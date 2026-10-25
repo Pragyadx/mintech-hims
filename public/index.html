@@ -497,14 +497,16 @@
           <div style="font-size: 12px; color: #10b981; margin-top: 4px; font-weight: 500;">Registered outpatients</div>
         </div>
 
-        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase;">Active Inpatients (IPD)</span>
-            <i class="fa-solid fa-bed" style="color: #1e40af; font-size: 18px;"></i>
-          </div>
-          <div id="dash-ipd-count" style="font-size: 30px; font-weight: 800; color: #1e40af; margin-top: 10px;">0</div>
-          <div style="font-size: 12px; color: #64748b; margin-top: 4px; font-weight: 500;">Currently admitted</div>
-        </div>
+        <div onclick="openBedManagementFromDashboard()" style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.06)'" onmouseout="this.style.transform='none'; this.style.boxShadow='none'">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b;">Active Inpatients (IPD)</span>
+                <i class="fa-solid fa-bed" style="color: #0284c7; font-size: 18px;"></i>
+              </div>
+              <div id="dash-kpi-ipd" style="font-size: 26px; font-weight: 800; color: #1e40af; margin-top: 10px;">0</div>
+              <div style="font-size: 11px; color: #0f766e; font-weight: 600; margin-top: 4px;">
+                <i class="fa-solid fa-arrow-right"></i> View Bed Matrix
+              </div>
+            </div>
 
         <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
           <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -540,6 +542,9 @@
             </button>
             <button type="button" onclick="switchTab('ipd')" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
               <i class="fa-solid fa-bed"></i> Inpatient (IPD)
+            </button>
+            <button type="button" onclick="openBedManagementFromDashboard()" style="background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-bed-pulse"></i> Bed Management
             </button>
            <button type="button" onclick="switchTab('billing')" style="background: #f0fdf4;">
   <i class="fa-solid fa-file-invoice-dollar" style="color: #0f766e;"></i> Invoices &amp; Billing
@@ -11800,6 +11805,14 @@ async function dischargeIpdPatientPrompt(ipdNumber) {
       }
     }
   });
+  window.openBedManagementFromDashboard = function() {
+    if (typeof switchTab === 'function') {
+      switchTab('billing');
+    }
+    if (typeof openBillingView === 'function') {
+      openBillingView('beds-management');
+    }
+  };
 </script>
 </body>
 </html>
