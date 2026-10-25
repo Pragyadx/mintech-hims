@@ -2579,6 +2579,257 @@
         </div>
 
       </div>
+      <!-- ======================================================== -->
+      <!-- SUB-VIEW: CONSOLIDATED TOTAL COLLECTION SUMMARY          -->
+      <!-- ======================================================== -->
+      <div id="billing-view-total-summary" class="billing-subview" style="display: none;">
+        
+        <!-- Filter Header Bar -->
+        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
+          <div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;">Collection Summary Report</h3>
+            <span style="font-size: 11px; color: #64748b;">Consolidated hospital ledger across OPD, IPD, Lab, and Pharmacy</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <!-- From Date / To Date -->
+            <div style="display: flex; align-items: center; border: 1px solid #cbd5e1; border-radius: 4px; overflow: hidden; background: #f8fafc;">
+              <span style="background: #f1f5f9; padding: 6px 10px; font-size: 12px; font-weight: 600; color: #475569; border-right: 1px solid #cbd5e1;">From Date</span>
+              <input type="date" id="summary-from-date" style="border: none; padding: 6px 8px; font-size: 12px; outline: none; background: transparent;">
+              <span style="background: #f1f5f9; padding: 6px 10px; font-size: 12px; font-weight: 600; color: #475569; border-left: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1;">To Date</span>
+              <input type="date" id="summary-to-date" style="border: none; padding: 6px 8px; font-size: 12px; outline: none; background: transparent;">
+            </div>
+
+            <!-- Dynamic Doctor Filter Dropdown -->
+            <select id="summary-doctor-filter" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white; color: #334155; min-width: 140px;">
+              <option value="">All Doctors</option>
+            </select>
+
+            <button type="button" onclick="loadCollectionSummaryReport()" style="background: #0284c7; color: white; border: none; border-radius: 4px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer;">
+              <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+            <button type="button" onclick="resetCollectionSummaryFilters()" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; padding: 7px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
+              Reset
+            </button>
+            <button type="button" onclick="window.print()" style="background: #059669; color: white; border: none; border-radius: 4px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-file-pdf"></i> Print PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Department Metric Cards -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px;">
+          <!-- OPD -->
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">OPD COLLECTION</span>
+              <i class="fa-regular fa-file-lines" style="color: #2dd4bf; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 24px; font-weight: 800; margin-top: 10px; color: #ffffff;">
+              ₹<span id="sum-kpi-opd-amt">0.00</span>
+            </div>
+            <div style="font-size: 11px; color: #99f6e4; opacity: 0.85; margin-top: 4px;">
+              <span id="sum-kpi-opd-count">0</span> Invoices Collected
+            </div>
+          </div>
+
+          <!-- IPD -->
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">IPD COLLECTION</span>
+              <i class="fa-solid fa-hospital" style="color: #38bdf8; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 24px; font-weight: 800; margin-top: 10px; color: #ffffff;">
+              ₹<span id="sum-kpi-ipd-amt">0.00</span>
+            </div>
+            <div style="font-size: 11px; color: #99f6e4; opacity: 0.85; margin-top: 4px;">
+              <span id="sum-kpi-ipd-count">0</span> Admissions / Payments
+            </div>
+          </div>
+
+          <!-- LAB -->
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">LAB COLLECTION</span>
+              <i class="fa-solid fa-flask-vial" style="color: #4ade80; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 24px; font-weight: 800; margin-top: 10px; color: #ffffff;">
+              ₹<span id="sum-kpi-lab-amt">0.00</span>
+            </div>
+            <div style="font-size: 11px; color: #99f6e4; opacity: 0.85; margin-top: 4px;">
+              <span id="sum-kpi-lab-count">0</span> Invoices Collected
+            </div>
+          </div>
+
+          <!-- PHARMACY -->
+          <div style="background: linear-gradient(135deg, #0d3b37 0%, #062321 100%); border: 1px solid #115e59; border-radius: 10px; padding: 16px 18px; color: white; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 11px; font-weight: 700; color: #99f6e4; text-transform: uppercase;">PHARMACY COLLECTION</span>
+              <i class="fa-solid fa-pills" style="color: #facc15; font-size: 16px;"></i>
+            </div>
+            <div style="font-size: 24px; font-weight: 800; margin-top: 10px; color: #ffffff;">
+              ₹<span id="sum-kpi-pharma-amt">0.00</span>
+            </div>
+            <div style="font-size: 11px; color: #99f6e4; opacity: 0.85; margin-top: 4px;">
+              <span id="sum-kpi-pharma-count">0</span> Bills Collected
+            </div>
+          </div>
+        </div>
+
+        <!-- Grand Total Banner -->
+        <div style="background: linear-gradient(135deg, #062321 0%, #041715 100%); border: 1px solid #115e59; border-radius: 10px; padding: 18px 24px; color: white; margin-bottom: 22px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 14px rgba(13,59,55,0.18);">
+          <div>
+            <span style="font-size: 11px; font-weight: 700; color: #2dd4bf; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL CONSOLIDATED REVENUE</span>
+            <div style="font-size: 32px; font-weight: 900; margin-top: 4px; color: #ffffff;">
+              ₹<span id="sum-kpi-grand-total">0.00</span>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 11px; color: #99f6e4;">Hospital Treasury Inflow</span>
+            <div style="font-size: 13px; font-weight: 700; color: #2dd4bf; margin-top: 2px;">Fully Realized Counter Cashflow</div>
+          </div>
+        </div>
+
+        <!-- Department Tables -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <!-- 1. OPD PATIENTS -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.3px;">OPD Patients</h4>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; background: #f8fafc;">
+                    <th style="padding: 8px 10px;">Sl No</th>
+                    <th style="padding: 8px 10px;">Module</th>
+                    <th style="padding: 8px 10px;">Ref No</th>
+                    <th style="padding: 8px 10px;">Date</th>
+                    <th style="padding: 8px 10px;">UHID</th>
+                    <th style="padding: 8px 10px;">Patient Name</th>
+                    <th style="padding: 8px 10px;">Item / Service</th>
+                    <th style="padding: 8px 10px;">Type</th>
+                    <th style="padding: 8px 10px; text-align: right;">Amount</th>
+                    <th style="padding: 8px 10px;">Payment (Mode)</th>
+                  </tr>
+                </thead>
+                <tbody id="summary-opd-tbody">
+                  <tr><td colspan="10" style="text-align: center; padding: 18px; color: #94a3b8;">No records found</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 2. IPD PATIENTS -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.3px;">IPD Patients</h4>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; background: #f8fafc;">
+                    <th style="padding: 8px 10px;">Sl No</th>
+                    <th style="padding: 8px 10px;">Module</th>
+                    <th style="padding: 8px 10px;">Ref No</th>
+                    <th style="padding: 8px 10px;">Date</th>
+                    <th style="padding: 8px 10px;">UHID</th>
+                    <th style="padding: 8px 10px;">Patient Name</th>
+                    <th style="padding: 8px 10px;">Item / Service</th>
+                    <th style="padding: 8px 10px;">Type</th>
+                    <th style="padding: 8px 10px; text-align: right;">Amount</th>
+                    <th style="padding: 8px 10px;">Payment (Mode)</th>
+                  </tr>
+                </thead>
+                <tbody id="summary-ipd-tbody">
+                  <tr><td colspan="10" style="text-align: center; padding: 18px; color: #94a3b8;">No records found</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 3. LAB PATIENTS -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.3px;">LAB Patients</h4>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; background: #f8fafc;">
+                    <th style="padding: 8px 10px;">Sl No</th>
+                    <th style="padding: 8px 10px;">Module</th>
+                    <th style="padding: 8px 10px;">Ref No</th>
+                    <th style="padding: 8px 10px;">Date</th>
+                    <th style="padding: 8px 10px;">UHID</th>
+                    <th style="padding: 8px 10px;">Patient Name</th>
+                    <th style="padding: 8px 10px;">Item / Service</th>
+                    <th style="padding: 8px 10px;">Type</th>
+                    <th style="padding: 8px 10px; text-align: right;">Amount</th>
+                    <th style="padding: 8px 10px;">Payment (Mode)</th>
+                  </tr>
+                </thead>
+                <tbody id="summary-lab-tbody">
+                  <tr><td colspan="10" style="text-align: center; padding: 18px; color: #94a3b8;">No records found</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 4. PHARMACY -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.3px;">Pharmacy</h4>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; background: #f8fafc;">
+                    <th style="padding: 8px 10px;">Sl No</th>
+                    <th style="padding: 8px 10px;">Module</th>
+                    <th style="padding: 8px 10px;">Ref No</th>
+                    <th style="padding: 8px 10px;">Date</th>
+                    <th style="padding: 8px 10px;">UHID</th>
+                    <th style="padding: 8px 10px;">Patient Name</th>
+                    <th style="padding: 8px 10px;">Item / Service</th>
+                    <th style="padding: 8px 10px;">Type</th>
+                    <th style="padding: 8px 10px; text-align: right;">Amount</th>
+                    <th style="padding: 8px 10px;">Payment (Mode)</th>
+                  </tr>
+                </thead>
+                <tbody id="summary-pharma-tbody">
+                  <tr><td colspan="10" style="text-align: center; padding: 18px; color: #94a3b8;">No records found</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 5. Payment Summary (collections cross-tab) -->
+          <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 700; color: #0f172a;">Payment Summary (collections)</h4>
+            <div style="overflow-x: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 2px solid #e2e8f0; color: #64748b; background: #f8fafc;">
+                    <th style="padding: 10px;">Payment Mode</th>
+                    <th style="padding: 10px; text-align: right;">OPD</th>
+                    <th style="padding: 10px; text-align: right;">IPD</th>
+                    <th style="padding: 10px; text-align: right;">LAB</th>
+                    <th style="padding: 10px; text-align: right;">PHARMACY</th>
+                    <th style="padding: 10px; text-align: right; font-weight: 700;">Total</th>
+                  </tr>
+                </thead>
+                <tbody id="summary-mode-crosstab-tbody">
+                  <tr>
+                    <td style="padding: 10px; font-weight: 700;">Total Collected</td>
+                    <td id="crosstab-opd-total" style="padding: 10px; text-align: right; font-weight: 700;">0.00</td>
+                    <td id="crosstab-ipd-total" style="padding: 10px; text-align: right; font-weight: 700;">0.00</td>
+                    <td id="crosstab-lab-total" style="padding: 10px; text-align: right; font-weight: 700;">0.00</td>
+                    <td id="crosstab-pharma-total" style="padding: 10px; text-align: right; font-weight: 700;">0.00</td>
+                    <td id="crosstab-grand-total" style="padding: 10px; text-align: right; font-weight: 700; color: #0f766e;">0.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="margin-top: 8px; font-size: 11px; color: #94a3b8;">
+              (P) = an item paid through more than one payment mode. Amounts shown are actual collections.
+            </div>
+          </div>
+        </div>
+
+      </div>
         
 <!-- ======================================================== -->
     <!-- FULL-SCREEN MODAL: CREATE OPD INVOICE & SETTLEMENT       -->
@@ -6098,6 +6349,186 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
   window.exportAllDcrExcel = function() {
     alert('Exporting Consolidated Daily Collection Register to Excel...');
   };
+  // --- TOTAL SUMMARY / COLLECTION SUMMARY REPORT CONTROLLER ---
+  let summaryRawRecords = [];
+
+  window.resetCollectionSummaryFilters = function() {
+    const today = new Date().toISOString().split('T')[0];
+    const fromEl = document.getElementById('summary-from-date');
+    const toEl = document.getElementById('summary-to-date');
+    const docEl = document.getElementById('summary-doctor-filter');
+    if (fromEl) fromEl.value = today;
+    if (toEl) toEl.value = today;
+    if (docEl) docEl.value = '';
+    loadCollectionSummaryReport();
+  };
+
+  window.loadCollectionSummaryReport = async function() {
+    const fromDate = document.getElementById('summary-from-date')?.value;
+    const toDate = document.getElementById('summary-to-date')?.value;
+    const doctorFilter = document.getElementById('summary-doctor-filter')?.value;
+
+    try {
+      const token = localStorage.getItem('token');
+      let url = '/api/billing/invoices?allSources=true';
+      if (fromDate) url += `&startDate=${fromDate}`;
+      if (toDate) url += `&endDate=${toDate}`;
+
+      const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+      const data = await res.json();
+      summaryRawRecords = Array.isArray(data) ? data : (data.invoices || data.payments || []);
+
+      // Populate doctor filter options dynamically from live records
+      const docSel = document.getElementById('summary-doctor-filter');
+      if (docSel) {
+        const cur = docSel.value;
+        const docs = new Set();
+        summaryRawRecords.forEach(r => {
+          const d = r.doctor || r.consultant || r.doctorName;
+          if (d && d.trim() && d.toUpperCase() !== 'SELF') docs.add(d.trim());
+        });
+        docSel.innerHTML = '<option value="">All Doctors</option>' +
+          Array.from(docs).map(d => `<option value="${d}">${d}</option>`).join('');
+        if (cur) docSel.value = cur;
+      }
+
+      // Filter by doctor if selected
+      let records = [...summaryRawRecords];
+      if (doctorFilter) {
+        records = records.filter(r => (r.doctor || r.consultant || r.doctorName) === doctorFilter);
+      }
+
+      renderCollectionSummaryTables(records);
+    } catch (err) {
+      console.warn('Collection summary report fallback:', err);
+      renderCollectionSummaryTables([]);
+    }
+  };
+
+  window.renderCollectionSummaryTables = function(records) {
+    const opd = [], ipd = [], lab = [], pharma = [];
+    let opdTotal = 0, ipdTotal = 0, labTotal = 0, pharmaTotal = 0;
+    const modeCrossTab = {};
+
+    records.forEach(r => {
+      const src = (r.source || r.department || 'OPD').toUpperCase();
+      const amt = Number(r.paidAmount ?? r.paid ?? 0);
+      const mode = r.paymentMode || 'Cash';
+
+      if (!modeCrossTab[mode]) {
+        modeCrossTab[mode] = { OPD: 0, IPD: 0, LAB: 0, PHARMACY: 0 };
+      }
+
+      if (src === 'IPD') {
+        ipd.push(r);
+        ipdTotal += amt;
+        modeCrossTab[mode].IPD += amt;
+      } else if (src === 'LAB') {
+        lab.push(r);
+        labTotal += amt;
+        modeCrossTab[mode].LAB += amt;
+      } else if (src === 'PHARMACY') {
+        pharma.push(r);
+        pharmaTotal += amt;
+        modeCrossTab[mode].PHARMACY += amt;
+      } else {
+        opd.push(r);
+        opdTotal += amt;
+        modeCrossTab[mode].OPD += amt;
+      }
+    });
+
+    const grandTotal = opdTotal + ipdTotal + labTotal + pharmaTotal;
+
+    // Update KPI Badges
+    const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+    setTxt('sum-kpi-opd-amt', opdTotal.toFixed(2));
+    setTxt('sum-kpi-opd-count', opd.length);
+    setTxt('sum-kpi-ipd-amt', ipdTotal.toFixed(2));
+    setTxt('sum-kpi-ipd-count', ipd.length);
+    setTxt('sum-kpi-lab-amt', labTotal.toFixed(2));
+    setTxt('sum-kpi-lab-count', lab.length);
+    setTxt('sum-kpi-pharma-amt', pharmaTotal.toFixed(2));
+    setTxt('sum-kpi-pharma-count', pharma.length);
+    setTxt('sum-kpi-grand-total', grandTotal.toFixed(2));
+
+    // Helper row generator
+    const makeRows = list => {
+      if (!list || list.length === 0) {
+        return `<tr><td colspan="10" style="text-align: center; padding: 18px; color: #94a3b8;">No records found</td></tr>`;
+      }
+      return list.map((item, idx) => {
+        const ref = item.invoiceId || item.billNo || item._id?.substring(0, 6) || '-';
+        const dateStr = (item.createdAt || item.date || '').split('T')[0] || '-';
+        const uhid = item.uhid || item.patientId || '-';
+        const name = item.patientName || item.name || '-';
+        const service = item.services || item.items || item.itemName || 'Consultation / Investigation';
+        const type = item.type || item.paymentType || 'Standard';
+        const amt = Number(item.paidAmount ?? item.paid ?? 0).toFixed(2);
+        const mode = item.paymentMode || 'Cash';
+        const module = (item.source || item.department || 'OPD').toUpperCase();
+
+        return `
+          <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 8px 10px;">${idx + 1}</td>
+            <td style="padding: 8px 10px;">${module}</td>
+            <td style="padding: 8px 10px; font-weight: 600; color: #0284c7;">${ref}</td>
+            <td style="padding: 8px 10px;">${dateStr}</td>
+            <td style="padding: 8px 10px;">${uhid}</td>
+            <td style="padding: 8px 10px; font-weight: 600;">${name}</td>
+            <td style="padding: 8px 10px;">${service}</td>
+            <td style="padding: 8px 10px;">${type}</td>
+            <td style="padding: 8px 10px; text-align: right; font-weight: 700; color: #0f766e;">₹${amt}</td>
+            <td style="padding: 8px 10px;">${mode}</td>
+          </tr>
+        `;
+      }).join('');
+    };
+
+    // Inject department table rows
+    const elOpdTbody = document.getElementById('summary-opd-tbody');
+    const elIpdTbody = document.getElementById('summary-ipd-tbody');
+    const elLabTbody = document.getElementById('summary-lab-tbody');
+    const elPharmaTbody = document.getElementById('summary-pharma-tbody');
+    if (elOpdTbody) elOpdTbody.innerHTML = makeRows(opd);
+    if (elIpdTbody) elIpdTbody.innerHTML = makeRows(ipd);
+    if (elLabTbody) elLabTbody.innerHTML = makeRows(lab);
+    if (elPharmaTbody) elPharmaTbody.innerHTML = makeRows(pharma);
+
+    // Cross-tab Payment Mode matrix
+    const crossTbody = document.getElementById('summary-mode-crosstab-tbody');
+    if (crossTbody) {
+      const modeKeys = Object.keys(modeCrossTab);
+      let rowsHtml = '';
+      modeKeys.forEach(m => {
+        const d = modeCrossTab[m];
+        const rowTotal = d.OPD + d.IPD + d.LAB + d.PHARMACY;
+        rowsHtml += `
+          <tr style="border-bottom: 1px solid #f1f5f9;">
+            <td style="padding: 8px 10px; font-weight: 600;">${m}</td>
+            <td style="padding: 8px 10px; text-align: right;">${d.OPD.toFixed(2)}</td>
+            <td style="padding: 8px 10px; text-align: right;">${d.IPD.toFixed(2)}</td>
+            <td style="padding: 8px 10px; text-align: right;">${d.LAB.toFixed(2)}</td>
+            <td style="padding: 8px 10px; text-align: right;">${d.PHARMACY.toFixed(2)}</td>
+            <td style="padding: 8px 10px; text-align: right; font-weight: 700; color: #0f766e;">${rowTotal.toFixed(2)}</td>
+          </tr>
+        `;
+      });
+
+      // Append footer total row
+      rowsHtml += `
+        <tr style="background: #f8fafc; font-weight: 700; border-top: 2px solid #e2e8f0;">
+          <td style="padding: 10px;">Total Collected</td>
+          <td style="padding: 10px; text-align: right;">${opdTotal.toFixed(2)}</td>
+          <td style="padding: 10px; text-align: right;">${ipdTotal.toFixed(2)}</td>
+          <td style="padding: 10px; text-align: right;">${labTotal.toFixed(2)}</td>
+          <td style="padding: 10px; text-align: right;">${pharmaTotal.toFixed(2)}</td>
+          <td style="padding: 10px; text-align: right; color: #0f766e;">${grandTotal.toFixed(2)}</td>
+        </tr>
+      `;
+      crossTbody.innerHTML = rowsHtml;
+    }
+  };
   // Open any billing sub-view and automatically switch to billing tab
   window.openBillingView = function(viewId, linkEl) {
     // 1. Switch active screen tab to 'billing'
@@ -6134,6 +6565,9 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     }
     if (viewId === 'daily-collection-register' && typeof applyAllDcrPreset === 'function') {
       applyAllDcrPreset('Today');
+    }
+    if (viewId === 'total-summary' && typeof resetCollectionSummaryFilters === 'function') {
+      resetCollectionSummaryFilters();
     }
   };
     function launchDashboard() {
