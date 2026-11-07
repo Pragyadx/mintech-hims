@@ -462,6 +462,10 @@
 
             <button type="button" class="nav-btn" onclick="switchTab('lab', this)"><i class="fa-solid fa-flask-vial"></i> Diagnostic Lab</button>
             <button type="button" class="nav-btn" onclick="switchTab('ipd', this)"><i class="fa-solid fa-bed"></i> Inpatient (IPD)</button>
+            <button type="button" class="nav-btn" onclick="switchTab('beds', this)">
+          <i class="fa-solid fa-bed" style="width: 18px; text-align: center;"></i>
+          <span>Beds Management</span>
+        </button>
             <button type="button" class="nav-btn" onclick="switchTab('pharmacy', this)"><i class="fa-solid fa-pills"></i> Pharmacy Store</button>
             <button type="button" class="nav-btn" onclick="switchTab('abdm', this)"><i class="fa-solid fa-shield-halved"></i> ABDM &amp; FHIR</button>
           </nav>
@@ -542,9 +546,6 @@
             </button>
             <button type="button" onclick="switchTab('ipd')" style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 10px 18px; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px;">
               <i class="fa-solid fa-bed"></i> Inpatient (IPD)
-            </button>
-            <button type="button" onclick="openBedManagementFromDashboard()" style="background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-              <i class="fa-solid fa-bed-pulse"></i> Bed Management
             </button>
            <button type="button" onclick="switchTab('billing')" style="background: #f0fdf4;">
   <i class="fa-solid fa-file-invoice-dollar" style="color: #0f766e;"></i> Invoices &amp; Billing
