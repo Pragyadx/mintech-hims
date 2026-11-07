@@ -5667,22 +5667,22 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
         <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #134e4a;">
             <div style="font-size: 13px; color: #576561; text-transform: uppercase; font-weight: 600;">Total Bed Capacity</div>
-            <div id="metric-total-beds" style="font-size: 28px; font-weight: 700; color: #1c2826; margin-top: 4px;">120</div>
+            <div id="metric-total-beds" style="font-size: 28px; font-weight: 700; color: #1c2826; margin-top: 4px;">0</div>
             <div style="font-size: 12px; color: #576561; margin-top: 4px;">All Operational Wards</div>
         </div>
         <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #b91c1c;">
             <div style="font-size: 13px; color: #576561; text-transform: uppercase; font-weight: 600;">Occupied Beds</div>
-            <div id="metric-occupied-beds" style="font-size: 28px; font-weight: 700; color: #b91c1c; margin-top: 4px;">84</div>
-            <div style="font-size: 12px; color: #576561; margin-top: 4px;">70% Occupancy Rate</div>
+            <div id="metric-occupied-beds" style="font-size: 28px; font-weight: 700; color: #b91c1c; margin-top: 4px;">0</div>
+            <div id="metric-occupancy-rate" style="font-size: 12px; color: #576561; margin-top: 4px;">0% Occupancy Rate</div>
         </div>
         <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #15803d;">
             <div style="font-size: 13px; color: #576561; text-transform: uppercase; font-weight: 600;">Available Beds</div>
-            <div id="metric-available-beds" style="font-size: 28px; font-weight: 700; color: #15803d; margin-top: 4px;">36</div>
+            <div id="metric-available-beds" style="font-size: 28px; font-weight: 700; color: #15803d; margin-top: 4px;">0</div>
             <div style="font-size: 12px; color: #15803d; margin-top: 4px;">Ready for Allocation</div>
         </div>
         <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b;">
             <div style="font-size: 13px; color: #576561; text-transform: uppercase; font-weight: 600;">Under Cleaning / Maintenance</div>
-            <div id="metric-maintenance-beds" style="font-size: 28px; font-weight: 700; color: #f59e0b; margin-top: 4px;">6</div>
+            <div id="metric-maintenance-beds" style="font-size: 28px; font-weight: 700; color: #f59e0b; margin-top: 4px;">0</div>
             <div style="font-size: 12px; color: #576561; margin-top: 4px;">Sterilization & Prep</div>
         </div>
     </div>
@@ -5697,14 +5697,9 @@
             <div style="display: flex; gap: 10px;">
                 <select id="ward-filter" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
                     <option value="all">All Wards</option>
-                    <option value="icu">ICU & Critical Care</option>
-                    <option value="general-male">General Ward (Male)</option>
-                    <option value="general-female">General Ward (Female)</option>
-                    <option value="pediatric">Pediatric Care</option>
-                    <option value="deluxe">Private Deluxe</option>
                 </select>
-                <button type="button" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer;">
-                    <i class="fa-solid fa-plus"></i> Allocate Bed
+                <button type="button" onclick="loadBedsData()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer;">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh Beds
                 </button>
             </div>
         </div>
@@ -5713,7 +5708,27 @@
         <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
             <thead>
                 <tr style="border-bottom: 2px solid #e8e6df; color: #576561;">
-                    <th
+                    <th style="padding: 10px;">Bed ID</th>
+                    <th style="padding: 10px;">Ward / Room</th>
+                    <th style="padding: 10px;">Bed Category</th>
+                    <th style="padding: 10px;">Status</th>
+                    <th style="padding: 10px;">Patient Allocated</th>
+                    <th style="padding: 10px;">Admitted Since</th>
+                    <th style="padding: 10px; text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="beds-table-body">
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 32px 16px; color: #576561;">
+                        <i class="fa-solid fa-bed" style="font-size: 24px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>
+                        No bed records found.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
 
       <!-- PHARMACY MODULE (MARG / PHARMACYPRO STANDARD) -->
       <section id="tab-pharmacy" class="tab-content">
@@ -8512,6 +8527,9 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       target.classList.add('active');
       target.style.display = 'block';
       window.scrollTo(0, 0);
+      if (cleanId === 'beds' && typeof loadBedsData === 'function') {
+            loadBedsData();
+        }
     }
 
     // 5. Activate the clicked button
@@ -11871,6 +11889,97 @@ async function dischargeIpdPatientPrompt(ipdNumber) {
       openBillingView('beds-management');
     }
   };
+  async function loadBedsData() {
+    const tableBody = document.getElementById("beds-table-body");
+    const totalEl = document.getElementById("metric-total-beds");
+    const occupiedEl = document.getElementById("metric-occupied-beds");
+    const availableEl = document.getElementById("metric-available-beds");
+    const maintenanceEl = document.getElementById("metric-maintenance-beds");
+    const rateEl = document.getElementById("metric-occupancy-rate");
+
+    if (!tableBody) return;
+
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="7" style="text-align: center; padding: 24px; color: #576561;">
+                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 8px;"></i> Fetching live bed & admission records...
+            </td>
+        </tr>
+    `;
+
+    try {
+        const hospitalId = (window.currentUser && (window.currentUser.hospitalId || window.currentUser.hospital_id)) || "default";
+        const token = localStorage.getItem("token") || localStorage.getItem("hims_token") || "";
+
+        const headers = { "Content-Type": "application/json" };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        const res = await fetch(`/api/ipd/active/${encodeURIComponent(hospitalId)}`, { headers });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const result = await res.json();
+        const admissions = Array.isArray(result) ? result : (result.admissions || result.data || []);
+
+        const occupiedCount = admissions.length;
+        if (occupiedEl) occupiedEl.innerText = occupiedCount;
+        if (maintenanceEl) maintenanceEl.innerText = 0;
+
+        // If total bed count is not explicitly set, reflect active occupied count
+        if (totalEl) totalEl.innerText = occupiedCount;
+        if (availableEl) availableEl.innerText = 0;
+        if (rateEl) rateEl.innerText = occupiedCount > 0 ? "100% Occupied" : "0% Occupied";
+
+        if (admissions.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 32px 16px; color: #576561;">
+                        <i class="fa-solid fa-bed" style="font-size: 24px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>
+                        No patients currently admitted. All beds are clear.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tableBody.innerHTML = admissions.map(adm => {
+            const bedNo = adm.bedNumber || adm.bed || adm.bedNo || "Unassigned";
+            const ward = adm.ward || adm.wardName || adm.room || "General";
+            const category = adm.category || adm.bedType || "Standard";
+            const patientName = adm.patientName || (adm.patient && adm.patient.name) || adm.name || "Unknown Patient";
+            const uhid = adm.uhid || adm.ipdNumber || adm.mrn || "";
+            const admitDate = adm.admissionDate ? new Date(adm.admissionDate).toLocaleDateString() : (adm.createdAt ? new Date(adm.createdAt).toLocaleDateString() : "—");
+
+            return `
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 12px 10px; font-weight: 600;">${bedNo}</td>
+                    <td style="padding: 12px 10px;">${ward}</td>
+                    <td style="padding: 12px 10px;">${category}</td>
+                    <td style="padding: 12px 10px;">
+                        <span style="background: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Occupied</span>
+                    </td>
+                    <td style="padding: 12px 10px;">${patientName} ${uhid ? `<span style="color:#576561; font-size:11px;">(${uhid})</span>` : ""}</td>
+                    <td style="padding: 12px 10px;">${admitDate}</td>
+                    <td style="padding: 12px 10px; text-align: right;">
+                        <button type="button" onclick="switchTab('ipd')" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">
+                            View in IPD
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+
+    } catch (err) {
+        console.warn("Could not load beds data:", err);
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 24px 16px; color: #576561;">
+                    <i class="fa-solid fa-circle-info" style="color: #64748b; margin-right: 6px;"></i>
+                    No active IPD admissions recorded in the database.
+                </td>
+            </tr>
+        `;
+    }
+}
 </script>
 </body>
 </html>
