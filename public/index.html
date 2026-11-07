@@ -5659,6 +5659,61 @@
 
   </div>
 </section> <!-- Closes section#tab-ipd -->
+<!-- ========================================== -->
+<!-- TAB: BEDS MANAGEMENT                       -->
+<!-- ========================================== -->
+<section id="tab-beds" class="tab-content" style="display: none; padding: 20px;">
+    <!-- Metric Summary Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #134e4a;">
+            <div style="font-size: 13px; color: #576561; text-transform: uppercase; font-weight: 600;">Total Bed Capacity</div>
+            <div id="metric-total-beds" style="font-size: 28px; font-weight: 700; color: #1c2826; margin-top: 4px;">120</div>
+            <div style="font-size: 12px; color: #576561; margin-top: 4px;">All Operational Wards</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #b91c1c;">
+            <div style="font-size: 13px; color: #576561; text-transform: uppercase; font-weight: 600;">Occupied Beds</div>
+            <div id="metric-occupied-beds" style="font-size: 28px; font-weight: 700; color: #b91c1c; margin-top: 4px;">84</div>
+            <div style="font-size: 12px; color: #576561; margin-top: 4px;">70% Occupancy Rate</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #15803d;">
+            <div style="font-size: 13px; color: #576561; text-transform: uppercase; font-weight: 600;">Available Beds</div>
+            <div id="metric-available-beds" style="font-size: 28px; font-weight: 700; color: #15803d; margin-top: 4px;">36</div>
+            <div style="font-size: 12px; color: #15803d; margin-top: 4px;">Ready for Allocation</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #f59e0b;">
+            <div style="font-size: 13px; color: #576561; text-transform: uppercase; font-weight: 600;">Under Cleaning / Maintenance</div>
+            <div id="metric-maintenance-beds" style="font-size: 28px; font-weight: 700; color: #f59e0b; margin-top: 4px;">6</div>
+            <div style="font-size: 12px; color: #576561; margin-top: 4px;">Sterilization & Prep</div>
+        </div>
+    </div>
+
+    <!-- Ward Matrix & Bed Management Panel -->
+    <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h3 style="margin: 0; font-size: 18px; color: #1c2826;">Ward & Bed Real-Time Occupancy Matrix</h3>
+                <p style="margin: 4px 0 0; font-size: 13px; color: #576561;">Live status across General Wards, Semi-Private, ICU, and Post-Op Suites</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <select id="ward-filter" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    <option value="all">All Wards</option>
+                    <option value="icu">ICU & Critical Care</option>
+                    <option value="general-male">General Ward (Male)</option>
+                    <option value="general-female">General Ward (Female)</option>
+                    <option value="pediatric">Pediatric Care</option>
+                    <option value="deluxe">Private Deluxe</option>
+                </select>
+                <button type="button" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer;">
+                    <i class="fa-solid fa-plus"></i> Allocate Bed
+                </button>
+            </div>
+        </div>
+
+        <!-- Bed Table -->
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e8e6df; color: #576561;">
+                    <th
 
       <!-- PHARMACY MODULE (MARG / PHARMACYPRO STANDARD) -->
       <section id="tab-pharmacy" class="tab-content">
