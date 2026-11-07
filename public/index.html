@@ -6124,12 +6124,12 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
   document.getElementById("print-modal").style.display = "block";
 }
     const roleRoutes = {
-      admin: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
-      ADMIN: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
-      super_admin: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
-      SUPER_ADMIN: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "pharmacy", "abdm"],
-      doctor: ["dashboard", "opd", "pharmacy", "lab", "ipd"],
-      DOCTOR: ["dashboard", "opd", "pharmacy", "lab", "ipd"],
+        admin: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "beds", "pharmacy", "abdm"],
+        ADMIN: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "beds", "pharmacy", "abdm"],
+        super_admin: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "beds", "pharmacy", "abdm"],
+        SUPER_ADMIN: ["dashboard", "registration", "opd", "billing", "lab", "ipd", "beds", "pharmacy", "abdm"],
+        doctor: ["dashboard", "opd", "pharmacy", "lab", "ipd", "beds"],
+        DOCTOR: ["dashboard", "opd", "pharmacy", "lab", "ipd", "beds"],
       receptionist: ["registration", "opd", "billing"],
       pharmacist: ["pharmacy", "billing"],
       pharmacy: ["pharmacy", "billing"],
@@ -6145,6 +6145,7 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       billing: { label: "Invoices & Billing", icon: "fa-file-invoice-dollar", title: "Invoices & Billing" },
       lab: { label: "Diagnostic Lab", icon: "fa-flask-vial", title: "Diagnostic Laboratory & LIS" },
       ipd: { label: "Inpatient (IPD)", icon: "fa-bed", title: "Inpatient Wards & Beds" },
+      beds: { label: 'Beds Management', icon: 'fa-solid fa-bed' },
       pharmacy: { label: "Pharmacy Store", icon: "fa-pills", title: "Pharmacy Inventory" },
       abdm: { label: "ABDM & FHIR", icon: "fa-shield-halved", title: "ABDM / ABHA Standards" },
     };
