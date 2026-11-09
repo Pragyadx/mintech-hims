@@ -105,7 +105,7 @@ exports.registerOpdPatient = async (req, res) => {
       data: visit
     });
   } catch (error) {
-    console.error("Mintech OPD registration error:", error);
+    console.error("ArvionOPD registration error:", error);
     res.status(500).json({
       success: false,
       error: error.message || "Server Error"
