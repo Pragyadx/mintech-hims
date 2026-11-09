@@ -17,6 +17,24 @@ exports.login = async (req, res) => {
         error: "Please provide both email and password.",
       });
     }
+    // Dedicated Laboratory Login
+        if (email.toLowerCase() === "laboratory@gmail.com" && password === "laboratory236") {
+            const token = generateToken("LAB-STAFF-01");
+            return res.status(200).json({
+                success: true,
+                message: "Laboratory technician authenticated",
+                token,
+                user: {
+                    id: "LAB-STAFF-01",
+                    name: "Central Diagnostic Lab",
+                    email: "laboratory@gmail.com",
+                    role: "LABTECH",
+                    department: "Pathology & Diagnostics",
+                    hospitalId: req.body.hospitalId || "arvion_central",
+                    hospitalName: "Arvion Diagnostic Services"
+                }
+            });
+        }
 
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
@@ -73,7 +91,13 @@ exports.seedUsers = async (req, res) => {
       { name: "Dr. Sharma (MD)", email: "doctor@hospital.com", password: "doc123", role: "Doctor", department: "General Medicine" },
       { name: "Pooja (Reception Desk)", email: "reception@hospital.com", password: "recep123", role: "Receptionist", department: "Front Desk" },
       { name: "Suresh (Billing Desk)", email: "cashier@hospital.com", password: "cash123", role: "Cashier", department: "Accounts" },
-      { name: "Anita (Lab Tech)", email: "lab@hospital.com", password: "lab123", role: "LabTech", department: "Pathology" },
+     {
+                name: "Central Diagnostic Lab",
+                email: "laboratory@gmail.com",
+                password: "laboratory236",
+                role: "LABTECH",
+                department: "Pathology"
+            },
       { name: "Vikram (Pharmacist)", email: "pharmacy@hospital.com", password: "pharma123", role: "Pharmacist", department: "Dispensary" },
       { name: "Super Administrator", email: "admin@hospital.com", password: "admin123", role: "Admin", department: "Management" },
     ];
