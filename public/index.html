@@ -1012,7 +1012,7 @@
                     <th style="padding: 8px 10px; text-align: center; width: 36px; font-weight: 600;">Action</th>
                   </tr>
                 </thead>
-                <tbody id="mintech-inv-selected-body">
+                <tbody id="Arvion-inv-selected-body">
                   <tr>
                     <td colspan="5" style="text-align: center; color: #a8a29e; padding: 35px; background: #fafaf9;">
                       No tests selected yet. Choose tests from the catalog.
@@ -1285,7 +1285,7 @@
                 <th style="padding: 6px 8px; text-align: left;">Doctor</th>
               </tr>
             </thead>
-            <tbody id="mintech-nb-table-body">
+            <tbody id="Arvion-nb-table-body">
               <tr><td colspan="8" style="text-align: center; color: #a8a29e; padding: 25px;">No newborn records found.</td></tr>
             </tbody>
           </table>
@@ -1702,7 +1702,7 @@
           <div style="text-align: center; border-bottom: 2px solid #0f766e; padding-bottom: 12px; margin-bottom: 16px;">
             <div style="font-size: 18px; font-weight: 900; color: #0f766e; letter-spacing: 0.5px;">ArvionMULTISPECIALITY HOSPITAL</div>
             <div style="font-size: 11px; color: #64748b;">NABH Accredited &bull; 24x7 Emergency & Inpatient Services</div>
-            <div style="font-size: 10px; color: #94a3b8;">Phone: +91 98765 43210 &bull; Web: mintech-hims.onrender.com</div>
+            <div style="font-size: 10px; color: #94a3b8;">Phone: +91 98765 43210 &bull; Web: Arvion-hims.onrender.com</div>
           </div>
 
           <!-- Certificate Title -->
@@ -3762,26 +3762,116 @@
       </div>
     </div>
     </section>
-        <!-- LAB SECTION -->
-        <section id="tab-lab" class="tab-content">
-          <div class="card">
-            <div class="card-title"><i class="fa-solid fa-vial"></i> Diagnostic Investigation Requisition</div>
-            <div class="form-grid">
-              <div class="form-group"><label>Visit ID</label><input type="text" id="lab-visit" placeholder="MongoDB Visit ID" /></div>
-              <div class="form-group"><label>Doctor Name</label><input type="text" id="lab-doc" value="Dr. Sharma" /></div>
-              <div class="form-group"><label>Investigation</label><input type="text" id="lab-test" value="Complete Blood Count (CBC)" /></div>
+        lab: ["lab"],
+labtech: ["lab"],
+laboratory: ["lab"],
+```[cite: 20]
+
+When an account with the `lab`, `labtech`, or `laboratory` role logs in, the sidebar will exclusively display the **Diagnostic Lab** workspace.
+
+---
+
+Find `<section id="tab-lab"` in `public/index.html`. Replace that section completely with this layout tailored to your Arvion color palette (teal `#134e4a`, sage green `#15803d`, and amber `#d97706`), with dynamic facility titles, zeroed metric counters, and action triggers:
+
+```html
+<!-- ========================================== -->
+<!-- TAB: DIAGNOSTIC LABORATORY                 -->
+<!-- ========================================== -->
+<section id="tab-lab" class="tab-content" style="display: none; padding: 20px;">
+    <!-- Lab Sub-Header & Action Ribbon -->
+    <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 14px 20px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="background: #e6f4f1; color: #134e4a; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                <i class="fa-solid fa-flask-vial"></i>
             </div>
-            <button class="btn" onclick="orderLabTest()"><i class="fa-solid fa-plus"></i> Submit Lab Order</button>
-          </div>
-          <div class="card">
-            <div class="card-title"><i class="fa-solid fa-clipboard-check"></i> Lab Reports by UHID</div>
-            <div style="display:flex; gap:12px;">
-              <input type="text" id="lab-uhid" placeholder="UHID-HOSP01-000001" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:6px;" />
-              <button class="btn btn-secondary" onclick="fetchLabReports()"><i class="fa-solid fa-magnifying-glass"></i> View Reports</button>
+            <div>
+                <h3 id="lab-facility-name" style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Diagnostic Laboratory</h3>
+                <span id="lab-hospital-subtext" style="font-size: 12px; color: #576561;">Central Pathology & Diagnostic Services</span>
             </div>
-            <div id="lab-results" style="margin-top:16px;"></div>
-          </div>
-        </section>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" onclick="openCreateAbhaModal()" style="background: #ffffff; color: #134e4a; border: 1px solid #134e4a; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-id-card"></i> Create ABHA
+            </button>
+            <button type="button" onclick="openLinkAbhaModal()" style="background: #ffffff; color: #134e4a; border: 1px solid #134e4a; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-link"></i> Link New ABHA
+            </button>
+            <button type="button" onclick="openAddLabPatientModal()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                <i class="fa-solid fa-user-plus"></i> Add New Patient
+            </button>
+        </div>
+    </div>
+
+    <!-- Live Metric Cards (No Mock Data) -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #134e4a;">
+            <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Total Tests</div>
+            <div id="metric-lab-total-tests" style="font-size: 28px; font-weight: 700; color: #1c2826; margin-top: 4px;">0</div>
+            <div style="font-size: 12px; color: #576561; margin-top: 4px;">All Ordered Investigations</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #0f766e;">
+            <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Total Patients</div>
+            <div id="metric-lab-total-patients" style="font-size: 28px; font-weight: 700; color: #0f766e; margin-top: 4px;">0</div>
+            <div style="font-size: 12px; color: #576561; margin-top: 4px;">Registered & Invoiced</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #15803d;">
+            <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Tests Completed</div>
+            <div id="metric-lab-completed-tests" style="font-size: 28px; font-weight: 700; color: #15803d; margin-top: 4px;">0</div>
+            <div style="font-size: 12px; color: #15803d; margin-top: 4px;">Reports Validated & Signed</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #d97706;">
+            <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Pending In Queue</div>
+            <div id="metric-lab-pending-tests" style="font-size: 28px; font-weight: 700; color: #d97706; margin-top: 4px;">0</div>
+            <div style="font-size: 12px; color: #d97706; margin-top: 4px;">Awaiting Sample / Processing</div>
+        </div>
+    </div>
+
+    <!-- Confirmed Tests & Worklist Matrix -->
+    <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+            <div>
+                <h3 style="margin: 0; font-size: 17px; color: #1c2826;">Laboratory Investigation Orders</h3>
+                <p style="margin: 4px 0 0; font-size: 13px; color: #576561;">Confirmed lab bookings, specimen statuses, and report generation</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <label style="font-size: 13px; color: #576561;">Show</label>
+                <select id="lab-entries-count" onchange="loadLabOrders()" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+                <button type="button" onclick="loadLabOrders()" style="background: #ffffff; color: #134e4a; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+            </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #e8e6df; color: #576561;">
+                        <th style="padding: 10px;">Order ID</th>
+                        <th style="padding: 10px;">Patient Name</th>
+                        <th style="padding: 10px;">Age / Gender</th>
+                        <th style="padding: 10px;">Tests Ordered</th>
+                        <th style="padding: 10px;">Clinical Notes</th>
+                        <th style="padding: 10px;">Referred By</th>
+                        <th style="padding: 10px;">Status</th>
+                        <th style="padding: 10px; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="lab-orders-table-body">
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 36px 16px; color: #576561;">
+                            <i class="fa-solid fa-vial" style="font-size: 26px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>
+                            No investigation orders in queue.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
 
         <!-- =================================================== -->
   <!-- TAB: INPATIENT DEPARTMENT (IPD) MANAGEMENT          -->
@@ -8573,6 +8663,9 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       if (cleanId === 'beds' && typeof loadBedsData === 'function') {
             loadBedsData();
         }
+        if ((cleanId === 'lab' || cleanId === 'tab-lab') && typeof loadLabOrders === 'function') {
+            loadLabOrders();
+        }
     }
 
     // 5. Activate the clicked button
@@ -10364,7 +10457,7 @@ function removeInvTest(id) {
 }
 
 function renderSelectedInvTable() {
-  const tbody = document.getElementById("mintech-inv-selected-body") || document.getElementById("inv-selected-body");
+  const tbody = document.getElementById("Arvion-inv-selected-body") || document.getElementById("inv-selected-body");
   if (!tbody) return;
 
   if (!selectedInvTests || selectedInvTests.length === 0) {
@@ -10559,7 +10652,7 @@ function switchOpdSubView(view) {
 // BIRTH REGISTRATION HANDLERS
 // ==========================================
 async function loadBirthRegistry() {
-  const tbody = document.getElementById("mintech-nb-table-body");
+  const tbody = document.getElementById("Arvion-nb-table-body");
   if (!tbody) return;
   try {
     const res = await fetch('/api/birth-reg');
@@ -11948,7 +12041,7 @@ function closeAddBedModal() {
 function getStoredHospitalBeds() {
     const hospitalId = (window.currentUser && (window.currentUser.hospitalId || window.currentUser.hospital_id)) || "default";
     try {
-        const stored = localStorage.getItem(`mintech_beds_${hospitalId}`);
+        const stored = localStorage.getItem(`Arvion_beds_${hospitalId}`);
         return stored ? JSON.parse(stored) : [];
     } catch (e) {
         return [];
@@ -11957,7 +12050,7 @@ function getStoredHospitalBeds() {
 
 function saveStoredHospitalBeds(beds) {
     const hospitalId = (window.currentUser && (window.currentUser.hospitalId || window.currentUser.hospital_id)) || "default";
-    localStorage.setItem(`mintech_beds_${hospitalId}`, JSON.stringify(beds));
+    localStorage.setItem(`Arvion_beds_${hospitalId}`, JSON.stringify(beds));
 }
 
 function handleSaveBed(e) {
@@ -12122,6 +12215,260 @@ function deleteHospitalBed(bedId) {
     saveStoredHospitalBeds(beds);
     loadBedsData();
 }
+window.openCreateAbhaModal = function() {
+    const el = document.getElementById("modal-create-abha");
+    if (el) el.style.display = "flex";
+};
+window.closeCreateAbhaModal = function() {
+    const el = document.getElementById("modal-create-abha");
+    if (el) el.style.display = "none";
+};
+
+window.openLinkAbhaModal = function() {
+    const el = document.getElementById("modal-link-abha");
+    if (el) el.style.display = "flex";
+};
+window.closeLinkAbhaModal = function() {
+    const el = document.getElementById("modal-link-abha");
+    if (el) el.style.display = "none";
+};
+
+window.openAddLabPatientModal = function() {
+    const el = document.getElementById("modal-add-lab-patient");
+    if (el) el.style.display = "flex";
+};
+window.closeAddLabPatientModal = function() {
+    const el = document.getElementById("modal-add-lab-patient");
+    if (el) el.style.display = "none";
+};
+
+function getLabHospitalKey() {
+    return (window.currentUser && (window.currentUser.hospitalId || window.currentUser.hospital_id)) || "default";
+}
+
+function getStoredLabOrders() {
+    try {
+        const data = localStorage.getItem(`arvion_lab_orders_${getLabHospitalKey()}`); return data ? JSON.parse(data) : []; } catch (e) { return []; } }  function saveStoredLabOrders(orders) { localStorage.setItem(`arvion_lab_orders_${getLabHospitalKey()}`, JSON.stringify(orders));
+}
+
+function handleCreateAbha(e) {
+    e.preventDefault();
+    const idVal = document.getElementById("input-abha-identifier").value.trim();
+    if (!idVal) return;
+    alert(`ABHA OTP verification request initiated for ${idVal}`);
+    closeCreateAbhaModal();
+}
+
+function handleLinkAbha(e) {
+    e.preventDefault();
+    const addr = document.getElementById("input-link-abha-address").value.trim();
+    if (!addr) return;
+    alert(`ABHA Address ${addr} linked successfully.`);
+    closeLinkAbhaModal();
+}
+
+function handleSaveLabPatient(e) {
+    e.preventDefault();
+    const name = document.getElementById("lab-pat-name").value.trim();
+    const phone = document.getElementById("lab-pat-phone").value.trim();
+    const age = document.getElementById("lab-pat-age").value.trim();
+    const gender = document.getElementById("lab-pat-gender").value;
+    const tests = document.getElementById("lab-pat-tests").value.trim();
+    const doctor = document.getElementById("lab-pat-doctor").value.trim() || "Self / OPD";
+    const notes = document.getElementById("lab-pat-notes").value.trim() || "Routine";
+
+    const orders = getStoredLabOrders();
+    const newOrder = {
+        id: `LAB-${Date.now().toString().slice(-4)}`, name, phone, ageGender: `${age}Y / ${gender.charAt(0)}`, tests, doctor, notes, status: "Sample Awaited", createdAt: new Date().toISOString() };  orders.unshift(newOrder); saveStoredLabOrders(orders); e.target.reset(); closeAddLabPatientModal(); loadLabOrders(); }  async function loadLabOrders() { const facilityNameEl = document.getElementById("lab-facility-name"); if (facilityNameEl && window.currentUser) { facilityNameEl.innerText = window.currentUser.hospitalName \vert{}\vert{} window.currentUser.name \vert{}\vert{} "Diagnostic Laboratory"; }  let orders = getStoredLabOrders();  try { const hospitalId = getLabHospitalKey(); const res = await fetch(`/api/lab/orders/${encodeURIComponent(hospitalId)}`);
+        if (res.ok) {
+            const apiOrders = await res.json();
+            if (Array.isArray(apiOrders) && apiOrders.length > 0) {
+                orders = apiOrders;
+            }
+        }
+    } catch (_) {}
+
+    const totalTestsEl = document.getElementById("metric-lab-total-tests");
+    const totalPatientsEl = document.getElementById("metric-lab-total-patients");
+    const completedEl = document.getElementById("metric-lab-completed-tests");
+    const pendingEl = document.getElementById("metric-lab-pending-tests");
+    const tbody = document.getElementById("lab-orders-table-body");
+
+    const totalCount = orders.length;
+    const completedCount = orders.filter(o => o.status === "Completed" || o.status === "Report Ready").length;
+    const pendingCount = totalCount - completedCount;
+
+    if (totalTestsEl) totalTestsEl.innerText = totalCount;
+    if (totalPatientsEl) totalPatientsEl.innerText = totalCount;
+    if (completedEl) completedEl.innerText = completedCount;
+    if (pendingEl) pendingEl.innerText = pendingCount;
+
+    if (!tbody) return;
+
+    if (orders.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 36px 16px; color: #576561;">
+                    <i class="fa-solid fa-vial" style="font-size: 26px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>
+                    No investigation orders in queue. Click <strong>"Add New Patient"</strong> to register an order.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = orders.map(ord => {
+        const isReady = ord.status === "Completed" || ord.status === "Report Ready";
+        const badgeStyle = isReady
+            ? "background: #dcfce7; color: #15803d;"
+            : "background: #fef3c7; color: #b45309;";
+
+        return `
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 12px 10px; font-weight: 600;">${ord.id}</td>
+                <td style="padding: 12px 10px;">${ord.name}</td>
+                <td style="padding: 12px 10px;">${ord.ageGender}</td>
+                <td style="padding: 12px 10px; color: #134e4a; font-weight: 500;">${ord.tests}</td>
+                <td style="padding: 12px 10px; color: #64748b;">${ord.notes}</td>
+                <td style="padding: 12px 10px;">${ord.doctor}</td>
+                <td style="padding: 12px 10px;"><span style="${badgeStyle} padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">${ord.status}</span></td>
+                <td style="padding: 12px 10px; text-align: right;">
+                    <button type="button" onclick="updateLabOrderStatus('${ord.id}')" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">
+                        ${isReady ? "Print Report" : "Complete"}
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+function updateLabOrderStatus(id) {
+    let orders = getStoredLabOrders();
+    const item = orders.find(o => o.id === id);
+    if (!item) return;
+    item.status = item.status === "Completed" ? "Report Ready" : "Completed";
+    saveStoredLabOrders(orders);
+    loadLabOrders();
+}
 </script>
+<!-- MODAL: CREATE ABHA -->
+<div id="modal-create-abha" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 99999; align-items: center; justify-content: center;">
+    <div style="background: #ffffff; border-radius: 8px; width: 90%; max-width: 480px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+            <h4 style="margin: 0; font-size: 16px; color: #134e4a;"><i class="fa-solid fa-id-card"></i> Create Ayushman Bharat Health Account (ABHA)</h4>
+            <button type="button" onclick="closeCreateAbhaModal()" style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer;">&times;</button>
+        </div>
+        <form onsubmit="handleCreateAbha(event)">
+            <div style="display: flex; gap: 14px; margin-bottom: 16px; font-size: 13px; color: #334155;">
+                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <input type="radio" name="abha_mode" value="mobile" checked> Mobile Number
+                </label>
+                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <input type="radio" name="abha_mode" value="aadhaar"> Aadhaar Number
+                </label>
+                <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <input type="radio" name="abha_mode" value="biometric"> Biometric
+                </label>
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Identification Input</label>
+                <input type="text" id="input-abha-identifier" required placeholder="Enter 10-digit mobile or 12-digit Aadhaar number" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="closeCreateAbhaModal()" style="background: #f1f5f9; color: #475569; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer;">Cancel</button>
+                <button type="submit" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Create ABHA</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL: LINK ABHA -->
+<div id="modal-link-abha" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 99999; align-items: center; justify-content: center;">
+    <div style="background: #ffffff; border-radius: 8px; width: 90%; max-width: 440px; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+            <h4 style="margin: 0; font-size: 16px; color: #134e4a;"><i class="fa-solid fa-link"></i> Link Patient via ABHA Address</h4>
+            <button type="button" onclick="closeLinkAbhaModal()" style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer;">&times;</button>
+        </div>
+        <form onsubmit="handleLinkAbha(event)">
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">ABHA Address</label>
+                <input type="text" id="input-link-abha-address" required placeholder="example@abdm" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" onclick="closeLinkAbhaModal()" style="background: #f1f5f9; color: #475569; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer;">Cancel</button>
+                <button type="submit" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Verify & Link</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL: ADD NEW LAB PATIENT -->
+<div id="modal-add-lab-patient" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 99999; align-items: center; justify-content: center;">
+    <div style="background: #ffffff; border-radius: 8px; width: 90%; max-width: 620px; max-height: 90vh; overflow-y: auto; padding: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.25);">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+            <h4 style="margin: 0; font-size: 16px; color: #134e4a;"><i class="fa-solid fa-user-plus"></i> Register Patient for Diagnostic Testing</h4>
+            <button type="button" onclick="closeAddLabPatientModal()" style="background: transparent; border: none; font-size: 20px; color: #64748b; cursor: pointer;">&times;</button>
+        </div>
+        <form onsubmit="handleSaveLabPatient(event)">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Patient Full Name *</label>
+                    <input type="text" id="lab-pat-name" required placeholder="Enter full name" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Phone Number *</label>
+                    <input type="tel" id="lab-pat-phone" required placeholder="10-digit number" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Age *</label>
+                    <input type="number" id="lab-pat-age" required min="0" max="130" placeholder="e.g. 34" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Gender *</label>
+                    <select id="lab-pat-gender" required style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box; background: #fff;">
+                        <option value="">Select</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Blood Group</label>
+                    <select id="lab-pat-blood" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box; background: #fff;">
+                        <option value="">Unknown</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Investigations / Tests Requested *</label>
+                <input type="text" id="lab-pat-tests" required placeholder="e.g. CBC, Lipid Profile, Thyroid TSH" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Referred By Doctor</label>
+                    <input type="text" id="lab-pat-doctor" placeholder="Dr. Name or Self" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px;">Clinical Notes</label>
+                    <input type="text" id="lab-pat-notes" placeholder="e.g. Fasting sample required" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+                <button type="button" onclick="closeAddLabPatientModal()" style="background: #f1f5f9; color: #475569; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer;">Cancel</button>
+                <button type="submit" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Patient & Add Test</button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>
