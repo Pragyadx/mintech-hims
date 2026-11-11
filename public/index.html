@@ -12257,78 +12257,160 @@ function handleLinkAbha(e) {
 }
 
 function handleSaveLabPatient(e) {
-    e.preventDefault();
-    const name = document.getElementById("lab-pat-name").value.trim();
-    const phone = document.getElementById("lab-pat-phone").value.trim();
-    const age = document.getElementById("lab-pat-age").value.trim();
-    const gender = document.getElementById("lab-pat-gender").value;
-    const tests = document.getElementById("lab-pat-tests").value.trim();
-    const doctor = document.getElementById("lab-pat-doctor").value.trim() || "Self / OPD";
-    const notes = document.getElementById("lab-pat-notes").value.trim() || "Routine";
+  if (e && e.preventDefault) e.preventDefault();
 
-    const orders = getStoredLabOrders();
-    const newOrder = {
-        id: `LAB-${Date.now().toString().slice(-4)}`, name, phone, ageGender: `${age}Y / ${gender.charAt(0)}`, tests, doctor, notes, status: "Sample Awaited", createdAt: new Date().toISOString() };  orders.unshift(newOrder); saveStoredLabOrders(orders); e.target.reset(); closeAddLabPatientModal(); loadLabOrders(); }  async function loadLabOrders() { const facilityNameEl = document.getElementById("lab-facility-name"); if (facilityNameEl && window.currentUser) { facilityNameEl.innerText = window.currentUser.hospitalName \vert{}\vert{} window.currentUser.name \vert{}\vert{} "Diagnostic Laboratory"; }  let orders = getStoredLabOrders();  try { const hospitalId = getLabHospitalKey(); const res = await fetch(`/api/lab/orders/${encodeURIComponent(hospitalId)}`);
-        if (res.ok) {
-            const apiOrders = await res.json();
-            if (Array.isArray(apiOrders) && apiOrders.length > 0) {
-                orders = apiOrders;
-            }
-        }
-    } catch (_) {}
+  const nameEl = document.getElementById("lab-pat-name");
+  const phoneEl = document.getElementById("lab-pat-phone");
+  const ageEl = document.getElementById("lab-pat-age");
+  const genderEl = document.getElementById("lab-pat-gender");
+  const testsEl = document.getElementById("lab-pat-tests");
+  const doctorEl = document.getElementById("lab-pat-doctor");
+  const notesEl = document.getElementById("lab-pat-notes");
 
-    const totalTestsEl = document.getElementById("metric-lab-total-tests");
-    const totalPatientsEl = document.getElementById("metric-lab-total-patients");
-    const completedEl = document.getElementById("metric-lab-completed-tests");
-    const pendingEl = document.getElementById("metric-lab-pending-tests");
-    const tbody = document.getElementById("lab-orders-table-body");
+  const name = nameEl ? nameEl.value.trim() : "";
+  const phone = phoneEl ? phoneEl.value.trim() : "";
+  const age = ageEl ? ageEl.value.trim() : "";
+  const gender = genderEl ? genderEl.value : "Other";
+  const tests = testsEl ? testsEl.value.trim() : "";
+  const doctor = (doctorEl && doctorEl.value.trim()) ? doctorEl.value.trim() : "Self / OPD";
+  const notes = (notesEl && notesEl.value.trim()) ? notesEl.value.trim() : "Routine";
 
-    const totalCount = orders.length;
-    const completedCount = orders.filter(o => o.status === "Completed" || o.status === "Report Ready").length;
-    const pendingCount = totalCount - completedCount;
+  if (!name || !tests) {
+    alert("Please enter both Patient Name and Tests Ordered.");
+    return;
+  }
 
-    if (totalTestsEl) totalTestsEl.innerText = totalCount;
-    if (totalPatientsEl) totalPatientsEl.innerText = totalCount;
-    if (completedEl) completedEl.innerText = completedCount;
-    if (pendingEl) pendingEl.innerText = pendingCount;
+  const hospitalId = (window.currentUser && window.currentUser.hospitalId) ? window.currentUser.hospitalId : 'arvion_central';
+  const storageKey = `arvion_lab_orders_${hospitalId}`;
 
-    if (!tbody) return;
-
-    if (orders.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="8" style="text-align: center; padding: 36px 16px; color: #576561;">
-                    <i class="fa-solid fa-vial" style="font-size: 26px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>
-                    No investigation orders in queue. Click <strong>"Add New Patient"</strong> to register an order.
-                </td>
-            </tr>
-        `;
-        return;
+  let orders = [];
+  try {
+    const raw = localStorage.getItem(storageKey) || localStorage.getItem('arvion_lab_orders');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      orders = Array.isArray(parsed) ? parsed : (parsed.orders || []);
     }
+  } catch (err) {
+    orders = [];
+  }
 
-    tbody.innerHTML = orders.map(ord => {
-        const isReady = ord.status === "Completed" || ord.status === "Report Ready";
-        const badgeStyle = isReady
-            ? "background: #dcfce7; color: #15803d;"
-            : "background: #fef3c7; color: #b45309;";
+  const newOrder = {
+    id: `LAB-${Date.now().toString().slice(-4)}`,
+    orderId: `LAB-${Date.now().toString().slice(-4)}`,
+    patientName: name,
+    phone: phone,
+    ageGender: `${age ? age + 'Y' : ''} / ${gender}`.trim(),
+    testsOrdered: tests,
+    tests: tests,
+    clinicalNotes: notes,
+    notes: notes,
+    referredBy: doctor,
+    status: "Sample Awaited",
+    createdAt: new Date().toISOString()
+  };
 
-        return `
-            <tr style="border-bottom: 1px solid #f1f5f9;">
-                <td style="padding: 12px 10px; font-weight: 600;">${ord.id}</td>
-                <td style="padding: 12px 10px;">${ord.name}</td>
-                <td style="padding: 12px 10px;">${ord.ageGender}</td>
-                <td style="padding: 12px 10px; color: #134e4a; font-weight: 500;">${ord.tests}</td>
-                <td style="padding: 12px 10px; color: #64748b;">${ord.notes}</td>
-                <td style="padding: 12px 10px;">${ord.doctor}</td>
-                <td style="padding: 12px 10px;"><span style="${badgeStyle} padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">${ord.status}</span></td>
-                <td style="padding: 12px 10px; text-align: right;">
-                    <button type="button" onclick="updateLabOrderStatus('${ord.id}')" style="background: transparent; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer;">
-                        ${isReady ? "Print Report" : "Complete"}
-                    </button>
-                </td>
-            </tr>
-        `;
-    }).join("");
+  orders.unshift(newOrder);
+
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(orders));
+    localStorage.setItem('arvion_lab_orders', JSON.stringify(orders));
+  } catch (err) {
+    console.warn("Could not save to localStorage", err);
+  }
+
+  // Close modal if open
+  const modal = document.getElementById("modal-add-lab-patient");
+  if (modal) modal.style.display = "none";
+
+  // Reset form
+  const form = document.getElementById("form-add-lab-patient") || (e && e.target && e.target.tagName === "FORM" ? e.target : null);
+  if (form && form.reset) form.reset();
+
+  // Reload the table and metrics
+  loadLabOrders();
+}
+
+async function loadLabOrders() {
+  const tableBody = document.getElementById('lab-orders-table-body') || document.querySelector('#tab-lab tbody');
+  const metricTotal = document.getElementById('metric-lab-total') || document.getElementById('lab-stat-total');
+  const metricPending = document.getElementById('metric-lab-pending') || document.getElementById('lab-stat-pending');
+  const metricProcessing = document.getElementById('metric-lab-processing') || document.getElementById('lab-stat-processing');
+  const metricCompleted = document.getElementById('metric-lab-completed') || document.getElementById('lab-stat-completed');
+
+  let orders = [];
+
+  try {
+    const hospitalId = (window.currentUser && window.currentUser.hospitalId) ? window.currentUser.hospitalId : 'arvion_central';
+    const localData = localStorage.getItem(`arvion_lab_orders_${hospitalId}`) || localStorage.getItem('arvion_lab_orders');
+    if (localData) {
+      const parsed = JSON.parse(localData);
+      orders = Array.isArray(parsed) ? parsed : (parsed.orders || []);
+    }
+  } catch (err) {
+    orders = [];
+  }
+
+  if (!Array.isArray(orders)) {
+    orders = [];
+  }
+
+  const total = orders.length;
+  const pending = orders.filter(o => !o.status || o.status.toLowerCase().includes('await') || o.status.toLowerCase().includes('pending')).length;
+  const processing = orders.filter(o => o.status && o.status.toLowerCase().includes('process')).length;
+  const completed = orders.filter(o => o.status && (o.status.toLowerCase().includes('complet') || o.status.toLowerCase().includes('ready') || o.status.toLowerCase().includes('signed'))).length;
+
+  if (metricTotal) metricTotal.textContent = total;
+  if (metricPending) metricPending.textContent = pending;
+  if (metricProcessing) metricProcessing.textContent = processing;
+  if (metricCompleted) metricCompleted.textContent = completed;
+
+  if (!tableBody) return;
+
+  if (orders.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="8" style="text-align: center; padding: 40px 20px; color: #94a3b8;">
+          <div style="font-size: 28px; margin-bottom: 8px;">🧪</div>
+          <div style="font-size: 14px; font-weight: 500; color: #64748b;">No investigation orders in queue.</div>
+          <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Click "+ Add New Patient" to register a diagnostic test.</div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tableBody.innerHTML = orders.map(ord => {
+    const orderId = ord.orderId || ord.id || 'LAB-001';
+    const status = ord.status || 'Sample Awaited';
+    const isReady = status === 'Report Ready';
+    const isCompleted = status === 'Completed';
+
+    let badgeStyle = 'background: #fef3c7; color: #92400e;';
+    if (isReady) badgeStyle = 'background: #dcfce7; color: #166534;';
+    else if (status === 'Processing') badgeStyle = 'background: #dbeafe; color: #1e40af;';
+    else if (isCompleted) badgeStyle = 'background: #e0e7ff; color: #3730a3;';
+
+    return `
+      <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 12px 16px; font-weight: 600; color: #0284c7;">${orderId}</td>
+        <td style="padding: 12px 16px; font-weight: 500; color: #1e293b;">${ord.patientName || 'N/A'}</td>
+        <td style="padding: 12px 16px; color: #64748b;">${ord.ageGender || '-'}</td>
+        <td style="padding: 12px 16px; color: #334155;"><strong>${ord.testsOrdered || ord.tests || 'General Pathology'}</strong></td>
+        <td style="padding: 12px 16px; color: #64748b;">${ord.clinicalNotes || ord.notes || '-'}</td>
+        <td style="padding: 12px 16px; color: #64748b;">${ord.referredBy || ord.doctor || 'Self / OPD'}</td>
+        <td style="padding: 12px 16px;">
+          <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; ${badgeStyle}">
+            ${status}
+          </span>
+        </td>
+        <td style="padding: 12px 16px; text-align: right;">
+          <button type="button" onclick="updateLabOrderStatus('${orderId}')" style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+            ${isReady ? 'Print Report' : 'Update'}
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
 function updateLabOrderStatus(id) {
