@@ -460,7 +460,26 @@
               </div>
             </div>
 
-            <button type="button" class="nav-btn" onclick="switchTab('lab', this)"><i class="fa-solid fa-flask-vial"></i> Diagnostic Lab</button>
+            <!-- Diagnostic Tests Menu with 6 Sub-features -->
+          <div style="margin-bottom: 4px;">
+            <button type="button" onclick="toggleLabSubmenu()" class="nav-btn" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.06); border: none; border-radius: 6px; color: #ffffff; font-size: 14px; font-weight: 500; cursor: pointer; text-align: left;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-flask-vial"></i>
+                <span>Diagnostic Tests</span>
+              </div>
+              <span id="lab-menu-chevron" style="font-size: 10px; transition: transform 0.2s;">▼</span>
+            </button>
+
+            <!-- 6 Sub-features -->
+            <div id="subnav-investigations" style="display: none; padding: 6px 0 6px 16px; background: rgba(0, 0, 0, 0.15); border-radius: 4px; margin-top: 2px;">
+              <a href="javascript:void(0)" onclick="openLabSection('new-test')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• New Test Entry</a>
+              <a href="javascript:void(0)" onclick="openLabSection('test-list')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Test Price List</a>
+              <a href="javascript:void(0)" onclick="openLabSection('create-package')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Create Health Package</a>
+              <a href="javascript:void(0)" onclick="openLabSection('package-list')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• All Packages</a>
+              <a href="javascript:void(0)" onclick="openLabSection('categories')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Lab Categories</a>
+              <a href="javascript:void(0)" onclick="openLabSection('quick-setup')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Quick Template Setup</a>
+            </div>
+          </div>
             <button type="button" class="nav-btn" onclick="switchTab('ipd', this)"><i class="fa-solid fa-bed"></i> Inpatient (IPD)</button>
             <button type="button" class="nav-btn" onclick="switchTab('beds', this)">
           <i class="fa-solid fa-bed" style="width: 18px; text-align: center;"></i>
@@ -12420,6 +12439,21 @@ function updateLabOrderStatus(id) {
     item.status = item.status === "Completed" ? "Report Ready" : "Completed";
     saveStoredLabOrders(orders);
     loadLabOrders();
+}
+function toggleLabSubmenu() {
+  const menu = document.getElementById('subnav-investigations');
+  const chevron = document.getElementById('lab-menu-chevron');
+  if (!menu) return;
+  const isHidden = menu.style.display === 'none' || menu.style.display === '';
+  menu.style.display = isHidden ? 'block' : 'none';
+  if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function openLabSection(sectionKey) {
+  if (typeof switchTab === 'function') {
+    switchTab('lab');
+  }
+  console.log("Opened sub-section:", sectionKey);
 }
 </script>
 <!-- MODAL: CREATE ABHA -->
