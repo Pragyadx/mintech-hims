@@ -4373,8 +4373,108 @@
         </div>
 
         <!-- 4. All Packages -->
-        <div id="lab-subview-package-list" class="lab-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
-            <h4 style="margin-top: 0; color: #134e4a;">All Packages</h4>
+        <div id="lab-subview-package-list" class="lab-subview" style="display: none;">
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
+                
+                <!-- Header & Quick Action -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <div>
+                        <h4 style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Active Health Packages & Test Bundles</h4>
+                        <span style="font-size: 12px; color: #576561;">Manage hospital wellness panels, validity dates, and scheme-wise package tariffs</span>
+                    </div>
+                    <button type="button" onclick="openLabSection('create-package')" style="background: #134e4a; color: #ffffff; border: none; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 7px;">
+                        <i class="fa-solid fa-plus"></i> Create Health Package
+                    </button>
+                </div>
+
+                <!-- Entries & Search Filter Bar -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: #fafaf8; padding: 12px 14px; border: 1px solid #e8e6df; border-radius: 6px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <span>Show</span>
+                        <select id="pkglist-page-size" onchange="changePkgListPageSize(this.value)" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; background: #ffffff;">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span>entries</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <label for="pkglist-search-input">Search:</label>
+                        <input type="text" id="pkglist-search-input" oninput="filterPkgListTable(this.value)" placeholder="Search package title or tariff..." style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; width: 230px;">
+                    </div>
+                </div>
+
+                <!-- Packages Table -->
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                <th style="padding: 10px;">#</th>
+                                <th style="padding: 10px;">Package Title</th>
+                                <th style="padding: 10px;">Base Tariff</th>
+                                <th style="padding: 10px;">Total Fee (₹)</th>
+                                <th style="padding: 10px;">Discount (₹)</th>
+                                <th style="padding: 10px;">Final Price (₹)</th>
+                                <th style="padding: 10px; text-align: center;">Included Tests</th>
+                                <th style="padding: 10px;">Valid Upto</th>
+                                <th style="padding: 10px; text-align: center;">Actions</th>
+                                <th style="padding: 10px; text-align: center;">Scheme Rates</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lab-pkglist-tbody">
+                            <tr>
+                                <td colspan="10" style="text-align: center; padding: 30px; color: #576561;">No health packages created yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e6df; font-size: 13px; color: #576561;">
+                    <div id="pkglist-showing-info">Showing 0 to 0 of 0 entries</div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button type="button" onclick="changePkgListPage(-1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Previous</button>
+                        <span id="pkglist-page-indicator" style="padding: 6px 12px; background: #134e4a; color: #ffffff; border-radius: 5px; font-weight: 600;">1</span>
+                        <button type="button" onclick="changePkgListPage(1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: View Included Tests in Package -->
+        <div id="modal-view-pkg-tests" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+            <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 id="modal-view-pkg-title" style="margin: 0; font-size: 15px; font-weight: 600;">Package Test Breakdown</h4>
+                    <button type="button" onclick="closeViewPkgTestsModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px; max-height: 75vh; overflow-y: auto;">
+                    <div id="modal-view-pkg-list" style="margin-bottom: 16px;"></div>
+                    <div style="display: flex; justify-content: flex-end; padding-top: 10px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closeViewPkgTestsModal()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Configure Package Scheme Pricing -->
+        <div id="modal-pkg-scheme-rates" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+            <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 id="modal-pkg-scheme-title" style="margin: 0; font-size: 15px; font-weight: 600;">Package Tariff Rates</h4>
+                    <button type="button" onclick="closePkgSchemeRatesModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px;">
+                    <input type="hidden" id="pkg-scheme-rate-idx" value="-1">
+                    <p style="margin: 0 0 14px; font-size: 12px; color: #576561;">Set custom net package prices for each active hospital billing scheme.</p>
+                    <div id="pkg-scheme-inputs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px;"></div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 12px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closePkgSchemeRatesModal()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+                        <button type="button" onclick="savePkgSchemeRates()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Scheme Rates</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 5. Lab Categories -->
@@ -10100,6 +10200,182 @@ window.openLabSection = function(sectionKey) {
     alert(`Health package "${title}" saved successfully!`);
     if (typeof openLabSection === 'function') openLabSection('package-list');
   };
+  // =========================================================
+  // ALL PACKAGES LIST, VIEW, EDIT, DELETE & SCHEME PRICING
+  // =========================================================
+  let pkgListState = {
+    page: 1,
+    pageSize: 10,
+    search: ''
+  };
+
+  window.loadAllHealthPackages = function() {
+    hospitalHealthPackages = JSON.parse(localStorage.getItem('arvion_lab_health_packages') || '[]');
+    renderAllPackagesTable();
+  };
+
+  window.changePkgListPageSize = function(val) {
+    pkgListState.pageSize = Number(val) || 10;
+    pkgListState.page = 1;
+    renderAllPackagesTable();
+  };
+
+  window.filterPkgListTable = function(q) {
+    pkgListState.search = (q || '').toLowerCase().trim();
+    pkgListState.page = 1;
+    renderAllPackagesTable();
+  };
+
+  window.changePkgListPage = function(delta) {
+    pkgListState.page += delta;
+    if (pkgListState.page < 1) pkgListState.page = 1;
+    renderAllPackagesTable();
+  };
+
+  window.renderAllPackagesTable = function() {
+    const tbody = document.getElementById('lab-pkglist-tbody');
+    const info = document.getElementById('pkglist-showing-info');
+    const pageInd = document.getElementById('pkglist-page-indicator');
+    if (!tbody) return;
+
+    const q = pkgListState.search;
+    const filtered = !q
+      ? hospitalHealthPackages
+      : hospitalHealthPackages.filter(p =>
+          (p.title || '').toLowerCase().includes(q) ||
+          (p.scheme || '').toLowerCase().includes(q) ||
+          (p.code || '').toLowerCase().includes(q)
+        );
+
+    const total = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(total / pkgListState.pageSize));
+    if (pkgListState.page > totalPages) pkgListState.page = totalPages;
+
+    const startIdx = (pkgListState.page - 1) * pkgListState.pageSize;
+    const pageItems = filtered.slice(startIdx, startIdx + pkgListState.pageSize);
+
+    if (pageInd) pageInd.textContent = `${pkgListState.page} / ${totalPages}`;
+    if (info) {
+      info.textContent = total === 0
+        ? 'Showing 0 to 0 of 0 entries'
+        : `Showing ${startIdx + 1} to ${Math.min(startIdx + pkgListState.pageSize, total)} of ${total} entries`;
+    }
+
+    if (pageItems.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; padding: 32px; color: #576561;">No health packages found. Click <strong>+ Create Health Package</strong> to bundle diagnostic tests.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = pageItems.map((pkg, i) => {
+      const globalIdx = hospitalHealthPackages.indexOf(pkg);
+      const testCount = (pkg.tests || []).length;
+      return `
+        <tr style="border-bottom: 1px solid #e8e6df;">
+          <td style="padding: 10px; color: #576561;">${startIdx + i + 1}</td>
+          <td style="padding: 10px; font-weight: 700; color: #1c2826;">${pkg.title}</td>
+          <td style="padding: 10px;">
+            <span style="background: #e6f4f1; color: #134e4a; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600;">${pkg.scheme || 'Standard'}</span>
+          </td>
+          <td style="padding: 10px; color: #576561;">₹${Number(pkg.baseTotal || 0).toFixed(2)}</td>
+          <td style="padding: 10px; color: #b91c1c;">₹${Number(pkg.discountAmt || 0).toFixed(2)}</td>
+          <td style="padding: 10px; font-weight: 700; color: #134e4a;">₹${Number(pkg.finalPrice || 0).toFixed(2)}</td>
+          <td style="padding: 10px; text-align: center;">
+            <button type="button" onclick="openViewPkgTestsModal(${globalIdx})" title="View ${testCount} included tests" style="background: #f1f5f9; color: #1c2826; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer;">
+              <i class="fa-solid fa-eye"></i> ${testCount}
+            </button>
+          </td>
+          <td style="padding: 10px; color: #1c2826;">${pkg.validUpto || '-'}</td>
+          <td style="padding: 10px; text-align: center; white-space: nowrap;">
+            <button type="button" onclick="editHealthPackage(${globalIdx})" title="Edit Package" style="background: #e6f4f1; color: #134e4a; border: none; padding: 6px 9px; border-radius: 5px; cursor: pointer; margin-right: 4px;">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button type="button" onclick="deleteHealthPackage(${globalIdx})" title="Delete Package" style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 9px; border-radius: 5px; cursor: pointer;">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </td>
+          <td style="padding: 10px; text-align: center;">
+            <button type="button" onclick="openPkgSchemeRatesModal(${globalIdx})" title="Configure Scheme Rates" style="background: #fef3c7; color: #92400e; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer;">
+              <i class="fa-solid fa-money-bill-wave"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  };
+
+  window.openViewPkgTestsModal = function(idx) {
+    const pkg = hospitalHealthPackages[idx];
+    if (!pkg) return;
+    document.getElementById('modal-view-pkg-title').textContent = `${pkg.title} — Included Tests (${(pkg.tests || []).length})`;
+    const listEl = document.getElementById('modal-view-pkg-list');
+    if (!pkg.tests || pkg.tests.length === 0) {
+      listEl.innerHTML = '<p style="color: #576561; font-size: 13px;">No individual tests recorded in this bundle.</p>';
+    } else {
+      listEl.innerHTML = pkg.tests.map((t, i) => `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-bottom: 1px solid #e8e6df; font-size: 13px;">
+          <span style="color: #1c2826; font-weight: 600;">${i + 1}. ${t.name}</span>
+          <span style="color: #134e4a; font-weight: 700;">₹${Number(t.price || 0).toFixed(2)}</span>
+        </div>
+      `).join('');
+    }
+    document.getElementById('modal-view-pkg-tests').style.display = 'flex';
+  };
+
+  window.closeViewPkgTestsModal = function() {
+    document.getElementById('modal-view-pkg-tests').style.display = 'none';
+  };
+
+  window.editHealthPackage = function(idx) {
+    if (typeof openLabSection === 'function') {
+      openLabSection('create-package');
+    }
+    if (typeof initCreateHealthPackage === 'function') {
+      initCreateHealthPackage(idx);
+    }
+  };
+
+  window.deleteHealthPackage = function(idx) {
+    const pkg = hospitalHealthPackages[idx];
+    if (!pkg) return;
+    if (!confirm(`Delete health package "${pkg.title}"?`)) return;
+    hospitalHealthPackages.splice(idx, 1);
+    persistHealthPackages();
+    renderAllPackagesTable();
+  };
+
+  window.openPkgSchemeRatesModal = function(idx) {
+    const pkg = hospitalHealthPackages[idx];
+    if (!pkg) return;
+    document.getElementById('pkg-scheme-rate-idx').value = idx;
+    document.getElementById('modal-pkg-scheme-title').textContent = `Tariff Rates: ${pkg.title}`;
+    const existing = pkg.schemeRates || {};
+    const grid = document.getElementById('pkg-scheme-inputs-grid');
+    grid.innerHTML = (hospitalPriceSchemes || []).map(s => `
+      <div>
+        <label style="display: block; font-size: 11px; font-weight: 600; color: #576561; margin-bottom: 4px;">${s.name} (${s.status})</label>
+        <input type="number" class="pkg-scheme-rate-val" data-scheme="${s.name}" value="${existing[s.name] ?? pkg.finalPrice ?? 0}" style="width: 100%; box-sizing: border-box; padding: 7px 9px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px;">
+      </div>
+    `).join('');
+    document.getElementById('modal-pkg-scheme-rates').style.display = 'flex';
+  };
+
+  window.closePkgSchemeRatesModal = function() {
+    document.getElementById('modal-pkg-scheme-rates').style.display = 'none';
+  };
+
+  window.savePkgSchemeRates = function() {
+    const idx = Number(document.getElementById('pkg-scheme-rate-idx').value);
+    const pkg = hospitalHealthPackages[idx];
+    if (!pkg) return;
+    const rates = {};
+    document.querySelectorAll('.pkg-scheme-rate-val').forEach(inp => {
+      rates[inp.dataset.scheme] = Number(inp.value) || 0;
+    });
+    pkg.schemeRates = rates;
+    persistHealthPackages();
+    closePkgSchemeRatesModal();
+    alert('Package tariff rates updated!');
+  };
   if (typeof switchTab === 'function') {
     switchTab('lab');
   }
@@ -13935,6 +14211,7 @@ function openLabSection(sectionKey) {
   if (sectionKey === 'new-test' && typeof loadMasterLabCatalog === 'function') loadMasterLabCatalog();
   if (sectionKey === 'test-list' && typeof loadTestPriceList === 'function') loadTestPriceList();
   if (sectionKey === 'create-package' && typeof initCreateHealthPackage === 'function') initCreateHealthPackage();
+  if (sectionKey === 'package-list' && typeof loadAllHealthPackages === 'function') loadAllHealthPackages();
 }
 
 </script>
