@@ -4477,9 +4477,216 @@
             </div>
         </div>
 
-        <!-- 5. Lab Categories -->
-        <div id="lab-subview-categories" class="lab-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
-            <h4 style="margin-top: 0; color: #134e4a;">Lab Categories</h4>
+        <!-- 5. Lab Categories & Test Groups -->
+        <div id="lab-subview-categories" class="lab-subview" style="display: none;">
+            
+            <!-- VIEW A: CATEGORY / GROUP LIST -->
+            <div id="lab-categories-list-card" style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <div>
+                        <h4 style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Diagnostic Categories & Test Panels</h4>
+                        <span style="font-size: 12px; color: #576561;">Organize tests into clinical profiles (e.g., Lipid Profile, Thyroid Panel, LFT) with custom group pricing</span>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button type="button" onclick="openImportMasterCategoryModal()" style="background: #e6f4f1; color: #134e4a; border: 1px solid #99f6e4; padding: 9px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-layer-group"></i> Add from Existing Catalog
+                        </button>
+                        <button type="button" onclick="openCategoryBuilder(-1)" style="background: #134e4a; color: #ffffff; border: none; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 7px;">
+                            <i class="fa-solid fa-plus"></i> Create New Category
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Entries & Search Filter Bar -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: #fafaf8; padding: 12px 14px; border: 1px solid #e8e6df; border-radius: 6px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <span>Show</span>
+                        <select id="catlist-page-size" onchange="changeCatListPageSize(this.value)" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; background: #ffffff;">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span>entries</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <label for="catlist-search-input">Search:</label>
+                        <input type="text" id="catlist-search-input" oninput="filterCatListTable(this.value)" placeholder="Search category or panel name..." style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; width: 230px;">
+                    </div>
+                </div>
+
+                <!-- Categories Table -->
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                <th style="padding: 10px;">#</th>
+                                <th style="padding: 10px;">Category / Group Name</th>
+                                <th style="padding: 10px; text-align: center;">Total Tests</th>
+                                <th style="padding: 10px; text-align: center;">View Tests</th>
+                                <th style="padding: 10px;">Status</th>
+                                <th style="padding: 10px;">Created Date</th>
+                                <th style="padding: 10px;">Modified Date</th>
+                                <th style="padding: 10px; text-align: center;">Actions</th>
+                                <th style="padding: 10px; text-align: center;">Scheme Rates</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lab-catlist-tbody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 30px; color: #576561;">No lab categories configured yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e6df; font-size: 13px; color: #576561;">
+                    <div id="catlist-showing-info">Showing 0 to 0 of 0 entries</div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button type="button" onclick="changeCatListPage(-1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Previous</button>
+                        <span id="catlist-page-indicator" style="padding: 6px 12px; background: #134e4a; color: #ffffff; border-radius: 5px; font-weight: 600;">1</span>
+                        <button type="button" onclick="changeCatListPage(1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW B: CREATE / EDIT CATEGORY BUILDER -->
+            <div id="lab-category-builder-card" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; overflow: hidden;">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 id="cat-builder-heading" style="margin: 0; font-size: 16px; font-weight: 700;">Create New Diagnostic Category</h4>
+                    <span style="background: rgba(255,255,255,0.18); color: #ffffff; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 12px;">Panel Configurator</span>
+                </div>
+
+                <div style="padding: 20px;">
+                    <input type="hidden" id="edit-category-index" value="-1">
+
+                    <!-- Price Scheme Selector -->
+                    <div style="max-width: 420px; margin-bottom: 20px;">
+                        <label style="display: block; font-size: 13px; font-weight: 700; color: #1c2826; margin-bottom: 6px;">Tariff / Price Scheme <span style="color: #dc2626;">*</span></label>
+                        <select id="cat-scheme-select" onchange="onCategorySchemeChange(this.value)" style="width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #1c2826; background: #ffffff;">
+                            <option value="">-- Choose Active Tariff Scheme --</option>
+                        </select>
+                        <p style="margin: 5px 0 0; font-size: 12px; color: #576561;">Choose a billing scheme to load test prices from your catalog.</p>
+                    </div>
+
+                    <!-- Dual-List Transfer Box -->
+                    <div style="display: grid; grid-template-columns: 1fr 115px 1fr; gap: 16px; align-items: center; margin-bottom: 22px;">
+                        <!-- Left Box -->
+                        <div style="border: 1px solid #e8e6df; border-radius: 8px; background: #fafaf8; padding: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 13px; font-weight: 700; color: #1c2826;">Available Catalog Tests</span>
+                                <span id="cat-avail-count" style="background: #134e4a; color: #ffffff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px;">0</span>
+                            </div>
+                            <input type="text" id="cat-avail-search" oninput="renderCategoryTransferLists()" placeholder="Search available tests..." style="width: 100%; box-sizing: border-box; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 12px; margin-bottom: 8px; background: #ffffff;">
+                            <div id="cat-avail-list" style="height: 230px; overflow-y: auto; background: #ffffff; border: 1px solid #e8e6df; border-radius: 6px; padding: 6px;">
+                                <div style="text-align: center; padding: 80px 12px; color: #576561; font-size: 13px;">Select a tariff scheme above to load tests.</div>
+                            </div>
+                        </div>
+
+                        <!-- Center Buttons -->
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                            <button type="button" onclick="moveHighlightedToCategory()" title="Add selected" style="width: 42px; height: 42px; border-radius: 50%; background: #0f766e; color: #ffffff; border: none; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                            <button type="button" onclick="removeHighlightedFromCategory()" title="Remove selected" style="width: 42px; height: 42px; border-radius: 50%; background: #b91c1c; color: #ffffff; border: none; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-arrow-left"></i>
+                            </button>
+                            <button type="button" onclick="addAllTestsToCategory()" style="width: 100%; background: #e6f4f1; color: #134e4a; border: 1px solid #99f6e4; padding: 6px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                                <i class="fa-solid fa-angles-right"></i> Add All
+                            </button>
+                            <button type="button" onclick="removeAllTestsFromCategory()" style="width: 100%; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 6px 8px; border-radius: 5px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                                <i class="fa-solid fa-angles-left"></i> Remove All
+                            </button>
+                        </div>
+
+                        <!-- Right Box -->
+                        <div style="border: 1px solid #e8e6df; border-radius: 8px; background: #fafaf8; padding: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 13px; font-weight: 700; color: #1c2826;">Selected Category Tests</span>
+                                <span id="cat-selected-count" style="background: #0f766e; color: #ffffff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px;">0</span>
+                            </div>
+                            <input type="text" id="cat-selected-search" oninput="renderCategoryTransferLists()" placeholder="Search selected tests..." style="width: 100%; box-sizing: border-box; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 12px; margin-bottom: 8px; background: #ffffff;">
+                            <div id="cat-selected-list" style="height: 230px; overflow-y: auto; background: #ffffff; border: 1px solid #e8e6df; border-radius: 6px; padding: 6px;">
+                                <div style="text-align: center; padding: 80px 12px; color: #576561; font-size: 13px;">No tests selected yet.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Grid: Group Details & Pricing Summary -->
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div style="border: 1px solid #e8e6df; border-radius: 8px; overflow: hidden;">
+                            <div style="background: #1c2826; color: #ffffff; padding: 10px 16px; font-size: 13px; font-weight: 700;">Category / Group Details</div>
+                            <div style="padding: 16px;">
+                                <div style="margin-bottom: 14px;">
+                                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 5px;">Category / Group Name <span style="color: #dc2626;">*</span></label>
+                                    <input type="text" id="cat-name-input" placeholder="e.g., Lipid Profile, Liver Function Test (LFT), Thyroid Panel" style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 5px;">Status</label>
+                                    <select id="cat-status-input" style="width: 100%; padding: 9px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="border: 1px solid #e8e6df; border-radius: 8px; overflow: hidden;">
+                            <div style="background: #1c2826; color: #ffffff; padding: 10px 16px; font-size: 13px; font-weight: 700;">Pricing Summary</div>
+                            <div style="padding: 16px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                    <label style="font-size: 12px; font-weight: 700; color: #1c2826;">Total Price (₹):</label>
+                                    <input type="number" id="cat-total-price-input" min="0" step="0.01" value="0.00" oninput="recalculateCategoryTotals('total')" style="width: 140px; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; font-weight: 700; color: #0f766e; text-align: right;">
+                                </div>
+                                <div style="margin-bottom: 10px;">
+                                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Discount (%)</label>
+                                    <input type="number" id="cat-discount-pct" min="0" max="100" step="0.01" value="0" oninput="recalculateCategoryTotals('pct')" style="width: 100%; box-sizing: border-box; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                                </div>
+                                <div style="margin-bottom: 12px;">
+                                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Discount Amount (₹)</label>
+                                    <input type="number" id="cat-discount-amt" min="0" step="0.01" value="0" oninput="recalculateCategoryTotals('amt')" style="width: 100%; box-sizing: border-box; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #e8e6df;">
+                                    <span style="font-size: 14px; font-weight: 700; color: #1c2826;">Final Price:</span>
+                                    <span id="cat-final-price" style="font-size: 18px; font-weight: 700; color: #134e4a;">₹0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Buttons -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closeCategoryBuilder()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-angles-left"></i> Back to Categories
+                        </button>
+                        <button type="button" onclick="saveLabCategory()" style="background: #134e4a; color: #ffffff; border: none; padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Category
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Quick-Add Category from Existing Catalog Tests -->
+        <div id="modal-import-master-category" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+            <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 560px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 style="margin: 0; font-size: 15px; font-weight: 600;">Create Category from Catalog Tests</h4>
+                    <button type="button" onclick="closeImportMasterCategoryModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 5px;">Category Name <span style="color: #dc2626;">*</span></label>
+                        <input type="text" id="quick-cat-name" placeholder="e.g., Hematology Profile" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 6px;">Select Tests to Include:</label>
+                    <div id="quick-cat-tests-checklist" style="max-height: 220px; overflow-y: auto; border: 1px solid #e8e6df; border-radius: 6px; padding: 8px; margin-bottom: 16px;"></div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 12px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closeImportMasterCategoryModal()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+                        <button type="button" onclick="saveQuickMasterCategory()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Add Category to Lab</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 6. Quick Template Setup -->
@@ -10376,6 +10583,482 @@ window.openLabSection = function(sectionKey) {
     closePkgSchemeRatesModal();
     alert('Package tariff rates updated!');
   };
+  // =========================================================
+  // LAB CATEGORIES & TEST PANELS ENGINE
+  // =========================================================
+  let hospitalLabCategories = JSON.parse(localStorage.getItem('arvion_lab_categories') || '[]');
+  let catListState = { page: 1, pageSize: 10, search: '' };
+  let catBuilderState = {
+    scheme: '',
+    selectedIds: new Set(),
+    highlightedAvail: new Set(),
+    highlightedSelected: new Set()
+  };
+
+  function persistLabCategories() {
+    localStorage.setItem('arvion_lab_categories', JSON.stringify(hospitalLabCategories));
+  }
+
+  function formatTimestampNow() {
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  window.loadLabCategoriesView = async function() {
+    if (typeof loadMasterLabCatalog === 'function' && (!masterLabCatalog || masterLabCatalog.length === 0)) {
+      await loadMasterLabCatalog();
+    }
+    hospitalLabCategories = JSON.parse(localStorage.getItem('arvion_lab_categories') || '[]');
+    closeCategoryBuilder();
+    renderLabCategoriesTable();
+  };
+
+  window.changeCatListPageSize = function(val) {
+    catListState.pageSize = Number(val) || 10;
+    catListState.page = 1;
+    renderLabCategoriesTable();
+  };
+
+  window.filterCatListTable = function(q) {
+    catListState.search = (q || '').toLowerCase().trim();
+    catListState.page = 1;
+    renderLabCategoriesTable();
+  };
+
+  window.changeCatListPage = function(delta) {
+    catListState.page += delta;
+    if (catListState.page < 1) catListState.page = 1;
+    renderLabCategoriesTable();
+  };
+
+  window.renderLabCategoriesTable = function() {
+    const tbody = document.getElementById('lab-catlist-tbody');
+    const info = document.getElementById('catlist-showing-info');
+    const pageInd = document.getElementById('catlist-page-indicator');
+    if (!tbody) return;
+
+    const q = catListState.search;
+    const filtered = !q
+      ? hospitalLabCategories
+      : hospitalLabCategories.filter(c => (c.name || '').toLowerCase().includes(q));
+
+    const total = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(total / catListState.pageSize));
+    if (catListState.page > totalPages) catListState.page = totalPages;
+
+    const startIdx = (catListState.page - 1) * catListState.pageSize;
+    const pageItems = filtered.slice(startIdx, startIdx + catListState.pageSize);
+
+    if (pageInd) pageInd.textContent = `${catListState.page} / ${totalPages}`;
+    if (info) {
+      info.textContent = total === 0
+        ? 'Showing 0 to 0 of 0 entries'
+        : `Showing ${startIdx + 1} to ${Math.min(startIdx + catListState.pageSize, total)} of ${total} entries`;
+    }
+
+    if (pageItems.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 32px; color: #576561;">No categories created yet. Click <strong>+ Create New Category</strong> to group diagnostic tests.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = pageItems.map((cat, i) => {
+      const globalIdx = hospitalLabCategories.indexOf(cat);
+      const count = (cat.tests || []).length;
+      const isActive = (cat.status || 'Active') === 'Active';
+      return `
+        <tr style="border-bottom: 1px solid #e8e6df;">
+          <td style="padding: 10px; color: #576561;">${startIdx + i + 1}</td>
+          <td style="padding: 10px; font-weight: 700; color: #1c2826;">${cat.name}</td>
+          <td style="padding: 10px; text-align: center; font-weight: 600;">${count}</td>
+          <td style="padding: 10px; text-align: center;">
+            <button type="button" onclick="viewCategoryTests(${globalIdx})" title="View Included Tests" style="background: #f1f5f9; color: #1c2826; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </td>
+          <td style="padding: 10px;">
+            <button type="button" onclick="toggleLabCategoryStatus(${globalIdx})" title="Click to toggle status" style="background: ${isActive ? '#dcfce7' : '#f1f5f9'}; color: ${isActive ? '#15803d' : '#64748b'}; border: none; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">
+              ${isActive ? 'Active' : 'Inactive'}
+            </button>
+          </td>
+          <td style="padding: 10px; color: #576561; font-size: 12px;">${cat.createdAt || '-'}</td>
+          <td style="padding: 10px; color: #576561; font-size: 12px;">${cat.modifiedAt || '-'}</td>
+          <td style="padding: 10px; text-align: center; white-space: nowrap;">
+            <button type="button" onclick="openCategoryBuilder(${globalIdx})" title="Edit Category" style="background: #e6f4f1; color: #134e4a; border: none; padding: 6px 9px; border-radius: 5px; cursor: pointer; margin-right: 4px;">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button type="button" onclick="deleteLabCategory(${globalIdx})" title="Delete Category" style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 9px; border-radius: 5px; cursor: pointer;">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </td>
+          <td style="padding: 10px; text-align: center;">
+            <button type="button" onclick="configureCategorySchemeRates(${globalIdx})" title="Scheme Rates" style="background: #fef3c7; color: #92400e; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer;">
+              <i class="fa-solid fa-money-bill-wave"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  };
+
+  window.toggleLabCategoryStatus = function(idx) {
+    const cat = hospitalLabCategories[idx];
+    if (!cat) return;
+    cat.status = (cat.status || 'Active') === 'Active' ? 'Inactive' : 'Active';
+    cat.modifiedAt = formatTimestampNow();
+    persistLabCategories();
+    renderLabCategoriesTable();
+  };
+
+  window.viewCategoryTests = function(idx) {
+    const cat = hospitalLabCategories[idx];
+    if (!cat) return;
+    document.getElementById('modal-view-pkg-title').textContent = `${cat.name} — Included Tests (${(cat.tests || []).length})`;
+    const listEl = document.getElementById('modal-view-pkg-list');
+    listEl.innerHTML = (!cat.tests || cat.tests.length === 0)
+      ? '<p style="color: #576561; font-size: 13px;">No tests linked to this category.</p>'
+      : cat.tests.map((t, i) => `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-bottom: 1px solid #e8e6df; font-size: 13px;">
+            <span style="color: #1c2826; font-weight: 600;">${i + 1}. ${t.name}</span>
+            <span style="color: #134e4a; font-weight: 700;">₹${Number(t.price || 0).toFixed(2)}</span>
+          </div>
+        `).join('');
+    document.getElementById('modal-view-pkg-tests').style.display = 'flex';
+  };
+
+  window.deleteLabCategory = function(idx) {
+    const cat = hospitalLabCategories[idx];
+    if (!cat) return;
+    if (!confirm(`Delete category "${cat.name}"?`)) return;
+    hospitalLabCategories.splice(idx, 1);
+    persistLabCategories();
+    renderLabCategoriesTable();
+  };
+
+  window.configureCategorySchemeRates = function(idx) {
+    const cat = hospitalLabCategories[idx];
+    if (!cat) return;
+    const summary = (hospitalPriceSchemes || []).map(s => {
+      const rate = (cat.schemeRates && cat.schemeRates[s.name] !== undefined) ? cat.schemeRates[s.name] : cat.finalPrice;
+      return `${s.name}: ₹${rate}`;
+    }).join(' | ');
+    const chosenScheme = prompt(
+      `Category: ${cat.name} (Net Base: ₹${cat.finalPrice})\nCurrent Scheme Rates:\n${summary}\n\nEnter Scheme Name to customize rate (e.g. Corporate):`
+    );
+    if (!chosenScheme) return;
+    const newRateStr = prompt(`Enter custom rate (₹) for "${cat.name}" under "${chosenScheme.trim()}":`, cat.finalPrice);
+    if (newRateStr === null) return;
+    cat.schemeRates = cat.schemeRates || {};
+    cat.schemeRates[chosenScheme.trim()] = Number(newRateStr) || 0;
+    cat.modifiedAt = formatTimestampNow();
+    persistLabCategories();
+    alert(`Saved ₹${cat.schemeRates[chosenScheme.trim()]} for ${chosenScheme.trim()}!`);
+  };
+
+  // --- CATEGORY BUILDER ---
+  window.openCategoryBuilder = async function(editIdx = -1) {
+    if (typeof loadMasterLabCatalog === 'function' && (!masterLabCatalog || masterLabCatalog.length === 0)) {
+      await loadMasterLabCatalog();
+    }
+    document.getElementById('lab-categories-list-card').style.display = 'none';
+    document.getElementById('lab-category-builder-card').style.display = 'block';
+
+    const schemeSel = document.getElementById('cat-scheme-select');
+    schemeSel.innerHTML = '<option value="">-- Choose Active Tariff Scheme --</option>';
+    (hospitalPriceSchemes || []).filter(s => s.status === 'Active').forEach(s => {
+      schemeSel.innerHTML += `<option value="${s.name}">${s.name}${s.isDefault ? ' (Default)' : ''}</option>`;
+    });
+
+    if (editIdx >= 0 && hospitalLabCategories[editIdx]) {
+      const cat = hospitalLabCategories[editIdx];
+      document.getElementById('edit-category-index').value = editIdx;
+      document.getElementById('cat-builder-heading').textContent = 'Edit Diagnostic Category';
+      document.getElementById('cat-name-input').value = cat.name || '';
+      document.getElementById('cat-status-input').value = cat.status || 'Active';
+      catBuilderState.scheme = cat.scheme || 'Standard';
+      schemeSel.value = catBuilderState.scheme;
+      catBuilderState.selectedIds = new Set(cat.testKeys || []);
+      catBuilderState.highlightedAvail.clear();
+      catBuilderState.highlightedSelected.clear();
+      renderCategoryTransferLists();
+      document.getElementById('cat-total-price-input').value = Number(cat.baseTotal || 0).toFixed(2);
+      document.getElementById('cat-discount-pct').value = Number(cat.discountPct || 0);
+      recalculateCategoryTotals('pct');
+    } else {
+      document.getElementById('edit-category-index').value = '-1';
+      document.getElementById('cat-builder-heading').textContent = 'Create New Diagnostic Category';
+      document.getElementById('cat-name-input').value = '';
+      document.getElementById('cat-status-input').value = 'Active';
+      catBuilderState.scheme = '';
+      catBuilderState.selectedIds.clear();
+      catBuilderState.highlightedAvail.clear();
+      catBuilderState.highlightedSelected.clear();
+      renderCategoryTransferLists();
+      document.getElementById('cat-total-price-input').value = '0.00';
+      document.getElementById('cat-discount-pct').value = '0';
+      document.getElementById('cat-discount-amt').value = '0';
+      document.getElementById('cat-final-price').textContent = '₹0.00';
+    }
+  };
+
+  window.closeCategoryBuilder = function() {
+    document.getElementById('lab-category-builder-card').style.display = 'none';
+    document.getElementById('lab-categories-list-card').style.display = 'block';
+  };
+
+  window.onCategorySchemeChange = function(schemeName) {
+    catBuilderState.scheme = schemeName;
+    catBuilderState.highlightedAvail.clear();
+    catBuilderState.highlightedSelected.clear();
+    renderCategoryTransferLists();
+    syncCategoryBaseTotalFromTests();
+  };
+
+  window.toggleCatItemHighlight = function(side, key) {
+    const set = side === 'avail' ? catBuilderState.highlightedAvail : catBuilderState.highlightedSelected;
+    if (set.has(key)) set.delete(key);
+    else set.add(key);
+    renderCategoryTransferLists();
+  };
+
+  window.moveHighlightedToCategory = function() {
+    if (!catBuilderState.scheme) { alert('Please select a Tariff / Price Scheme first.'); return; }
+    catBuilderState.highlightedAvail.forEach(k => catBuilderState.selectedIds.add(k));
+    catBuilderState.highlightedAvail.clear();
+    renderCategoryTransferLists();
+    syncCategoryBaseTotalFromTests();
+  };
+
+  window.removeHighlightedFromCategory = function() {
+    catBuilderState.highlightedSelected.forEach(k => catBuilderState.selectedIds.delete(k));
+    catBuilderState.highlightedSelected.clear();
+    renderCategoryTransferLists();
+    syncCategoryBaseTotalFromTests();
+  };
+
+  window.addAllTestsToCategory = function() {
+    if (!catBuilderState.scheme) { alert('Please select a Tariff / Price Scheme first.'); return; }
+    (masterLabCatalog || []).forEach((t, i) => catBuilderState.selectedIds.add(getTestKey(t, i)));
+    catBuilderState.highlightedAvail.clear();
+    renderCategoryTransferLists();
+    syncCategoryBaseTotalFromTests();
+  };
+
+  window.removeAllTestsFromCategory = function() {
+    catBuilderState.selectedIds.clear();
+    catBuilderState.highlightedSelected.clear();
+    renderCategoryTransferLists();
+    syncCategoryBaseTotalFromTests();
+  };
+
+  window.renderCategoryTransferLists = function() {
+    const availBox = document.getElementById('cat-avail-list');
+    const selBox = document.getElementById('cat-selected-list');
+    const availBadge = document.getElementById('cat-avail-count');
+    const selBadge = document.getElementById('cat-selected-count');
+    if (!availBox || !selBox) return;
+
+    if (!catBuilderState.scheme) {
+      availBadge.textContent = '0';
+      selBadge.textContent = '0';
+      availBox.innerHTML = '<div style="text-align: center; padding: 80px 12px; color: #576561; font-size: 13px;">Select a tariff scheme above to load tests.</div>';
+      selBox.innerHTML = '<div style="text-align: center; padding: 80px 12px; color: #576561; font-size: 13px;">No tests selected yet.</div>';
+      return;
+    }
+
+    const qAvail = (document.getElementById('cat-avail-search')?.value || '').toLowerCase().trim();
+    const qSel = (document.getElementById('cat-selected-search')?.value || '').toLowerCase().trim();
+    const availItems = [];
+    const selItems = [];
+
+    (masterLabCatalog || []).forEach((t, i) => {
+      const key = getTestKey(t, i);
+      const name = t.testName || t.name || 'Unnamed Test';
+      const price = getTestPriceUnderScheme(t, catBuilderState.scheme);
+      const item = { key, name, price };
+      if (catBuilderState.selectedIds.has(key)) selItems.push(item);
+      else availItems.push(item);
+    });
+
+    availBadge.textContent = availItems.length;
+    selBadge.textContent = selItems.length;
+
+    const filteredAvail = availItems.filter(it => !qAvail || it.name.toLowerCase().includes(qAvail));
+    const filteredSel = selItems.filter(it => !qSel || it.name.toLowerCase().includes(qSel));
+
+    availBox.innerHTML = filteredAvail.length === 0
+      ? '<div style="text-align: center; padding: 80px 12px; color: #576561; font-size: 13px;">No available tests found.</div>'
+      : filteredAvail.map(it => {
+          const active = catBuilderState.highlightedAvail.has(it.key);
+          return `<div onclick="toggleCatItemHighlight('avail', '${it.key}')" ondblclick="catBuilderState.selectedIds.add('${it.key}'); renderCategoryTransferLists(); syncCategoryBaseTotalFromTests();" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; margin-bottom: 4px; border-radius: 5px; cursor: pointer; font-size: 13px; background: ${active ? '#e6f4f1' : '#ffffff'}; border: 1px solid ${active ? '#0f766e' : '#e8e6df'};">
+            <span style="font-weight: 600; color: #1c2826;">${it.name}</span>
+            <span style="font-weight: 700; color: #134e4a;">₹${it.price}</span>
+          </div>`;
+        }).join('');
+
+    selBox.innerHTML = filteredSel.length === 0
+      ? '<div style="text-align: center; padding: 80px 12px; color: #576561; font-size: 13px;">Click tests on the left and press the green arrow to add.</div>'
+      : filteredSel.map(it => {
+          const active = catBuilderState.highlightedSelected.has(it.key);
+          return `<div onclick="toggleCatItemHighlight('selected', '${it.key}')" ondblclick="catBuilderState.selectedIds.delete('${it.key}'); renderCategoryTransferLists(); syncCategoryBaseTotalFromTests();" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; margin-bottom: 4px; border-radius: 5px; cursor: pointer; font-size: 13px; background: ${active ? '#fee2e2' : '#f8faf9'}; border: 1px solid ${active ? '#fca5a5' : '#cbd5e1'};">
+            <span style="font-weight: 600; color: #1c2826;">${it.name}</span>
+            <span style="font-weight: 700; color: #0f766e;">₹${it.price}</span>
+          </div>`;
+        }).join('');
+  };
+
+  window.syncCategoryBaseTotalFromTests = function() {
+    let sum = 0;
+    (masterLabCatalog || []).forEach((t, i) => {
+      if (catBuilderState.selectedIds.has(getTestKey(t, i))) {
+        sum += getTestPriceUnderScheme(t, catBuilderState.scheme);
+      }
+    });
+    const totalInp = document.getElementById('cat-total-price-input');
+    if (totalInp) totalInp.value = sum.toFixed(2);
+    recalculateCategoryTotals('pct');
+  };
+
+  window.recalculateCategoryTotals = function(mode = 'pct') {
+    const totalInp = document.getElementById('cat-total-price-input');
+    const pctEl = document.getElementById('cat-discount-pct');
+    const amtEl = document.getElementById('cat-discount-amt');
+    const baseTotal = Math.max(0, Number(totalInp?.value) || 0);
+    let pct = Number(pctEl?.value) || 0;
+    let amt = Number(amtEl?.value) || 0;
+
+    if (mode === 'amt') {
+      amt = Math.min(baseTotal, Math.max(0, amt));
+      pct = baseTotal > 0 ? Number(((amt / baseTotal) * 100).toFixed(2)) : 0;
+      if (pctEl) pctEl.value = pct.toFixed(2);
+    } else {
+      pct = Math.min(100, Math.max(0, pct));
+      amt = Number(((baseTotal * pct) / 100).toFixed(2));
+      if (amtEl) amtEl.value = amt.toFixed(2);
+    }
+
+    const finalPrice = Math.max(0, baseTotal - amt);
+    const finalEl = document.getElementById('cat-final-price');
+    if (finalEl) finalEl.textContent = `₹${finalPrice.toFixed(2)}`;
+  };
+
+  window.saveLabCategory = function() {
+    const name = document.getElementById('cat-name-input').value.trim();
+    const status = document.getElementById('cat-status-input').value;
+    if (!catBuilderState.scheme) { alert('Please select a Tariff / Price Scheme.'); return; }
+    if (catBuilderState.selectedIds.size === 0) { alert('Please include at least one test in this category.'); return; }
+    if (!name) { alert('Please enter a Category / Group Name.'); return; }
+
+    const includedTests = [];
+    (masterLabCatalog || []).forEach((t, i) => {
+      const k = getTestKey(t, i);
+      if (catBuilderState.selectedIds.has(k)) {
+        includedTests.push({ key: k, name: t.testName || t.name, price: getTestPriceUnderScheme(t, catBuilderState.scheme) });
+      }
+    });
+
+    const baseTotal = Number(document.getElementById('cat-total-price-input').value) || 0;
+    const discountPct = Number(document.getElementById('cat-discount-pct').value) || 0;
+    const discountAmt = Number(document.getElementById('cat-discount-amt').value) || 0;
+    const finalPrice = Math.max(0, baseTotal - discountAmt);
+    const now = formatTimestampNow();
+    const editIdx = Number(document.getElementById('edit-category-index').value);
+
+    if (editIdx >= 0 && hospitalLabCategories[editIdx]) {
+      hospitalLabCategories[editIdx] = {
+        ...hospitalLabCategories[editIdx],
+        name,
+        status,
+        scheme: catBuilderState.scheme,
+        testKeys: Array.from(catBuilderState.selectedIds),
+        tests: includedTests,
+        baseTotal,
+        discountPct,
+        discountAmt,
+        finalPrice,
+        modifiedAt: now
+      };
+    } else {
+      hospitalLabCategories.push({
+        name,
+        status,
+        scheme: catBuilderState.scheme,
+        testKeys: Array.from(catBuilderState.selectedIds),
+        tests: includedTests,
+        baseTotal,
+        discountPct,
+        discountAmt,
+        finalPrice,
+        createdAt: now,
+        modifiedAt: now
+      });
+    }
+
+    persistLabCategories();
+    closeCategoryBuilder();
+    renderLabCategoriesTable();
+  };
+
+  // --- QUICK ADD FROM EXISTING CATALOG ---
+  window.openImportMasterCategoryModal = async function() {
+    if (typeof loadMasterLabCatalog === 'function' && (!masterLabCatalog || masterLabCatalog.length === 0)) {
+      await loadMasterLabCatalog();
+    }
+    const list = document.getElementById('quick-cat-tests-checklist');
+    list.innerHTML = (!masterLabCatalog || masterLabCatalog.length === 0)
+      ? '<div style="padding: 20px; text-align: center; color: #576561; font-size: 13px;">No tests in your catalog yet. Add tests first.</div>'
+      : masterLabCatalog.map((t, i) => `
+          <label style="display: flex; justify-content: space-between; align-items: center; padding: 7px 8px; border-bottom: 1px solid #f1f5f9; font-size: 13px; cursor: pointer;">
+            <span><input type="checkbox" class="quick-cat-chk" value="${i}" style="margin-right: 8px;"> ${t.testName || t.name}</span>
+            <span style="font-weight: 600; color: #134e4a;">₹${t.price ?? t.basePrice ?? 0}</span>
+          </label>
+        `).join('');
+    document.getElementById('quick-cat-name').value = '';
+    document.getElementById('modal-import-master-category').style.display = 'flex';
+  };
+
+  window.closeImportMasterCategoryModal = function() {
+    document.getElementById('modal-import-master-category').style.display = 'none';
+  };
+
+  window.saveQuickMasterCategory = function() {
+    const name = document.getElementById('quick-cat-name').value.trim();
+    if (!name) { alert('Please enter a Category Name.'); return; }
+    const checked = Array.from(document.querySelectorAll('.quick-cat-chk:checked')).map(c => Number(c.value));
+    if (checked.length === 0) { alert('Please select at least one test.'); return; }
+
+    const tests = [];
+    const keys = [];
+    let total = 0;
+    checked.forEach(idx => {
+      const t = masterLabCatalog[idx];
+      if (!t) return;
+      const k = getTestKey(t, idx);
+      const p = Number(t.price ?? t.basePrice ?? 0) || 0;
+      keys.push(k);
+      tests.push({ key: k, name: t.testName || t.name, price: p });
+      total += p;
+    });
+
+    const now = formatTimestampNow();
+    hospitalLabCategories.push({
+      name,
+      status: 'Active',
+      scheme: 'Standard',
+      testKeys: keys,
+      tests,
+      baseTotal: total,
+      discountPct: 0,
+      discountAmt: 0,
+      finalPrice: total,
+      createdAt: now,
+      modifiedAt: now
+    });
+
+    persistLabCategories();
+    closeImportMasterCategoryModal();
+    renderLabCategoriesTable();
+  };
   if (typeof switchTab === 'function') {
     switchTab('lab');
   }
@@ -14212,6 +14895,7 @@ function openLabSection(sectionKey) {
   if (sectionKey === 'test-list' && typeof loadTestPriceList === 'function') loadTestPriceList();
   if (sectionKey === 'create-package' && typeof initCreateHealthPackage === 'function') initCreateHealthPackage();
   if (sectionKey === 'package-list' && typeof loadAllHealthPackages === 'function') loadAllHealthPackages();
+  if (sectionKey === 'categories' && typeof loadLabCategoriesView === 'function') loadLabCategoriesView();
 }
 
 </script>
