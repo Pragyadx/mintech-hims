@@ -4763,6 +4763,38 @@
             </div>
         </div>
 </section>
+<!-- ========================================== -->
+<!-- TAB: LAB PATIENTS & WORKFLOW               -->
+<!-- ========================================== -->
+<section id="tab-lab-patients" class="tab-content" style="display: none; padding: 20px;">
+    <div id="lab-patient-workspace">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 14px 20px; margin-bottom: 20px;">
+            <div>
+                <h3 id="lab-patient-section-title" style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Patient Management</h3>
+                <span id="lab-patient-section-subtitle" style="font-size: 12px; color: #576561;">Manage lab appointments, diagnostic reports, and sample collections</span>
+            </div>
+        </div>
+
+        <!-- 1. Appointment -->
+        <div id="lab-patient-subview-appointments" class="lab-patient-subview" style="display: block; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Appointment</h4>
+            <p style="font-size: 13px; color: #576561;">Patient lab bookings and appointment queue workspace.</p>
+        </div>
+
+        <!-- 2. Report Listing -->
+        <div id="lab-patient-subview-reports" class="lab-patient-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Report Listing</h4>
+            <p style="font-size: 13px; color: #576561;">Completed and pending diagnostic test reports.</p>
+        </div>
+
+        <!-- 3. Sample List -->
+        <div id="lab-patient-subview-samples" class="lab-patient-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Sample List</h4>
+            <p style="font-size: 13px; color: #576561;">Specimen collection status and barcode tracking.</p>
+        </div>
+    </div>
+</section>
 
         <!-- =================================================== -->
   <!-- TAB: INPATIENT DEPARTMENT (IPD) MANAGEMENT          -->
@@ -7229,8 +7261,8 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       pharmacy: ["pharmacy", "billing"],
       PHARMACIST: ["pharmacy", "billing"],
       cashier: ["billing", "pharmacy"],
-      labtech: ["dashboard", "lab"],
-      LABTECH: ["dashboard", "lab"]
+      labtech: ["dashboard", "lab", "lab-patients"],
+      LABTECH: ["dashboard", "lab", "lab-patients"],
     };
 
     const tabMeta = {
@@ -7243,6 +7275,7 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       beds: { label: 'Beds Management', icon: 'fa-solid fa-bed' },
       pharmacy: { label: "Pharmacy Store", icon: "fa-pills", title: "Pharmacy Inventory" },
       abdm: { label: "ABDM & FHIR", icon: "fa-shield-halved", title: "ABDM / ABHA Standards" },
+      'lab-patients': { label: "Patient", icon: "fa-user-group", title: "Lab Patients & Appointments" },
     };
 
 // Toggle the Invoices & Billing sidebar dropdown
@@ -9507,7 +9540,24 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
             </div>
           `;
           navContainer.appendChild(groupDiv);
-        } else {
+        } else if (tabId === 'lab-patients') {
+  const groupDiv = document.createElement("div");
+  groupDiv.innerHTML = `
+    <button type="button" class="nav-btn" id="nav-btn-lab-patients" onclick="switchTab('lab-patients', this); toggleLabPatientSubmenu();" style="justify-content: space-between; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid ${meta.icon}"></i>
+        <span>${meta.label}</span>
+      </div>
+      <i class="fa-solid fa-chevron-down submenu-chevron" id="lab-patient-chevron" style="font-size: 11px; transition: transform 0.2s;"></i>
+    </button>
+    <div id="subnav-lab-patients" style="display: none; background: rgba(0, 0, 0, 0.16); padding: 6px 0 6px 28px; border-radius: 0 0 6px 6px;">
+      <a href="javascript:void(0)" onclick="openLabPatientSection('appointments')" class="subnav-link" style="display: block; padding: 7px 10px; color: #e2e8f0; font-size: 13px; text-decoration: none;">• Appointment</a>
+      <a href="javascript:void(0)" onclick="openLabPatientSection('reports')" class="subnav-link" style="display: block; padding: 7px 10px; color: #e2e8f0; font-size: 13px; text-decoration: none;">• Report Listing</a>
+      <a href="javascript:void(0)" onclick="openLabPatientSection('samples')" class="subnav-link" style="display: block; padding: 7px 10px; color: #e2e8f0; font-size: 13px; text-decoration: none;">• Sample List</a>
+    </div>
+  `;
+  navContainer.appendChild(groupDiv);
+} else {
           const btn = document.createElement("button");
           btn.className = `nav-btn ${idx === 0 ? "active" : ""}`;
           btn.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${meta.label}`;
@@ -15181,6 +15231,23 @@ function openLabSection(sectionKey) {
   if (sectionKey === 'package-list' && typeof loadAllHealthPackages === 'function') loadAllHealthPackages();
   if (sectionKey === 'categories' && typeof loadLabCategoriesView === 'function') loadLabCategoriesView();
   if (sectionKey === 'quick-setup' && typeof initQuickTemplateSetup === 'function') initQuickTemplateSetup();
+}
+function toggleLabPatientSubmenu() {
+  const menu = document.getElementById('subnav-lab-patients');
+  const chevron = document.getElementById('lab-patient-chevron');
+  if (!menu) return;
+  const isHidden = menu.style.display === 'none' || menu.style.display === '';
+  menu.style.display = isHidden ? 'block' : 'none';
+  if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function openLabPatientSection(sectionKey) {
+  if (typeof switchTab === 'function') {
+    switchTab('lab-patients');
+  }
+  document.querySelectorAll('.lab-patient-subview').forEach(el => el.style.display = 'none');
+  const activeView = document.getElementById('lab-patient-subview-' + sectionKey);
+  if (activeView) activeView.style.display = 'block';
 }
 
 </script>
