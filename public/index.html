@@ -460,26 +460,19 @@
               </div>
             </div>
 
-            <!-- Diagnostic Tests Menu with 6 Sub-features -->
-          <div style="margin-bottom: 4px;">
-            <button type="button" onclick="toggleLabSubmenu()" class="nav-btn" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.06); border: none; border-radius: 6px; color: #ffffff; font-size: 14px; font-weight: 500; cursor: pointer; text-align: left;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <i class="fa-solid fa-flask-vial"></i>
-                <span>Diagnostic Tests</span>
-              </div>
-              <span id="lab-menu-chevron" style="font-size: 10px; transition: transform 0.2s;">▼</span>
-            </button>
-
-            <!-- 6 Sub-features -->
-            <div id="subnav-investigations" style="display: none; padding: 6px 0 6px 16px; background: rgba(0, 0, 0, 0.15); border-radius: 4px; margin-top: 2px;">
-              <a href="javascript:void(0)" onclick="openLabSection('new-test')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• New Test Entry</a>
-              <a href="javascript:void(0)" onclick="openLabSection('test-list')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Test Price List</a>
-              <a href="javascript:void(0)" onclick="openLabSection('create-package')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Create Health Package</a>
-              <a href="javascript:void(0)" onclick="openLabSection('package-list')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• All Packages</a>
-              <a href="javascript:void(0)" onclick="openLabSection('categories')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Lab Categories</a>
-              <a href="javascript:void(0)" onclick="openLabSection('quick-setup')" style="display: block; padding: 6px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Quick Template Setup</a>
-            </div>
+            <button type="button" class="nav-btn" onclick="switchTab('lab', this); toggleLabSubmenu(this);" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <span><i class="fa-solid fa-flask-vial"></i> Diagnostic Tests</span>
+            <i id="lab-chevron" class="fa-solid fa-chevron-down" style="font-size: 11px; transition: transform 0.2s;"></i>
+          </button>
+          <div id="subnav-investigations" style="display: none; padding-left: 16px; background: rgba(0, 0, 0, 0.15); border-radius: 4px; margin-bottom: 6px;">
+            <a href="javascript:void(0)" onclick="openLabSection('new-test')" class="subnav-link" style="display: block; padding: 7px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• New Test Entry</a>
+            <a href="javascript:void(0)" onclick="openLabSection('test-list')" class="subnav-link" style="display: block; padding: 7px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Test Price List</a>
+            <a href="javascript:void(0)" onclick="openLabSection('create-package')" class="subnav-link" style="display: block; padding: 7px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Create Health Package</a>
+            <a href="javascript:void(0)" onclick="openLabSection('package-list')" class="subnav-link" style="display: block; padding: 7px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• All Packages</a>
+            <a href="javascript:void(0)" onclick="openLabSection('categories')" class="subnav-link" style="display: block; padding: 7px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Lab Categories</a>
+            <a href="javascript:void(0)" onclick="openLabSection('quick-setup')" class="subnav-link" style="display: block; padding: 7px 12px; color: #cbd5e1; font-size: 13px; text-decoration: none;">• Quick Template Setup</a>
           </div>
+
             <button type="button" class="nav-btn" onclick="switchTab('ipd', this)"><i class="fa-solid fa-bed"></i> Inpatient (IPD)</button>
             <button type="button" class="nav-btn" onclick="switchTab('beds', this)">
           <i class="fa-solid fa-bed" style="width: 18px; text-align: center;"></i>
@@ -6354,12 +6347,13 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       registration: { label: "Reception & Intake", icon: "fa-address-card", title: "Patient Registration & MPI" },
       opd: { label: "OPD Consultation", icon: "fa-stethoscope", title: "OPD Consultation & Queue" },
       billing: { label: "Invoices & Billing", icon: "fa-file-invoice-dollar", title: "Invoices & Billing" },
-      lab: { label: "Diagnostic Lab", icon: "fa-flask-vial", title: "Diagnostic Laboratory & LIS" },
+      lab: { label: "Diagnostic Tests", icon: "fa-flask-vial", title: "Diagnostic Laboratory & LIS" },
       ipd: { label: "Inpatient (IPD)", icon: "fa-bed", title: "Inpatient Wards & Beds" },
       beds: { label: 'Beds Management', icon: 'fa-solid fa-bed' },
       pharmacy: { label: "Pharmacy Store", icon: "fa-pills", title: "Pharmacy Inventory" },
       abdm: { label: "ABDM & FHIR", icon: "fa-shield-halved", title: "ABDM / ABHA Standards" },
     };
+
 // Toggle the Invoices & Billing sidebar dropdown
   window.toggleBillingSubmenu = function(btn) {
   const submenu = document.getElementById('billing-submenu');
@@ -8597,6 +8591,28 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
               <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('ipd-invoices', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-file-invoice" style="width: 14px;"></i> IPD Invoices</a>
               <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('refunds', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-rotate-left" style="width: 14px;"></i> Refunds</a>
               <a href="javascript:void(0)" onclick="switchTab('billing'); openBillingView('patient-referrals', this)" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #94a3b8; font-size: 12px; text-decoration: none; border-radius: 4px;"><i class="fa-solid fa-users" style="width: 14px;"></i> Patient Referrals</a>
+            </div>
+          `;
+          navContainer.appendChild(groupDiv);
+        } else if (tabId === 'lab') {
+          // Render Expandable Dropdown for Diagnostic Tests
+          const groupDiv = document.createElement("div");
+          groupDiv.style.margin = "2px 0";
+          groupDiv.innerHTML = `
+            <button type="button" class="nav-btn active" id="nav-btn-lab" onclick="switchTab('lab', this); toggleLabSubmenu(this);" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid ${meta.icon}"></i>
+                <span>${meta.label}</span>
+              </div>
+              <i class="fa-solid fa-chevron-down submenu-chevron" id="lab-chevron" style="font-size: 11px; transition: transform 0.25s;"></i>
+            </button>
+            <div id="subnav-investigations" style="display: block; background: rgba(0, 0, 0, 0.22); padding: 4px 0 6px 12px; border-left: 2px solid #0f766e; margin-left: 12px;">
+              <a href="javascript:void(0)" onclick="openLabSection('new-test')" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #cbd5e1; font-size: 12px; text-decoration: none; border-radius: 4px;">• New Test Entry</a>
+              <a href="javascript:void(0)" onclick="openLabSection('test-list')" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #cbd5e1; font-size: 12px; text-decoration: none; border-radius: 4px;">• Test Price List</a>
+              <a href="javascript:void(0)" onclick="openLabSection('create-package')" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #cbd5e1; font-size: 12px; text-decoration: none; border-radius: 4px;">• Create Health Package</a>
+              <a href="javascript:void(0)" onclick="openLabSection('package-list')" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #cbd5e1; font-size: 12px; text-decoration: none; border-radius: 4px;">• All Packages</a>
+              <a href="javascript:void(0)" onclick="openLabSection('categories')" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #cbd5e1; font-size: 12px; text-decoration: none; border-radius: 4px;">• Lab Categories</a>
+              <a href="javascript:void(0)" onclick="openLabSection('quick-setup')" class="subnav-link" style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; color: #cbd5e1; font-size: 12px; text-decoration: none; border-radius: 4px;">• Quick Template Setup</a>
             </div>
           `;
           navContainer.appendChild(groupDiv);
