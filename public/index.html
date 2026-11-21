@@ -5292,9 +5292,86 @@
         </div>
 
         <!-- 1. Referral Share -->
-        <div id="lab-doctor-subview-referral-share" class="lab-doctor-subview" style="display: block; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
-            <h4 style="margin-top: 0; color: #134e4a;">Referral Share</h4>
-            <p style="font-size: 13px; color: #576561;">Set commission percentages and referral payout rules per doctor.</p>
+        <div id="lab-doctor-subview-referral-share" class="lab-doctor-subview" style="display: block;">
+            <!-- Top Form Card: Assign / Edit Doctor Share -->
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 22px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+                    <div>
+                        <h4 id="ref-share-form-heading" style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Configure Doctor Referral Share</h4>
+                        <span style="font-size: 12px; color: #576561;">Select an existing referring doctor or enter a new doctor's details to assign their diagnostic commission percentage.</span>
+                    </div>
+                    <button type="button" onclick="openLabDoctorSection('doctor-directory')" style="background: #e6f4f1; color: #134e4a; border: 1px solid #99f6e4; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                        <i class="fa-solid fa-address-book"></i> Open Doctor Directory
+                    </button>
+                </div>
+
+                <input type="hidden" id="ref-share-edit-idx" value="-1">
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 18px;">
+                    <!-- Select or Type Doctor -->
+                    <div>
+                        <label style="display: block; font-size: 13px; font-weight: 700; color: #1c2826; margin-bottom: 6px;">Select or Enter Doctor <span style="color: #dc2626;">*</span></label>
+                        <input type="text" id="ref-share-doctor-input" list="ref-share-doctors-datalist" oninput="onReferralDoctorInput(this.value)" placeholder="Search or type doctor name..." style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #1c2826;">
+                        <datalist id="ref-share-doctors-datalist"></datalist>
+                    </div>
+
+                    <!-- Clinic / Hospital Name -->
+                    <div>
+                        <label style="display: block; font-size: 13px; font-weight: 700; color: #1c2826; margin-bottom: 6px;">Clinic / Hospital Name</label>
+                        <input type="text" id="ref-share-clinic-input" placeholder="e.g., City Care Clinic" style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #1c2826;">
+                    </div>
+
+                    <!-- Clinic Address / Location -->
+                    <div>
+                        <label style="display: block; font-size: 13px; font-weight: 700; color: #1c2826; margin-bottom: 6px;">Clinic Address / Area</label>
+                        <input type="text" id="ref-share-address-input" placeholder="e.g., Sector 18, Main Road" style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #1c2826;">
+                    </div>
+
+                    <!-- Share (%) -->
+                    <div>
+                        <label style="display: block; font-size: 13px; font-weight: 700; color: #1c2826; margin-bottom: 6px;">Share (%) <span style="color: #dc2626;">*</span></label>
+                        <input type="number" id="ref-share-pct-input" min="0" max="100" step="0.5" placeholder="Share (%)" style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #0f766e; border-radius: 6px; font-size: 13px; color: #1c2826; font-weight: 600;">
+                    </div>
+                </div>
+
+                <!-- Save & Cancel Action Buttons -->
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button type="button" onclick="saveDoctorReferralShare()" style="background: #134e4a; color: #ffffff; border: none; padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-check"></i> Save
+                    </button>
+                    <button type="button" id="ref-share-cancel-btn" onclick="resetReferralShareForm()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom Card: Active Referral Share Rules -->
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+                    <h4 style="margin: 0; font-size: 15px; color: #1c2826; font-weight: 700;">Saved Referral Share Rules</h4>
+                    <input type="text" id="ref-share-table-search" oninput="renderReferralShareTable()" placeholder="Filter saved doctors..." style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; width: 220px;">
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                <th style="padding: 10px;">#</th>
+                                <th style="padding: 10px;">Doctor Name</th>
+                                <th style="padding: 10px;">Clinic / Hospital</th>
+                                <th style="padding: 10px;">Share (%)</th>
+                                <th style="padding: 10px;">Connection Status</th>
+                                <th style="padding: 10px; text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ref-share-rules-tbody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 28px; color: #576561;">No referral share rules configured yet. Use the form above to add a doctor.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- 2. Doctor Directory -->
@@ -15797,6 +15874,166 @@ function openLabDoctorSection(sectionKey) {
   if (sectionKey === 'referral-share' && typeof loadLabReferralShareView === 'function') loadLabReferralShareView();
   if (sectionKey === 'doctor-directory' && typeof loadLabDoctorDirectoryView === 'function') loadLabDoctorDirectoryView();
 }
+// =========================================================
+// REFERRAL DOCTORS & COMMISSION SHARE ENGINE
+// =========================================================
+let hospitalReferralDoctors = JSON.parse(localStorage.getItem('arvion_lab_referral_doctors') || '[]');
+
+function persistReferralDoctors() {
+  localStorage.setItem('arvion_lab_referral_doctors', JSON.stringify(hospitalReferralDoctors));
+}
+
+window.loadLabReferralShareView = function() {
+  hospitalReferralDoctors = JSON.parse(localStorage.getItem('arvion_lab_referral_doctors') || '[]');
+  populateReferralDoctorDatalist();
+  renderReferralShareTable();
+};
+
+function populateReferralDoctorDatalist() {
+  const dl = document.getElementById('ref-share-doctors-datalist');
+  if (!dl) return;
+  const names = new Set();
+  hospitalReferralDoctors.forEach(d => { if (d.doctorName) names.add(d.doctorName); });
+  (typeof hospitalLabBookings !== 'undefined' ? hospitalLabBookings : []).forEach(b => {
+    if (b.refDoctor && b.refDoctor.trim()) names.add(b.refDoctor.trim());
+  });
+  dl.innerHTML = Array.from(names).map(n => `<option value="${n.replace(/"/g, '&quot;')}">`).join('');
+}
+
+window.onReferralDoctorInput = function(val) {
+  const clean = (val || '').trim().toLowerCase();
+  if (!clean) return;
+  const match = hospitalReferralDoctors.find(d => (d.doctorName || '').toLowerCase() === clean);
+  if (match) {
+    document.getElementById('ref-share-clinic-input').value = match.clinicName || '';
+    document.getElementById('ref-share-address-input').value = match.clinicAddress || '';
+    document.getElementById('ref-share-pct-input').value = match.sharePercent ?? '';
+  }
+};
+
+window.resetReferralShareForm = function() {
+  document.getElementById('ref-share-edit-idx').value = '-1';
+  document.getElementById('ref-share-form-heading').textContent = 'Configure Doctor Referral Share';
+  document.getElementById('ref-share-doctor-input').value = '';
+  document.getElementById('ref-share-clinic-input').value = '';
+  document.getElementById('ref-share-address-input').value = '';
+  document.getElementById('ref-share-pct-input').value = '';
+};
+
+window.saveDoctorReferralShare = function() {
+  const doctorName = document.getElementById('ref-share-doctor-input').value.trim();
+  const clinicName = document.getElementById('ref-share-clinic-input').value.trim();
+  const clinicAddress = document.getElementById('ref-share-address-input').value.trim();
+  const shareRaw = document.getElementById('ref-share-pct-input').value;
+
+  if (!doctorName) {
+    alert('Please select or enter a Doctor Name.');
+    return;
+  }
+  if (shareRaw === '' || Number(shareRaw) < 0 || Number(shareRaw) > 100) {
+    alert('Please enter a valid Share (%) between 0 and 100.');
+    return;
+  }
+
+  const sharePercent = Number(shareRaw);
+  const editIdx = Number(document.getElementById('ref-share-edit-idx').value);
+
+  if (editIdx >= 0 && hospitalReferralDoctors[editIdx]) {
+    hospitalReferralDoctors[editIdx] = {
+      ...hospitalReferralDoctors[editIdx],
+      doctorName,
+      clinicName: clinicName || hospitalReferralDoctors[editIdx].clinicName || '-',
+      clinicAddress: clinicAddress || hospitalReferralDoctors[editIdx].clinicAddress || '-',
+      sharePercent
+    };
+  } else {
+    const existingIdx = hospitalReferralDoctors.findIndex(d => (d.doctorName || '').toLowerCase() === doctorName.toLowerCase());
+    if (existingIdx >= 0) {
+      hospitalReferralDoctors[existingIdx].sharePercent = sharePercent;
+      if (clinicName) hospitalReferralDoctors[existingIdx].clinicName = clinicName;
+      if (clinicAddress) hospitalReferralDoctors[existingIdx].clinicAddress = clinicAddress;
+    } else {
+      hospitalReferralDoctors.unshift({
+        doctorName,
+        clinicName: clinicName || '-',
+        clinicAddress: clinicAddress || '-',
+        sharePercent,
+        status: 'Request Accepted'
+      });
+    }
+  }
+
+  persistReferralDoctors();
+  resetReferralShareForm();
+  populateReferralDoctorDatalist();
+  renderReferralShareTable();
+  alert(`Referral share (${sharePercent}%) saved for ${doctorName}!`);
+};
+
+window.editReferralShareRule = function(idx) {
+  const doc = hospitalReferralDoctors[idx];
+  if (!doc) return;
+  document.getElementById('ref-share-edit-idx').value = idx;
+  document.getElementById('ref-share-form-heading').textContent = `Edit Referral Share — ${doc.doctorName}`;
+  document.getElementById('ref-share-doctor-input').value = doc.doctorName || '';
+  document.getElementById('ref-share-clinic-input').value = doc.clinicName === '-' ? '' : (doc.clinicName || '');
+  document.getElementById('ref-share-address-input').value = doc.clinicAddress === '-' ? '' : (doc.clinicAddress || '');
+  document.getElementById('ref-share-pct-input').value = doc.sharePercent ?? 0;
+  document.getElementById('ref-share-doctor-input').focus();
+};
+
+window.deleteReferralShareRule = function(idx) {
+  const doc = hospitalReferralDoctors[idx];
+  if (!doc) return;
+  if (!confirm(`Remove ${doc.doctorName} from referral share list?`)) return;
+  hospitalReferralDoctors.splice(idx, 1);
+  persistReferralDoctors();
+  populateReferralDoctorDatalist();
+  renderReferralShareTable();
+};
+
+window.renderReferralShareTable = function() {
+  const tbody = document.getElementById('ref-share-rules-tbody');
+  if (!tbody) return;
+  const q = (document.getElementById('ref-share-table-search')?.value || '').toLowerCase().trim();
+  const filtered = !q
+    ? hospitalReferralDoctors
+    : hospitalReferralDoctors.filter(d =>
+        (d.doctorName || '').toLowerCase().includes(q) ||
+        (d.clinicName || '').toLowerCase().includes(q)
+      );
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 28px; color: #576561;">No referral share rules found. Use the form above to add a doctor.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((d, i) => {
+    const globalIdx = hospitalReferralDoctors.indexOf(d);
+    const isAccepted = d.status === 'Request Accepted';
+    return `
+      <tr style="border-bottom: 1px solid #e8e6df;">
+        <td style="padding: 10px; color: #576561;">${i + 1}</td>
+        <td style="padding: 10px; font-weight: 700; color: #1c2826;">${d.doctorName}</td>
+        <td style="padding: 10px; color: #576561;">${d.clinicName || '-'}</td>
+        <td style="padding: 10px;">
+          <span style="background: #e6f4f1; color: #134e4a; padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 12px;">${d.sharePercent}%</span>
+        </td>
+        <td style="padding: 10px;">
+          <span style="background: ${isAccepted ? '#dcfce7' : '#fef3c7'}; color: ${isAccepted ? '#15803d' : '#92400e'}; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;">${d.status || 'Request Accepted'}</span>
+        </td>
+        <td style="padding: 10px; text-align: center; white-space: nowrap;">
+          <button type="button" onclick="editReferralShareRule(${globalIdx})" title="Edit Share" style="background: #e6f4f1; color: #134e4a; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; margin-right: 4px; font-size: 12px; font-weight: 600;">
+            <i class="fa-solid fa-pen-to-square"></i> Edit
+          </button>
+          <button type="button" onclick="deleteReferralShareRule(${globalIdx})" title="Delete" style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 9px; border-radius: 5px; cursor: pointer;">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+};
 
 // =========================================================
 // LAB PATIENT APPOINTMENTS & BOOKING ENGINE
