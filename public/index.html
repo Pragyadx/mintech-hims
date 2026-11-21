@@ -4689,11 +4689,79 @@
             </div>
         </div>
 
-        <!-- 6. Quick Template Setup -->
-        <div id="lab-subview-quick-setup" class="lab-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
-            <h4 style="margin-top: 0; color: #134e4a;">Quick Template Setup</h4>
+       <!-- 6. Quick Template Setup -->
+        <div id="lab-subview-quick-setup" class="lab-subview" style="display: none;">
+            <div style="display: grid; grid-template-columns: 270px 1fr; gap: 20px; align-items: start;">
+                
+                <!-- Left Panel: Existing Templates / Catalog Selector -->
+                <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px;">
+                    <label style="display: block; font-size: 13px; font-weight: 700; color: #1c2826; margin-bottom: 8px;">Select from Existing Catalog / Groups</label>
+                    <input type="text" id="quick-tpl-search" oninput="filterQuickTemplateList(this.value)" placeholder="Filter templates or tests..." style="width: 100%; box-sizing: border-box; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 12px; margin-bottom: 10px;">
+
+                    <div id="quick-tpl-source-list" style="height: 280px; overflow-y: auto; border: 1px solid #e8e6df; border-radius: 6px; background: #fafaf8; padding: 6px; margin-bottom: 12px;">
+                        <div style="text-align: center; padding: 90px 12px; color: #576561; font-size: 12px;">Loading existing catalog items...</div>
+                    </div>
+
+                    <button type="button" onclick="stageSelectedQuickTemplates()" style="width: 100%; background: #134e4a; color: #ffffff; border: none; padding: 10px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                        <i class="fa-solid fa-file-import"></i> Load Template into Editor
+                    </button>
+                </div>
+
+                <!-- Right Panel: Editable Template Staging Card -->
+                <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 16px; color: #1c2826; font-weight: 700;">Quick Template Staging & Parameter Editor</h4>
+                            <span style="font-size: 12px; color: #576561;">Select existing tests or panels on the left, customize reference ranges, fees, or discounts, and save to your active catalog.</span>
+                        </div>
+                        <button type="button" onclick="addBlankQuickTemplateRow()" style="background: #e6f4f1; color: #134e4a; border: 1px solid #99f6e4; padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-plus"></i> Add Blank Row
+                        </button>
+                    </div>
+
+                    <!-- Optional Group / Template Title -->
+                    <div style="max-width: 380px; margin-bottom: 16px;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 5px;">Save As Category / Group Name (Optional)</label>
+                        <input type="text" id="quick-tpl-group-name" placeholder="Leave blank to save as individual tests only" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+
+                    <!-- Editable Staging Table -->
+                    <div style="overflow-x: auto; margin-bottom: 18px;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                    <th style="padding: 10px;">Test Name</th>
+                                    <th style="padding: 10px;">Test Code</th>
+                                    <th style="padding: 10px;">Range Min</th>
+                                    <th style="padding: 10px;">Range Max</th>
+                                    <th style="padding: 10px;">Unit</th>
+                                    <th style="padding: 10px;">Test Price (₹)</th>
+                                    <th style="padding: 10px;">Discount (%)</th>
+                                    <th style="padding: 10px; text-align: center;">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quick-tpl-staged-tbody">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 30px; color: #576561;">
+                                        Pick items from the left list or click <strong>+ Add Blank Row</strong> to customize parameters.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Cancel & Save Action Bar -->
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 14px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="cancelQuickTemplateSetup()" style="background: #ffffff; color: #b91c1c; border: 1px solid #fca5a5; padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-xmark"></i> Cancel
+                        </button>
+                        <button type="button" id="btn-save-quick-tpl" onclick="saveQuickTemplateSetup()" style="background: #134e4a; color: #ffffff; border: none; padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-check"></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 </section>
 
         <!-- =================================================== -->
@@ -11059,6 +11127,222 @@ window.openLabSection = function(sectionKey) {
     closeImportMasterCategoryModal();
     renderLabCategoriesTable();
   };
+  // =========================================================
+  // QUICK TEMPLATE SETUP ENGINE
+  // =========================================================
+  let quickTemplateSelectedIndices = new Set();
+  let quickTemplateStagedRows = [];
+
+  window.initQuickTemplateSetup = async function() {
+    if (typeof loadMasterLabCatalog === 'function' && (!masterLabCatalog || masterLabCatalog.length === 0)) {
+      await loadMasterLabCatalog();
+    }
+    quickTemplateSelectedIndices.clear();
+    renderQuickTemplateSourceList();
+    renderQuickTemplateStagedTable();
+  };
+
+  window.filterQuickTemplateList = function() {
+    renderQuickTemplateSourceList();
+  };
+
+  window.renderQuickTemplateSourceList = function() {
+    const box = document.getElementById('quick-tpl-source-list');
+    if (!box) return;
+    const q = (document.getElementById('quick-tpl-search')?.value || '').toLowerCase().trim();
+    const list = masterLabCatalog || [];
+
+    if (list.length === 0) {
+      box.innerHTML = '<div style="text-align: center; padding: 80px 10px; color: #576561; font-size: 12px;">No existing tests in catalog yet. Use <strong>+ Add Blank Row</strong> on the right to create new ones.</div>';
+      return;
+    }
+
+    const filtered = list
+      .map((t, idx) => ({ t, idx }))
+      .filter(({ t }) => !q || (t.testName || t.name || '').toLowerCase().includes(q) || (t.testCode || t.code || '').toLowerCase().includes(q));
+
+    if (filtered.length === 0) {
+      box.innerHTML = '<div style="text-align: center; padding: 80px 10px; color: #576561; font-size: 12px;">No matching templates found.</div>';
+      return;
+    }
+
+    box.innerHTML = filtered.map(({ t, idx }) => {
+      const active = quickTemplateSelectedIndices.has(idx);
+      const name = t.testName || t.name || 'Unnamed Test';
+      const price = t.price ?? t.basePrice ?? 0;
+      return `
+        <div onclick="toggleQuickTemplateSourceItem(${idx})" ondblclick="quickTemplateSelectedIndices.add(${idx}); stageSelectedQuickTemplates();" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; margin-bottom: 4px; border-radius: 5px; cursor: pointer; font-size: 12px; background: ${active ? '#e6f4f1' : '#ffffff'}; border: 1px solid ${active ? '#0f766e' : '#e8e6df'};">
+          <span style="font-weight: 600; color: #1c2826;">${name}</span>
+          <span style="color: #134e4a; font-weight: 700;">₹${price}</span>
+        </div>
+      `;
+    }).join('');
+  };
+
+  window.toggleQuickTemplateSourceItem = function(idx) {
+    if (quickTemplateSelectedIndices.has(idx)) quickTemplateSelectedIndices.delete(idx);
+    else quickTemplateSelectedIndices.add(idx);
+    renderQuickTemplateSourceList();
+  };
+
+  window.stageSelectedQuickTemplates = function() {
+    if (quickTemplateSelectedIndices.size === 0) {
+      alert('Click at least one test on the left list first.');
+      return;
+    }
+    quickTemplateSelectedIndices.forEach(idx => {
+      const t = masterLabCatalog[idx];
+      if (!t) return;
+      const ranges = typeof parseRangeParts === 'function' ? parseRangeParts(t) : { min: t.rangeMin || '', max: t.rangeMax || '' };
+      quickTemplateStagedRows.push({
+        testName: t.testName || t.name || '',
+        testCode: t.testCode || t.code || ('TPL-' + Math.floor(1000 + Math.random() * 9000)),
+        rangeMin: ranges.min,
+        rangeMax: ranges.max,
+        unit: t.unit || '',
+        price: t.price ?? t.basePrice ?? 0,
+        discount: t.discountPercent ?? t.discount ?? 0
+      });
+    });
+    quickTemplateSelectedIndices.clear();
+    renderQuickTemplateSourceList();
+    renderQuickTemplateStagedTable();
+  };
+
+  window.addBlankQuickTemplateRow = function() {
+    quickTemplateStagedRows.push({
+      testName: '',
+      testCode: 'TPL-' + Math.floor(1000 + Math.random() * 9000),
+      rangeMin: '',
+      rangeMax: '',
+      unit: '',
+      price: 0,
+      discount: 0
+    });
+    renderQuickTemplateStagedTable();
+  };
+
+  window.renderQuickTemplateStagedTable = function() {
+    const tbody = document.getElementById('quick-tpl-staged-tbody');
+    if (!tbody) return;
+    if (quickTemplateStagedRows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 30px; color: #576561;">Pick items from the left list or click <strong>+ Add Blank Row</strong> to customize parameters.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = quickTemplateStagedRows.map((row, i) => `
+      <tr style="border-bottom: 1px solid #e8e6df;">
+        <td style="padding: 8px;"><input type="text" value="${row.testName}" placeholder="Test Name" onchange="quickTemplateStagedRows[${i}].testName=this.value" style="width: 145px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="text" value="${row.testCode}" placeholder="Code" onchange="quickTemplateStagedRows[${i}].testCode=this.value" style="width: 85px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="text" value="${row.rangeMin}" placeholder="Min" onchange="quickTemplateStagedRows[${i}].rangeMin=this.value" style="width: 60px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="text" value="${row.rangeMax}" placeholder="Max" onchange="quickTemplateStagedRows[${i}].rangeMax=this.value" style="width: 60px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="text" value="${row.unit}" placeholder="Unit" onchange="quickTemplateStagedRows[${i}].unit=this.value" style="width: 65px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="number" min="0" value="${row.price}" onchange="quickTemplateStagedRows[${i}].price=Number(this.value)" style="width: 80px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="number" min="0" max="100" value="${row.discount}" onchange="quickTemplateStagedRows[${i}].discount=Number(this.value)" style="width: 60px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px; text-align: center;">
+          <button type="button" onclick="quickTemplateStagedRows.splice(${i}, 1); renderQuickTemplateStagedTable();" style="background: #fee2e2; color: #b91c1c; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer;">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  };
+
+  window.cancelQuickTemplateSetup = function() {
+    if (quickTemplateStagedRows.length === 0) return;
+    if (confirm('Clear all staged template rows?')) {
+      quickTemplateStagedRows = [];
+      document.getElementById('quick-tpl-group-name').value = '';
+      renderQuickTemplateStagedTable();
+    }
+  };
+
+  window.saveQuickTemplateSetup = async function() {
+    const validRows = quickTemplateStagedRows.filter(r => (r.testName || '').trim() !== '');
+    if (validRows.length === 0) {
+      alert('Please add at least one test with a valid Test Name before saving.');
+      return;
+    }
+
+    const btn = document.getElementById('btn-save-quick-tpl');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; }
+
+    try {
+      const token = localStorage.getItem('token');
+      const savedGroupTests = [];
+      const savedGroupKeys = [];
+      let totalGroupFee = 0;
+
+      for (const row of validRows) {
+        const payload = {
+          testName: row.testName.trim(),
+          testCode: row.testCode.trim() || ('TPL-' + Math.floor(1000 + Math.random() * 9000)),
+          rangeMin: row.rangeMin,
+          rangeMax: row.rangeMax,
+          normalRange: (row.rangeMin || row.rangeMax) ? `${row.rangeMin} - ${row.rangeMax} ${row.unit}`.trim() : '',
+          unit: row.unit,
+          price: Number(row.price) || 0,
+          discountPercent: Number(row.discount) || 0
+        };
+
+        try {
+          const res = await fetch('/api/investigations/tests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            const data = await res.json();
+            const created = data.test || data.data || payload;
+            masterLabCatalog.push(created);
+            const k = getTestKey(created, masterLabCatalog.length - 1);
+            savedGroupKeys.push(k);
+            savedGroupTests.push({ key: k, name: created.testName, price: created.price || 0 });
+          } else {
+            masterLabCatalog.push(payload);
+            const k = getTestKey(payload, masterLabCatalog.length - 1);
+            savedGroupKeys.push(k);
+            savedGroupTests.push({ key: k, name: payload.testName, price: payload.price || 0 });
+          }
+        } catch (_) {
+          masterLabCatalog.push(payload);
+          const k = getTestKey(payload, masterLabCatalog.length - 1);
+          savedGroupKeys.push(k);
+          savedGroupTests.push({ key: k, name: payload.testName, price: payload.price || 0 });
+        }
+        totalGroupFee += payload.price;
+      }
+
+      const groupName = document.getElementById('quick-tpl-group-name').value.trim();
+      if (groupName && typeof hospitalLabCategories !== 'undefined') {
+        const now = formatTimestampNow();
+        hospitalLabCategories.push({
+          name: groupName,
+          status: 'Active',
+          scheme: 'Standard',
+          testKeys: savedGroupKeys,
+          tests: savedGroupTests,
+          baseTotal: totalGroupFee,
+          discountPct: 0,
+          discountAmt: 0,
+          finalPrice: totalGroupFee,
+          createdAt: now,
+          modifiedAt: now
+        });
+        persistLabCategories();
+      }
+
+      quickTemplateStagedRows = [];
+      document.getElementById('quick-tpl-group-name').value = '';
+      renderQuickTemplateSourceList();
+      renderQuickTemplateStagedTable();
+      alert(groupName
+        ? `Saved ${validRows.length} test(s) and created category "${groupName}"!`
+        : `Saved ${validRows.length} test(s) to your hospital catalog!`);
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i> Save'; }
+    }
+  };
   if (typeof switchTab === 'function') {
     switchTab('lab');
   }
@@ -14896,6 +15180,7 @@ function openLabSection(sectionKey) {
   if (sectionKey === 'create-package' && typeof initCreateHealthPackage === 'function') initCreateHealthPackage();
   if (sectionKey === 'package-list' && typeof loadAllHealthPackages === 'function') loadAllHealthPackages();
   if (sectionKey === 'categories' && typeof loadLabCategoriesView === 'function') loadLabCategoriesView();
+  if (sectionKey === 'quick-setup' && typeof initQuickTemplateSetup === 'function') initQuickTemplateSetup();
 }
 
 </script>
