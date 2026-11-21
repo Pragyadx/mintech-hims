@@ -4000,9 +4000,245 @@
             </div>
         </div>
 
-        <!-- 2. Test Price List -->
-        <div id="lab-subview-test-list" class="lab-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
-            <h4 style="margin-top: 0; color: #134e4a;">Test Price List</h4>
+        <!-- 2. Test Price List & Price Schemes -->
+        <div id="lab-subview-test-list" class="lab-subview" style="display: none;">
+            
+            <!-- MAIN VIEW: TEST PRICE LIST -->
+            <div id="lab-pricelist-main-card" style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
+                <!-- Top Action Ribbon -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button type="button" onclick="openPriceSchemesPanel()" style="background: #134e4a; color: #ffffff; border: none; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 7px;">
+                            <i class="fa-solid fa-tags"></i> Price Schemes
+                        </button>
+                        <button type="button" onclick="openLabSection('new-test')" style="background: #e6f4f1; color: #134e4a; border: 1px solid #99f6e4; padding: 9px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-plus"></i> Add New Test
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button type="button" onclick="exportLabTestsCSV()" style="background: #0f766e; color: #ffffff; border: none; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 7px;">
+                            <i class="fa-solid fa-file-export"></i> Export Tests (CSV)
+                        </button>
+                        <button type="button" onclick="openImportTestsModal()" style="background: #ffffff; color: #134e4a; border: 1px solid #134e4a; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 7px;">
+                            <i class="fa-solid fa-file-import"></i> Import Tests (CSV)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Entries & Search Filter Bar -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: #fafaf8; padding: 12px 14px; border: 1px solid #e8e6df; border-radius: 6px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <span>Show</span>
+                        <select id="pricelist-page-size" onchange="changePriceListPageSize(this.value)" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; background: #ffffff;">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span>entries</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <label for="pricelist-search-input">Search:</label>
+                        <input type="text" id="pricelist-search-input" oninput="filterPriceListTable(this.value)" placeholder="Filter by name, code, or unit..." style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; width: 230px;">
+                    </div>
+                </div>
+
+                <!-- Test Price Table -->
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                <th style="padding: 10px;">#</th>
+                                <th style="padding: 10px;">Test Name</th>
+                                <th style="padding: 10px;">Test Code</th>
+                                <th style="padding: 10px;">Range Min</th>
+                                <th style="padding: 10px;">Range Max</th>
+                                <th style="padding: 10px;">Unit</th>
+                                <th style="padding: 10px;">Standard Fee (₹)</th>
+                                <th style="padding: 10px;">Discount (%)</th>
+                                <th style="padding: 10px; text-align: center;">View</th>
+                                <th style="padding: 10px; text-align: center;">Edit</th>
+                                <th style="padding: 10px; text-align: center;">Delete</th>
+                                <th style="padding: 10px; text-align: center;">Scheme Rates</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lab-pricelist-tbody">
+                            <tr>
+                                <td colspan="12" style="text-align: center; padding: 30px; color: #576561;">Loading hospital test catalog...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e6df; font-size: 13px; color: #576561;">
+                    <div id="pricelist-showing-info">Showing 0 to 0 of 0 entries</div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button type="button" id="pricelist-prev-btn" onclick="changePriceListPage(-1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Previous</button>
+                        <span id="pricelist-page-indicator" style="padding: 6px 12px; background: #134e4a; color: #ffffff; border-radius: 5px; font-weight: 600;">1</span>
+                        <button type="button" id="pricelist-next-btn" onclick="changePriceListPage(1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-VIEW: PRICE SCHEMES MANAGER -->
+            <div id="lab-price-schemes-card" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 10px;">
+                    <div>
+                        <h4 style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Hospital Rate Schemes & Tariffs</h4>
+                        <p style="margin: 4px 0 0; font-size: 13px; color: #576561;">Define custom billing tiers for cash patients, corporate tie-ups, insurance TPAs, or health camps, and assign test-specific rates.</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" onclick="closePriceSchemesPanel()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 9px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Price List
+                        </button>
+                        <button type="button" onclick="openNewPriceSchemeModal()" style="background: #134e4a; color: #ffffff; border: none; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-plus"></i> Add New Price Scheme
+                        </button>
+                    </div>
+                </div>
+
+                <div style="overflow-x: auto; margin-top: 16px;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                <th style="padding: 10px;">#</th>
+                                <th style="padding: 10px;">Scheme Name</th>
+                                <th style="padding: 10px;">Description</th>
+                                <th style="padding: 10px;">Scope</th>
+                                <th style="padding: 10px;">Status</th>
+                                <th style="padding: 10px; text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="price-schemes-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Add / Edit Price Scheme -->
+        <div id="modal-price-scheme" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+            <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 460px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 id="modal-scheme-title" style="margin: 0; font-size: 15px; font-weight: 600;">New Price Scheme</h4>
+                    <button type="button" onclick="closeNewPriceSchemeModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px;">
+                    <input type="hidden" id="edit-scheme-index" value="-1">
+                    <div style="margin-bottom: 14px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #1c2826; margin-bottom: 6px;">Availability Scope</label>
+                        <div style="display: flex; gap: 16px; font-size: 13px; color: #1c2826;">
+                            <label style="cursor: pointer;"><input type="radio" name="scheme-scope" value="Facility Only" checked> This Facility Only</label>
+                            <label style="cursor: pointer;"><input type="radio" name="scheme-scope" value="Network Wide"> Network / Global Scheme</label>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 14px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #1c2826; margin-bottom: 6px;">Scheme Name <span style="color: #dc2626;">*</span></label>
+                        <input type="text" id="scheme-name-input" placeholder="e.g., Corporate Panel, TPA Insurance, Health Camp" style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+                    <div style="margin-bottom: 14px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #1c2826; margin-bottom: 6px;">Description / Tariff Notes</label>
+                        <input type="text" id="scheme-desc-input" placeholder="Optional note about billing rules or discount eligibility" style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+                    <div style="margin-bottom: 18px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #1c2826; margin-bottom: 6px;">Status</label>
+                        <select id="scheme-status-input" style="width: 100%; padding: 9px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 12px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closeNewPriceSchemeModal()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Close</button>
+                        <button type="button" onclick="savePriceScheme()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Scheme</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Import Tests via CSV -->
+        <div id="modal-import-tests" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+            <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 500px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 style="margin: 0; font-size: 15px; font-weight: 600;"><i class="fa-solid fa-file-csv" style="margin-right: 8px;"></i>Bulk Import Diagnostic Tests</h4>
+                    <button type="button" onclick="closeImportTestsModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 14px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #1c2826; margin-bottom: 8px;">Select CSV Spreadsheet <span style="color: #dc2626;">*</span></label>
+                        <input type="file" id="import-tests-csv-file" accept=".csv" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px dashed #0f766e; border-radius: 6px; background: #f8faf9; font-size: 13px;">
+                    </div>
+                    <div style="background: #f8faf9; border-left: 3px solid #0f766e; padding: 10px 12px; border-radius: 4px; font-size: 12px; color: #576561; margin-bottom: 16px; line-height: 1.5;">
+                        <strong>CSV Formatting Guide:</strong> Include columns <code style="color: #134e4a;">Test Name, Test Code, Range Min, Range Max, Unit, Test Price, Discount</code>. To import scheme-specific pricing simultaneously, add columns formatted as <code style="color: #134e4a;">price_Corporate</code> or <code style="color: #134e4a;">price_Insurance</code>—any new scheme columns are registered automatically.
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <button type="button" onclick="downloadSampleLabCSV()" style="background: transparent; color: #0f766e; border: none; padding: 0; font-size: 12px; font-weight: 600; text-decoration: underline; cursor: pointer;">
+                            <i class="fa-solid fa-download"></i> Download Sample CSV Template
+                        </button>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 12px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closeImportTestsModal()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Close</button>
+                        <button type="button" id="btn-run-csv-import" onclick="processImportedTestsCSV()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Upload & Save to Catalog</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Edit Test / Manage Per-Test Scheme Prices -->
+        <div id="modal-edit-lab-test" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+            <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 540px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 id="modal-edit-test-title" style="margin: 0; font-size: 15px; font-weight: 600;">Edit Test & Scheme Rates</h4>
+                    <button type="button" onclick="closeEditLabTestModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px; max-height: 80vh; overflow-y: auto;">
+                    <input type="hidden" id="edit-test-id">
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Test Name</label>
+                            <input type="text" id="edit-test-name" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Test Code</label>
+                            <input type="text" id="edit-test-code" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Range Min</label>
+                            <input type="text" id="edit-test-min" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Range Max</label>
+                            <input type="text" id="edit-test-max" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Unit</label>
+                            <input type="text" id="edit-test-unit" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Standard Fee (₹)</label>
+                            <input type="number" id="edit-test-price" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Discount (%)</label>
+                            <input type="number" id="edit-test-discount" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                    </div>
+
+                    <!-- Custom Scheme Rates for this Test -->
+                    <div style="background: #fafaf8; border: 1px solid #e8e6df; border-radius: 6px; padding: 12px; margin-bottom: 16px;">
+                        <div style="font-size: 12px; font-weight: 700; color: #134e4a; text-transform: uppercase; margin-bottom: 8px;">Scheme-Specific Pricing (₹)</div>
+                        <div id="edit-test-scheme-rates-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"></div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 12px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closeEditLabTestModal()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+                        <button type="button" id="btn-save-edited-test" onclick="saveEditedLabTest()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Changes</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 3. Create Health Package -->
@@ -9004,6 +9240,477 @@ window.openLabSection = function(sectionKey) {
     } finally {
       if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Test to Catalog'; }
     }
+  };
+  // =========================================================
+  // TEST PRICE LIST, CSV EXPORT/IMPORT & PRICE SCHEMES ENGINE
+  // =========================================================
+  let priceListState = {
+    page: 1,
+    pageSize: 10,
+    search: ''
+  };
+
+  let hospitalPriceSchemes = JSON.parse(localStorage.getItem('arvion_lab_price_schemes') || 'null') || [
+    { name: 'Standard', description: 'Default hospital walk-in rate card', scope: 'Facility Only', status: 'Active', isDefault: true },
+    { name: 'Cash', description: 'Direct counter cash tariff', scope: 'Facility Only', status: 'Active', isDefault: true }
+  ];
+
+  function persistPriceSchemes() {
+    localStorage.setItem('arvion_lab_price_schemes', JSON.stringify(hospitalPriceSchemes));
+  }
+
+  window.loadTestPriceList = async function() {
+    await loadMasterLabCatalog();
+    renderPriceListTable();
+  };
+
+  window.changePriceListPageSize = function(val) {
+    priceListState.pageSize = Number(val) || 10;
+    priceListState.page = 1;
+    renderPriceListTable();
+  };
+
+  window.filterPriceListTable = function(q) {
+    priceListState.search = (q || '').toLowerCase().trim();
+    priceListState.page = 1;
+    renderPriceListTable();
+  };
+
+  window.changePriceListPage = function(delta) {
+    priceListState.page += delta;
+    if (priceListState.page < 1) priceListState.page = 1;
+    renderPriceListTable();
+  };
+
+  function getFilteredPriceList() {
+    const q = priceListState.search;
+    if (!q) return masterLabCatalog;
+    return masterLabCatalog.filter(t =>
+      (t.testName || t.name || '').toLowerCase().includes(q) ||
+      (t.testCode || t.code || '').toLowerCase().includes(q) ||
+      (t.unit || '').toLowerCase().includes(q)
+    );
+  }
+
+  function parseRangeParts(t) {
+    if (t.rangeMin !== undefined || t.rangeMax !== undefined) {
+      return { min: t.rangeMin || '', max: t.rangeMax || '' };
+    }
+    const nr = (t.normalRange || '').trim();
+    if (nr.includes('-')) {
+      const parts = nr.split('-');
+      return { min: parts[0].trim(), max: (parts[1] || '').replace(/[a-zA-Z/%]+/g, '').trim() };
+    }
+    return { min: '', max: '' };
+  }
+
+  window.renderPriceListTable = function() {
+    const tbody = document.getElementById('lab-pricelist-tbody');
+    const info = document.getElementById('pricelist-showing-info');
+    const pageInd = document.getElementById('pricelist-page-indicator');
+    if (!tbody) return;
+
+    const filtered = getFilteredPriceList();
+    const total = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(total / priceListState.pageSize));
+    if (priceListState.page > totalPages) priceListState.page = totalPages;
+
+    const startIdx = (priceListState.page - 1) * priceListState.pageSize;
+    const pageItems = filtered.slice(startIdx, startIdx + priceListState.pageSize);
+
+    if (pageInd) pageInd.textContent = `${priceListState.page} / ${totalPages}`;
+    if (info) {
+      info.textContent = total === 0
+        ? 'Showing 0 to 0 of 0 entries'
+        : `Showing ${startIdx + 1} to ${Math.min(startIdx + priceListState.pageSize, total)} of ${total} entries`;
+    }
+
+    if (pageItems.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 32px; color: #576561;">No diagnostic tests found. Use <strong>Add New Test</strong> or <strong>Import Tests (CSV)</strong> to populate your catalog.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = pageItems.map((t, i) => {
+      const globalIndex = masterLabCatalog.indexOf(t);
+      const ranges = parseRangeParts(t);
+      const price = t.price ?? t.basePrice ?? 0;
+      const discount = t.discountPercent ?? t.discount ?? 0;
+      return `
+        <tr style="border-bottom: 1px solid #e8e6df;">
+          <td style="padding: 10px; color: #576561;">${startIdx + i + 1}</td>
+          <td style="padding: 10px; font-weight: 600; color: #1c2826;">${t.testName || t.name || 'Unnamed'}</td>
+          <td style="padding: 10px; color: #576561;">${t.testCode || t.code || '-'}</td>
+          <td style="padding: 10px;">${ranges.min || '-'}</td>
+          <td style="padding: 10px;">${ranges.max || '-'}</td>
+          <td style="padding: 10px;">${t.unit || '-'}</td>
+          <td style="padding: 10px; font-weight: 600; color: #134e4a;">₹${price}</td>
+          <td style="padding: 10px;">${discount}%</td>
+          <td style="padding: 10px; text-align: center;">
+            <button type="button" onclick="viewLabTestDetails(${globalIndex})" title="View Details" style="background: #f1f5f9; color: #1c2826; border: none; padding: 6px 9px; border-radius: 5px; cursor: pointer;"><i class="fa-solid fa-eye"></i></button>
+          </td>
+          <td style="padding: 10px; text-align: center;">
+            <button type="button" onclick="openEditLabTestModal(${globalIndex})" title="Edit Test" style="background: #e6f4f1; color: #134e4a; border: none; padding: 6px 9px; border-radius: 5px; cursor: pointer;"><i class="fa-solid fa-pen-to-square"></i></button>
+          </td>
+          <td style="padding: 10px; text-align: center;">
+            <button type="button" onclick="deleteLabTestItem(${globalIndex})" title="Delete Test" style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 9px; border-radius: 5px; cursor: pointer;"><i class="fa-solid fa-trash-can"></i></button>
+          </td>
+          <td style="padding: 10px; text-align: center;">
+            <button type="button" onclick="openEditLabTestModal(${globalIndex}, true)" title="Configure Scheme Rates" style="background: #fef3c7; color: #92400e; border: none; padding: 6px 9px; border-radius: 5px; cursor: pointer;"><i class="fa-solid fa-money-bill-wave"></i></button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  };
+
+  window.viewLabTestDetails = function(idx) {
+    const t = masterLabCatalog[idx];
+    if (!t) return;
+    const ranges = parseRangeParts(t);
+    const schemeRates = t.schemePrices || {};
+    const schemeLines = hospitalPriceSchemes.map(s => `• ${s.name}: ₹${schemeRates[s.name] ?? (t.price || 0)}`).join('\n');
+    alert(
+      `Test: ${t.testName || t.name}\n` +
+      `Code: ${t.testCode || t.code || 'N/A'}\n` +
+      `Reference Range: ${ranges.min || '0'} - ${ranges.max || '0'} ${t.unit || ''}\n` +
+      `Standard Price: ₹${t.price || 0} (Discount: ${t.discountPercent || 0}%)\n\n` +
+      `Scheme Tariffs:\n${schemeLines}`
+    );
+  };
+
+  window.openEditLabTestModal = function(idx, focusSchemes = false) {
+    const t = masterLabCatalog[idx];
+    if (!t) return;
+    const ranges = parseRangeParts(t);
+    document.getElementById('edit-test-id').value = idx;
+    document.getElementById('edit-test-name').value = t.testName || t.name || '';
+    document.getElementById('edit-test-code').value = t.testCode || t.code || '';
+    document.getElementById('edit-test-min').value = ranges.min;
+    document.getElementById('edit-test-max').value = ranges.max;
+    document.getElementById('edit-test-unit').value = t.unit || '';
+    document.getElementById('edit-test-price').value = t.price ?? t.basePrice ?? 0;
+    document.getElementById('edit-test-discount').value = t.discountPercent ?? t.discount ?? 0;
+
+    const container = document.getElementById('edit-test-scheme-rates-container');
+    const existingRates = t.schemePrices || {};
+    container.innerHTML = hospitalPriceSchemes.map(s => `
+      <div>
+        <label style="display: block; font-size: 11px; font-weight: 600; color: #576561; margin-bottom: 3px;">${s.name} (${s.status})</label>
+        <input type="number" class="scheme-rate-input" data-scheme="${s.name}" value="${existingRates[s.name] ?? (t.price || 0)}" style="width: 100%; box-sizing: border-box; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px;">
+      </div>
+    `).join('');
+
+    document.getElementById('modal-edit-lab-test').style.display = 'flex';
+  };
+
+  window.closeEditLabTestModal = function() {
+    document.getElementById('modal-edit-lab-test').style.display = 'none';
+  };
+
+  window.saveEditedLabTest = async function() {
+    const idx = Number(document.getElementById('edit-test-id').value);
+    const t = masterLabCatalog[idx];
+    if (!t) return;
+
+    const updatedName = document.getElementById('edit-test-name').value.trim();
+    const updatedCode = document.getElementById('edit-test-code').value.trim();
+    const minVal = document.getElementById('edit-test-min').value.trim();
+    const maxVal = document.getElementById('edit-test-max').value.trim();
+    const unitVal = document.getElementById('edit-test-unit').value.trim();
+    const priceVal = Number(document.getElementById('edit-test-price').value) || 0;
+    const discountVal = Number(document.getElementById('edit-test-discount').value) || 0;
+
+    const schemePrices = {};
+    document.querySelectorAll('.scheme-rate-input').forEach(inp => {
+      schemePrices[inp.dataset.scheme] = Number(inp.value) || 0;
+    });
+
+    const payload = {
+      ...t,
+      testName: updatedName,
+      testCode: updatedCode,
+      rangeMin: minVal,
+      rangeMax: maxVal,
+      normalRange: (minVal || maxVal) ? `${minVal} - ${maxVal} ${unitVal}`.trim() : '',
+      unit: unitVal,
+      price: priceVal,
+      discountPercent: discountVal,
+      schemePrices
+    };
+
+    try {
+      const token = localStorage.getItem('token');
+      if (t._id) {
+        await fetch(`/api/investigations/tests/${t._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify(payload)
+        });
+      }
+      masterLabCatalog[idx] = payload;
+      closeEditLabTestModal();
+      renderPriceListTable();
+    } catch (err) {
+      alert('Failed to update test: ' + err.message);
+    }
+  };
+
+  window.deleteLabTestItem = async function(idx) {
+    const t = masterLabCatalog[idx];
+    if (!t) return;
+    if (!confirm(`Delete "${t.testName || t.name}" from your hospital catalog?`)) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      if (t._id) {
+        await fetch(`/api/investigations/tests/${t._id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      }
+      masterLabCatalog.splice(idx, 1);
+      renderPriceListTable();
+    } catch (err) {
+      alert('Error deleting test: ' + err.message);
+    }
+  };
+
+  // --- RUNNABLE CSV EXPORT ---
+  window.exportLabTestsCSV = function() {
+    const schemeCols = hospitalPriceSchemes.map(s => `price_${s.name.replace(/\s+/g, '_')}`);
+    const headers = ['Test Name', 'Test Code', 'Range Min', 'Range Max', 'Unit', 'Test Price', 'Discount', ...schemeCols];
+
+    const rows = masterLabCatalog.map(t => {
+      const r = parseRangeParts(t);
+      const base = t.price ?? t.basePrice ?? 0;
+      const schemeVals = hospitalPriceSchemes.map(s => (t.schemePrices && t.schemePrices[s.name] !== undefined) ? t.schemePrices[s.name] : base);
+      return [
+        `"${(t.testName || t.name || '').replace(/"/g, '""')}"`,
+        `"${(t.testCode || t.code || '').replace(/"/g, '""')}"`,
+        `"${r.min}"`,
+        `"${r.max}"`,
+        `"${t.unit || ''}"`,
+        base,
+        t.discountPercent ?? t.discount ?? 0,
+        ...schemeVals
+      ].join(',');
+    });
+
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `ArvionHIMS_Lab_Price_List_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // --- RUNNABLE CSV IMPORT ---
+  window.openImportTestsModal = function() {
+    document.getElementById('modal-import-tests').style.display = 'flex';
+  };
+
+  window.closeImportTestsModal = function() {
+    document.getElementById('modal-import-tests').style.display = 'none';
+  };
+
+  window.downloadSampleLabCSV = function() {
+    const sample = [
+      'Test Name,Test Code,Range Min,Range Max,Unit,Test Price,Discount,price_Standard,price_Corporate',
+      '"Complete Blood Count (CBC)","CBC-01","4.5","11.0","10^3/uL",350,0,350,300',
+      '"Fasting Blood Glucose","FBG-02","70","100","mg/dL",120,0,120,100'
+    ].join('\n');
+    const blob = new Blob([sample], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ArvionHIMS_Sample_Test_Import.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  window.processImportedTestsCSV = function() {
+    const fileInput = document.getElementById('import-tests-csv-file');
+    const file = fileInput?.files?.[0];
+    if (!file) {
+      alert('Please select a CSV file first.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      const text = e.target.result;
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+      if (lines.length < 2) {
+        alert('The uploaded CSV file has no data rows.');
+        return;
+      }
+
+      const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
+      const schemeColumns = headers.filter(h => h.toLowerCase().startsWith('price_'));
+
+      // Auto-register any new scheme columns found in CSV
+      schemeColumns.forEach(col => {
+        const schemeName = col.slice(6).replace(/_/g, ' ').trim();
+        if (schemeName && !hospitalPriceSchemes.some(s => s.name.toLowerCase() === schemeName.toLowerCase())) {
+          hospitalPriceSchemes.push({
+            name: schemeName,
+            description: 'Imported via CSV rate sheet',
+            scope: 'Facility Only',
+            status: 'Active',
+            isDefault: false
+          });
+        }
+      });
+      persistPriceSchemes();
+
+      const token = localStorage.getItem('token');
+      let importedCount = 0;
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
+        const clean = cols.map(c => c.replace(/^"|"$/g, '').trim());
+        const rowObj = {};
+        headers.forEach((h, idx) => { rowObj[h] = clean[idx] || ''; });
+
+        const testName = rowObj['Test Name'] || rowObj['testName'];
+        if (!testName) continue;
+
+        const schemePrices = {};
+        schemeColumns.forEach(col => {
+          const sName = col.slice(6).replace(/_/g, ' ').trim();
+          if (rowObj[col] !== '') schemePrices[sName] = Number(rowObj[col]) || 0;
+        });
+
+        const newTest = {
+          testName,
+          testCode: rowObj['Test Code'] || ('IMP-' + Math.floor(1000 + Math.random() * 9000)),
+          rangeMin: rowObj['Range Min'] || '',
+          rangeMax: rowObj['Range Max'] || '',
+          normalRange: (rowObj['Range Min'] || rowObj['Range Max']) ? `${rowObj['Range Min']} - ${rowObj['Range Max']} ${rowObj['Unit'] || ''}`.trim() : '',
+          unit: rowObj['Unit'] || '',
+          price: Number(rowObj['Test Price']) || 0,
+          discountPercent: Number(rowObj['Discount']) || 0,
+          schemePrices
+        };
+
+        try {
+          const res = await fetch('/api/investigations/tests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(newTest)
+          });
+          if (res.ok) {
+            const saved = await res.json();
+            masterLabCatalog.push(saved.test || saved.data || newTest);
+          } else {
+            masterLabCatalog.push(newTest);
+          }
+          importedCount++;
+        } catch (_) {
+          masterLabCatalog.push(newTest);
+          importedCount++;
+        }
+      }
+
+      fileInput.value = '';
+      closeImportTestsModal();
+      renderPriceListTable();
+      alert(`Successfully imported ${importedCount} diagnostic test(s)!`);
+    };
+    reader.readAsText(file);
+  };
+
+  // --- PRICE SCHEMES MANAGER ---
+  window.openPriceSchemesPanel = function() {
+    document.getElementById('lab-pricelist-main-card').style.display = 'none';
+    document.getElementById('lab-price-schemes-card').style.display = 'block';
+    renderPriceSchemesTable();
+  };
+
+  window.closePriceSchemesPanel = function() {
+    document.getElementById('lab-price-schemes-card').style.display = 'none';
+    document.getElementById('lab-pricelist-main-card').style.display = 'block';
+  };
+
+  window.renderPriceSchemesTable = function() {
+    const tbody = document.getElementById('price-schemes-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = hospitalPriceSchemes.map((s, idx) => `
+      <tr style="border-bottom: 1px solid #e8e6df;">
+        <td style="padding: 10px; color: #576561;">${idx + 1}</td>
+        <td style="padding: 10px; font-weight: 700; color: #1c2826;">${s.name}</td>
+        <td style="padding: 10px; color: #576561;">${s.description || '-'}</td>
+        <td style="padding: 10px;">
+          <span style="background: #e6f4f1; color: #134e4a; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600;">${s.scope || 'Facility Only'}</span>
+        </td>
+        <td style="padding: 10px;">
+          <span style="background: ${s.status === 'Active' ? '#dcfce7' : '#f1f5f9'}; color: ${s.status === 'Active' ? '#15803d' : '#64748b'}; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 600;">${s.status}</span>
+        </td>
+        <td style="padding: 10px; text-align: right; display: flex; justify-content: flex-end; gap: 6px;">
+          <button type="button" onclick="openNewPriceSchemeModal(${idx})" style="background: #e6f4f1; color: #134e4a; border: none; padding: 6px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer;">
+            <i class="fa-solid fa-pen"></i> Edit
+          </button>
+          <button type="button" onclick="closePriceSchemesPanel()" style="background: #0f766e; color: #ffffff; border: none; padding: 6px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer;">
+            <i class="fa-solid fa-list"></i> View Test Prices
+          </button>
+          ${s.isDefault ? '' : `<button type="button" onclick="deletePriceScheme(${idx})" style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer;"><i class="fa-solid fa-trash"></i> Delete</button>`}
+        </td>
+      </tr>
+    `).join('');
+  };
+
+  window.openNewPriceSchemeModal = function(editIdx = -1) {
+    document.getElementById('edit-scheme-index').value = editIdx;
+    if (editIdx >= 0 && hospitalPriceSchemes[editIdx]) {
+      const s = hospitalPriceSchemes[editIdx];
+      document.getElementById('modal-scheme-title').textContent = 'Edit Price Scheme';
+      document.getElementById('scheme-name-input').value = s.name;
+      document.getElementById('scheme-desc-input').value = s.description || '';
+      document.getElementById('scheme-status-input').value = s.status || 'Active';
+    } else {
+      document.getElementById('modal-scheme-title').textContent = 'Add New Price Scheme';
+      document.getElementById('scheme-name-input').value = '';
+      document.getElementById('scheme-desc-input').value = '';
+      document.getElementById('scheme-status-input').value = 'Active';
+    }
+    document.getElementById('modal-price-scheme').style.display = 'flex';
+  };
+
+  window.closeNewPriceSchemeModal = function() {
+    document.getElementById('modal-price-scheme').style.display = 'none';
+  };
+
+  window.savePriceScheme = function() {
+    const name = document.getElementById('scheme-name-input').value.trim();
+    if (!name) {
+      alert('Please enter a Scheme Name.');
+      return;
+    }
+    const desc = document.getElementById('scheme-desc-input').value.trim();
+    const status = document.getElementById('scheme-status-input').value;
+    const scopeEl = document.querySelector('input[name="scheme-scope"]:checked');
+    const scope = scopeEl ? scopeEl.value : 'Facility Only';
+    const editIdx = Number(document.getElementById('edit-scheme-index').value);
+
+    if (editIdx >= 0 && hospitalPriceSchemes[editIdx]) {
+      hospitalPriceSchemes[editIdx] = { ...hospitalPriceSchemes[editIdx], name, description: desc, status, scope };
+    } else {
+      hospitalPriceSchemes.push({ name, description: desc, status, scope, isDefault: false });
+    }
+
+    persistPriceSchemes();
+    closeNewPriceSchemeModal();
+    renderPriceSchemesTable();
+  };
+
+  window.deletePriceScheme = function(idx) {
+    if (!confirm(`Delete price scheme "${hospitalPriceSchemes[idx].name}"?`)) return;
+    hospitalPriceSchemes.splice(idx, 1);
+    persistPriceSchemes();
+    renderPriceSchemesTable();
   };
   if (typeof switchTab === 'function') {
     switchTab('lab');
