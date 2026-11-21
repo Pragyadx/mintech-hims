@@ -5375,11 +5375,112 @@
         </div>
 
         <!-- 2. Doctor Directory -->
-        <div id="lab-doctor-subview-doctor-directory" class="lab-doctor-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
-            <h4 style="margin-top: 0; color: #134e4a;">Doctor Directory</h4>
-            <p style="font-size: 13px; color: #576561;">Connected referring doctors, clinics, and partnership status.</p>
+        <div id="lab-doctor-subview-doctor-directory" class="lab-doctor-subview" style="display: none;">
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
+                
+                <!-- Header & + Add Doctor Button -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <div>
+                        <h4 style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Connected Referral Doctor Directory</h4>
+                        <span style="font-size: 12px; color: #576561;">Review connected clinics, approve pending doctor requests, and edit referral share terms.</span>
+                    </div>
+                    <button type="button" onclick="openDoctorDirectoryModal(-1)" style="background: #134e4a; color: #ffffff; border: none; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 7px;">
+                        <i class="fa-solid fa-user-plus"></i> Add Connected Doctor
+                    </button>
+                </div>
+
+                <!-- Show Entries & Search Bar -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: #fafaf8; padding: 12px 14px; border: 1px solid #e8e6df; border-radius: 6px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <span>Show</span>
+                        <select id="docdir-page-size" onchange="changeDocDirPageSize(this.value)" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; background: #ffffff;">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span>entries</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <label for="docdir-search-input">Search:</label>
+                        <input type="text" id="docdir-search-input" oninput="filterDocDirTable(this.value)" placeholder="Search doctor, clinic, or address..." style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; width: 240px;">
+                    </div>
+                </div>
+
+                <!-- Directory Table -->
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                <th style="padding: 10px;">Connected Lab</th>
+                                <th style="padding: 10px;">Share (%)</th>
+                                <th style="padding: 10px;">Doctor Name</th>
+                                <th style="padding: 10px;">Clinic Name</th>
+                                <th style="padding: 10px;">Clinic Address</th>
+                                <th style="padding: 10px; text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lab-docdir-tbody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 32px; color: #576561;">No connected doctors listed yet. Click <strong>+ Add Connected Doctor</strong> or configure a doctor under <strong>Referral Share</strong>.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e6df; font-size: 13px; color: #576561;">
+                    <div id="docdir-showing-info">Showing 0 to 0 of 0 entries</div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button type="button" onclick="changeDocDirPage(-1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Previous</button>
+                        <span id="docdir-page-indicator" style="padding: 6px 12px; background: #134e4a; color: #ffffff; border-radius: 5px; font-weight: 600;">1</span>
+                        <button type="button" onclick="changeDocDirPage(1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Next</button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <!-- Modal: Add / Edit Connected Doctor -->
+        <div id="modal-doctor-directory" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+            <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 500px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.18);">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 id="modal-docdir-title" style="margin: 0; font-size: 15px; font-weight: 700;"><i class="fa-solid fa-user-doctor" style="margin-right: 8px;"></i>Connected Doctor Details</h4>
+                    <button type="button" onclick="closeDoctorDirectoryModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px;">
+                    <input type="hidden" id="docdir-edit-idx" value="-1">
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Doctor Name <span style="color: #dc2626;">*</span></label>
+                        <input type="text" id="docdir-name-input" placeholder="e.g., Dr. A. Sharma" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; margin-bottom: 12px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Clinic / Hospital Name</label>
+                            <input type="text" id="docdir-clinic-input" placeholder="e.g., Metro Polyclinic" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Share (%)</label>
+                            <input type="number" id="docdir-share-input" min="0" max="100" step="0.5" value="0" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Clinic Address</label>
+                        <input type="text" id="docdir-address-input" placeholder="Street, Sector, City" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+                    <div style="margin-bottom: 18px;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Request Status</label>
+                        <select id="docdir-status-input" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
+                            <option value="Request Accepted">Request Accepted</option>
+                            <option value="Pending Request">Pending Request</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 12px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closeDoctorDirectoryModal()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+                        <button type="button" onclick="saveDoctorDirectoryRecord()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Doctor</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 </section>
 
         <!-- =================================================== -->
@@ -16033,6 +16134,180 @@ window.renderReferralShareTable = function() {
       </tr>
     `;
   }).join('');
+};
+// =========================================================
+// DOCTOR DIRECTORY ENGINE
+// =========================================================
+let docDirTableState = { page: 1, pageSize: 10, search: '' };
+
+function getActiveFacilityName() {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return user.hospitalName || user.labName || 'Central Diagnostic Lab';
+  } catch (_) {
+    return 'Central Diagnostic Lab';
+  }
+}
+
+window.loadLabDoctorDirectoryView = function() {
+  hospitalReferralDoctors = JSON.parse(localStorage.getItem('arvion_lab_referral_doctors') || '[]');
+  renderDoctorDirectoryTable();
+};
+
+window.changeDocDirPageSize = function(val) {
+  docDirTableState.pageSize = Number(val) || 10;
+  docDirTableState.page = 1;
+  renderDoctorDirectoryTable();
+};
+
+window.filterDocDirTable = function(q) {
+  docDirTableState.search = (q || '').toLowerCase().trim();
+  docDirTableState.page = 1;
+  renderDoctorDirectoryTable();
+};
+
+window.changeDocDirPage = function(delta) {
+  docDirTableState.page += delta;
+  if (docDirTableState.page < 1) docDirTableState.page = 1;
+  renderDoctorDirectoryTable();
+};
+
+window.renderDoctorDirectoryTable = function() {
+  const tbody = document.getElementById('lab-docdir-tbody');
+  const info = document.getElementById('docdir-showing-info');
+  const pageInd = document.getElementById('docdir-page-indicator');
+  if (!tbody) return;
+
+  const q = docDirTableState.search;
+  const filtered = !q
+    ? hospitalReferralDoctors
+    : hospitalReferralDoctors.filter(d =>
+        (d.doctorName || '').toLowerCase().includes(q) ||
+        (d.clinicName || '').toLowerCase().includes(q) ||
+        (d.clinicAddress || '').toLowerCase().includes(q)
+      );
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / docDirTableState.pageSize));
+  if (docDirTableState.page > totalPages) docDirTableState.page = totalPages;
+
+  const startIdx = (docDirTableState.page - 1) * docDirTableState.pageSize;
+  const pageItems = filtered.slice(startIdx, startIdx + docDirTableState.pageSize);
+
+  if (pageInd) pageInd.textContent = `${docDirTableState.page} / ${totalPages}`;
+  if (info) {
+    info.textContent = total === 0
+      ? 'Showing 0 to 0 of 0 entries'
+      : `Showing ${startIdx + 1} to ${Math.min(startIdx + docDirTableState.pageSize, total)} of ${total} entries`;
+  }
+
+  if (pageItems.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 32px; color: #576561;">No connected doctors found. Click <strong>+ Add Connected Doctor</strong> to add a referral partner.</td></tr>`;
+    return;
+  }
+
+  const facilityName = getActiveFacilityName();
+
+  tbody.innerHTML = pageItems.map(d => {
+    const globalIdx = hospitalReferralDoctors.indexOf(d);
+    const isAccepted = d.status === 'Request Accepted';
+    return `
+      <tr style="border-bottom: 1px solid #e8e6df;">
+        <td style="padding: 10px; color: #576561; font-weight: 600;">${d.connectedLab || facilityName}</td>
+        <td style="padding: 10px; font-weight: 700; color: #134e4a;">${d.sharePercent ?? 0}</td>
+        <td style="padding: 10px; font-weight: 700; color: #1c2826;">${d.doctorName}</td>
+        <td style="padding: 10px; color: #1c2826;">${d.clinicName || '-'}</td>
+        <td style="padding: 10px; color: #576561; max-width: 280px;">${d.clinicAddress || '-'}</td>
+        <td style="padding: 10px; text-align: center; white-space: nowrap;">
+          <button type="button" onclick="toggleDoctorRequestStatus(${globalIdx})" title="Click to toggle Request Accepted / Pending Request" style="background: ${isAccepted ? '#dcfce7' : '#fef3c7'}; color: ${isAccepted ? '#15803d' : '#92400e'}; border: none; padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; margin-right: 4px;">
+            ${isAccepted ? 'Request Accepted' : 'Pending Request'}
+          </button>
+          <button type="button" onclick="openDoctorDirectoryModal(${globalIdx})" title="Edit Doctor" style="background: #e6f4f1; color: #134e4a; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; margin-right: 4px;">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </button>
+          <button type="button" onclick="deleteDoctorDirectoryRecord(${globalIdx})" title="Delete Doctor" style="background: #fee2e2; color: #b91c1c; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer;">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+};
+
+window.toggleDoctorRequestStatus = function(idx) {
+  const d = hospitalReferralDoctors[idx];
+  if (!d) return;
+  d.status = d.status === 'Request Accepted' ? 'Pending Request' : 'Request Accepted';
+  persistReferralDoctors();
+  renderDoctorDirectoryTable();
+};
+
+window.openDoctorDirectoryModal = function(idx = -1) {
+  document.getElementById('docdir-edit-idx').value = idx;
+  if (idx >= 0 && hospitalReferralDoctors[idx]) {
+    const d = hospitalReferralDoctors[idx];
+    document.getElementById('modal-docdir-title').innerHTML = `<i class="fa-solid fa-pen-to-square" style="margin-right: 8px;"></i>Edit Connected Doctor`;
+    document.getElementById('docdir-name-input').value = d.doctorName || '';
+    document.getElementById('docdir-clinic-input').value = d.clinicName === '-' ? '' : (d.clinicName || '');
+    document.getElementById('docdir-share-input').value = d.sharePercent ?? 0;
+    document.getElementById('docdir-address-input').value = d.clinicAddress === '-' ? '' : (d.clinicAddress || '');
+    document.getElementById('docdir-status-input').value = d.status || 'Request Accepted';
+  } else {
+    document.getElementById('modal-docdir-title').innerHTML = `<i class="fa-solid fa-user-plus" style="margin-right: 8px;"></i>Add Connected Doctor`;
+    document.getElementById('docdir-name-input').value = '';
+    document.getElementById('docdir-clinic-input').value = '';
+    document.getElementById('docdir-share-input').value = '0';
+    document.getElementById('docdir-address-input').value = '';
+    document.getElementById('docdir-status-input').value = 'Request Accepted';
+  }
+  document.getElementById('modal-doctor-directory').style.display = 'flex';
+};
+
+window.closeDoctorDirectoryModal = function() {
+  document.getElementById('modal-doctor-directory').style.display = 'none';
+};
+
+window.saveDoctorDirectoryRecord = function() {
+  const doctorName = document.getElementById('docdir-name-input').value.trim();
+  if (!doctorName) { alert('Please enter Doctor Name.'); return; }
+  const clinicName = document.getElementById('docdir-clinic-input').value.trim() || '-';
+  const sharePercent = Number(document.getElementById('docdir-share-input').value) || 0;
+  const clinicAddress = document.getElementById('docdir-address-input').value.trim() || '-';
+  const status = document.getElementById('docdir-status-input').value;
+
+  const editIdx = Number(document.getElementById('docdir-edit-idx').value);
+  if (editIdx >= 0 && hospitalReferralDoctors[editIdx]) {
+    hospitalReferralDoctors[editIdx] = {
+      ...hospitalReferralDoctors[editIdx],
+      doctorName,
+      clinicName,
+      sharePercent,
+      clinicAddress,
+      status
+    };
+  } else {
+    hospitalReferralDoctors.unshift({
+      connectedLab: getActiveFacilityName(),
+      doctorName,
+      clinicName,
+      sharePercent,
+      clinicAddress,
+      status
+    });
+  }
+
+  persistReferralDoctors();
+  closeDoctorDirectoryModal();
+  renderDoctorDirectoryTable();
+};
+
+window.deleteDoctorDirectoryRecord = function(idx) {
+  const d = hospitalReferralDoctors[idx];
+  if (!d) return;
+  if (!confirm(`Remove ${d.doctorName} from the Doctor Directory?`)) return;
+  hospitalReferralDoctors.splice(idx, 1);
+  persistReferralDoctors();
+  renderDoctorDirectoryTable();
 };
 
 // =========================================================
