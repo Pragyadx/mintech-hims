@@ -5278,6 +5278,32 @@
             </div>
         </div>
 </section>
+<!-- ========================================== -->
+<!-- TAB: REFERRAL DOCTORS & COMMISSION         -->
+<!-- ========================================== -->
+<section id="tab-lab-doctors" class="tab-content" style="display: none; padding: 20px;">
+    <div id="lab-doctor-workspace">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 14px 20px; margin-bottom: 20px;">
+            <div>
+                <h3 id="lab-doctor-section-title" style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Referral Doctors & Share</h3>
+                <span id="lab-doctor-section-subtitle" style="font-size: 12px; color: #576561;">Configure doctor referral percentages and manage connected clinics</span>
+            </div>
+        </div>
+
+        <!-- 1. Referral Share -->
+        <div id="lab-doctor-subview-referral-share" class="lab-doctor-subview" style="display: block; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Referral Share</h4>
+            <p style="font-size: 13px; color: #576561;">Set commission percentages and referral payout rules per doctor.</p>
+        </div>
+
+        <!-- 2. Doctor Directory -->
+        <div id="lab-doctor-subview-doctor-directory" class="lab-doctor-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Doctor Directory</h4>
+            <p style="font-size: 13px; color: #576561;">Connected referring doctors, clinics, and partnership status.</p>
+        </div>
+    </div>
+</section>
 
         <!-- =================================================== -->
   <!-- TAB: INPATIENT DEPARTMENT (IPD) MANAGEMENT          -->
@@ -7744,8 +7770,8 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       pharmacy: ["pharmacy", "billing"],
       PHARMACIST: ["pharmacy", "billing"],
       cashier: ["billing", "pharmacy"],
-      labtech: ["dashboard", "lab", "lab-patients"],
-      LABTECH: ["dashboard", "lab", "lab-patients"],
+      labtech: ["dashboard", "lab", "lab-patients", "lab-doctors"],
+      LABTECH: ["dashboard", "lab", "lab-patients", "lab-doctors"],
     };
 
     const tabMeta = {
@@ -7759,6 +7785,7 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       pharmacy: { label: "Pharmacy Store", icon: "fa-pills", title: "Pharmacy Inventory" },
       abdm: { label: "ABDM & FHIR", icon: "fa-shield-halved", title: "ABDM / ABHA Standards" },
       'lab-patients': { label: "Patient", icon: "fa-user-group", title: "Lab Patients & Appointments" },
+      'lab-doctors': { label: "Referral Doctors", icon: "fa-user-doctor", title: "Referral Doctors & Share" },
     };
 
 // Toggle the Invoices & Billing sidebar dropdown
@@ -10037,6 +10064,22 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       <a href="javascript:void(0)" onclick="openLabPatientSection('appointments')" class="subnav-link" style="display: block; padding: 7px 10px; color: #e2e8f0; font-size: 13px; text-decoration: none;">• Appointment</a>
       <a href="javascript:void(0)" onclick="openLabPatientSection('reports')" class="subnav-link" style="display: block; padding: 7px 10px; color: #e2e8f0; font-size: 13px; text-decoration: none;">• Report Listing</a>
       <a href="javascript:void(0)" onclick="openLabPatientSection('samples')" class="subnav-link" style="display: block; padding: 7px 10px; color: #e2e8f0; font-size: 13px; text-decoration: none;">• Sample List</a>
+    </div>
+  `;
+  navContainer.appendChild(groupDiv);
+} else if (tabId === 'lab-doctors') {
+  const groupDiv = document.createElement("div");
+  groupDiv.innerHTML = `
+    <button type="button" class="nav-btn" id="nav-btn-lab-doctors" onclick="switchTab('lab-doctors', this); toggleLabDoctorSubmenu();" style="justify-content: space-between; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid ${meta.icon}"></i>
+        <span>${meta.label}</span>
+      </div>
+      <i class="fa-solid fa-chevron-down submenu-chevron" id="lab-doctor-chevron" style="font-size: 11px; transition: transform 0.2s;"></i>
+    </button>
+    <div id="subnav-lab-doctors" style="display: none; background: rgba(0, 0, 0, 0.16); padding: 6px 0 6px 28px; border-radius: 0 0 6px 6px;">
+      <a href="javascript:void(0)" onclick="openLabDoctorSection('referral-share')" class="subnav-link" style="display: block; padding: 7px 10px; color: #e2e8f0; font-size: 13px; text-decoration: none;">• Referral Share</a>
+      <a href="javascript:void(0)" onclick="openLabDoctorSection('doctor-directory')" class="subnav-link" style="display: block; padding: 7px 10px; color: #e2e8f0; font-size: 13px; text-decoration: none;">• Doctor Directory</a>
     </div>
   `;
   navContainer.appendChild(groupDiv);
@@ -15734,6 +15777,25 @@ function openLabPatientSection(sectionKey) {
   if (sectionKey === 'appointments' && typeof loadLabAppointmentsView === 'function') loadLabAppointmentsView();
   if (sectionKey === 'reports' && typeof loadLabReportsView === 'function') loadLabReportsView();
   if (sectionKey === 'samples' && typeof loadLabSamplesView === 'function') loadLabSamplesView();
+}
+function toggleLabDoctorSubmenu() {
+  const menu = document.getElementById('subnav-lab-doctors');
+  const chevron = document.getElementById('lab-doctor-chevron');
+  if (!menu) return;
+  const isHidden = menu.style.display === 'none' || menu.style.display === '';
+  menu.style.display = isHidden ? 'block' : 'none';
+  if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function openLabDoctorSection(sectionKey) {
+  if (typeof switchTab === 'function') {
+    switchTab('lab-doctors');
+  }
+  document.querySelectorAll('.lab-doctor-subview').forEach(el => el.style.display = 'none');
+  const activeView = document.getElementById('lab-doctor-subview-' + sectionKey);
+  if (activeView) activeView.style.display = 'block';
+  if (sectionKey === 'referral-share' && typeof loadLabReferralShareView === 'function') loadLabReferralShareView();
+  if (sectionKey === 'doctor-directory' && typeof loadLabDoctorDirectoryView === 'function') loadLabDoctorDirectoryView();
 }
 
 // =========================================================
