@@ -501,7 +501,105 @@
         </button>
       </header>
 <section id="tab-dashboard" class="tab-content active" style="padding: 24px 28px; background: #f8fafc; min-height: 100vh;">
-      
+  <!-- 1. LABTECH DEDICATED DASHBOARD VIEW -->
+    <div id="labtech-dashboard-view" style="display: none;">
+      <!-- Lab Sub-Header & Action Ribbon -->
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 14px 20px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="background: #e6f4f1; color: #134e4a; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            <i class="fa-solid fa-flask-vial"></i>
+          </div>
+          <div>
+            <h3 id="lab-facility-name" style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Diagnostic Laboratory</h3>
+            <span id="lab-hospital-subtext" style="font-size: 12px; color: #576561;">Central Pathology & Diagnostic Services</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button type="button" onclick="openCreateAbhaModal()" style="background: #ffffff; color: #134e4a; border: 1px solid #134e4a; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-id-card"></i> Create ABHA
+          </button>
+          <button type="button" onclick="openLinkAbhaModal()" style="background: #ffffff; color: #134e4a; border: 1px solid #134e4a; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-link"></i> Link New ABHA
+          </button>
+          <button type="button" onclick="openAddLabPatientModal()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+            <i class="fa-solid fa-user-plus"></i> Add New Patient
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Metric Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #134e4a;">
+          <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Total Tests</div>
+          <div id="metric-lab-total-tests" style="font-size: 28px; font-weight: 700; color: #1c2826; margin-top: 4px;">0</div>
+          <div style="font-size: 12px; color: #576561; margin-top: 4px;">All Ordered Investigations</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #0f766e;">
+          <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Total Patients</div>
+          <div id="metric-lab-total-patients" style="font-size: 28px; font-weight: 700; color: #0f766e; margin-top: 4px;">0</div>
+          <div style="font-size: 12px; color: #576561; margin-top: 4px;">Registered & Invoiced</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #15803d;">
+          <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Tests Completed</div>
+          <div id="metric-lab-completed-tests" style="font-size: 28px; font-weight: 700; color: #15803d; margin-top: 4px;">0</div>
+          <div style="font-size: 12px; color: #15803d; margin-top: 4px;">Reports Validated & Signed</div>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #d97706;">
+          <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Pending In Queue</div>
+          <div id="metric-lab-pending-tests" style="font-size: 28px; font-weight: 700; color: #d97706; margin-top: 4px;">0</div>
+          <div style="font-size: 12px; color: #d97706; margin-top: 4px;">Awaiting Sample / Processing</div>
+        </div>
+      </div>
+
+      <!-- Confirmed Tests & Worklist Matrix -->
+      <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 style="margin: 0; font-size: 17px; color: #1c2826;">Laboratory Investigation Orders</h3>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #576561;">Confirmed lab bookings, specimen statuses, and report generation</p>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <label style="font-size: 13px; color: #576561;">Show</label>
+            <select id="lab-entries-count" onchange="loadLabOrders()" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+            <button type="button" onclick="loadLabOrders()" style="background: #ffffff; color: #134e4a; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">
+              <i class="fa-solid fa-arrows-rotate"></i> Refresh
+            </button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+            <thead>
+              <tr style="border-bottom: 2px solid #e8e6df; color: #576561;">
+                <th style="padding: 10px;">Order ID</th>
+                <th style="padding: 10px;">Patient Name</th>
+                <th style="padding: 10px;">Age / Gender</th>
+                <th style="padding: 10px;">Tests Ordered</th>
+                <th style="padding: 10px;">Clinical Notes</th>
+                <th style="padding: 10px;">Referred By</th>
+                <th style="padding: 10px;">Status</th>
+                <th style="padding: 10px; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="lab-orders-table-body">
+              <tr>
+                <td colspan="8" style="text-align: center; padding: 36px 16px; color: #576561;">
+                  <i class="fa-solid fa-vial" style="font-size: 26px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>
+                  No investigation orders in queue.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. HOSPITAL ADMIN / DOCTOR DASHBOARD VIEW -->
+    <div id="hospital-admin-dashboard-view">    
       <!-- Top 4 Clean Metric Cards -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 24px;">
         
@@ -628,7 +726,7 @@
         </div>
 
       </div>
-
+</div>
     </section>
     
       
@@ -3779,97 +3877,44 @@
 <!-- TAB: DIAGNOSTIC LABORATORY                 -->
 <!-- ========================================== -->
 <section id="tab-lab" class="tab-content" style="display: none; padding: 20px;">
-    <!-- Lab Sub-Header & Action Ribbon -->
-    <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 14px 20px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="background: #e6f4f1; color: #134e4a; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
-                <i class="fa-solid fa-flask-vial"></i>
-            </div>
+    <div id="lab-test-management-workspace">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 14px 20px; margin-bottom: 20px;">
             <div>
-                <h3 id="lab-facility-name" style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Diagnostic Laboratory</h3>
-                <span id="lab-hospital-subtext" style="font-size: 12px; color: #576561;">Central Pathology & Diagnostic Services</span>
-            </div>
-        </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button type="button" onclick="openCreateAbhaModal()" style="background: #ffffff; color: #134e4a; border: 1px solid #134e4a; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                <i class="fa-solid fa-id-card"></i> Create ABHA
-            </button>
-            <button type="button" onclick="openLinkAbhaModal()" style="background: #ffffff; color: #134e4a; border: 1px solid #134e4a; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                <i class="fa-solid fa-link"></i> Link New ABHA
-            </button>
-            <button type="button" onclick="openAddLabPatientModal()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                <i class="fa-solid fa-user-plus"></i> Add New Patient
-            </button>
-        </div>
-    </div>
-
-    <!-- Live Metric Cards (No Mock Data) -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
-        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #134e4a;">
-            <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Total Tests</div>
-            <div id="metric-lab-total-tests" style="font-size: 28px; font-weight: 700; color: #1c2826; margin-top: 4px;">0</div>
-            <div style="font-size: 12px; color: #576561; margin-top: 4px;">All Ordered Investigations</div>
-        </div>
-        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #0f766e;">
-            <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Total Patients</div>
-            <div id="metric-lab-total-patients" style="font-size: 28px; font-weight: 700; color: #0f766e; margin-top: 4px;">0</div>
-            <div style="font-size: 12px; color: #576561; margin-top: 4px;">Registered & Invoiced</div>
-        </div>
-        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #15803d;">
-            <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Tests Completed</div>
-            <div id="metric-lab-completed-tests" style="font-size: 28px; font-weight: 700; color: #15803d; margin-top: 4px;">0</div>
-            <div style="font-size: 12px; color: #15803d; margin-top: 4px;">Reports Validated & Signed</div>
-        </div>
-        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px; border-left: 4px solid #d97706;">
-            <div style="font-size: 12px; color: #576561; text-transform: uppercase; font-weight: 600;">Pending In Queue</div>
-            <div id="metric-lab-pending-tests" style="font-size: 28px; font-weight: 700; color: #d97706; margin-top: 4px;">0</div>
-            <div style="font-size: 12px; color: #d97706; margin-top: 4px;">Awaiting Sample / Processing</div>
-        </div>
-    </div>
-
-    <!-- Confirmed Tests & Worklist Matrix -->
-    <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
-            <div>
-                <h3 style="margin: 0; font-size: 17px; color: #1c2826;">Laboratory Investigation Orders</h3>
-                <p style="margin: 4px 0 0; font-size: 13px; color: #576561;">Confirmed lab bookings, specimen statuses, and report generation</p>
-            </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <label style="font-size: 13px; color: #576561;">Show</label>
-                <select id="lab-entries-count" onchange="loadLabOrders()" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                </select>
-                <button type="button" onclick="loadLabOrders()" style="background: #ffffff; color: #134e4a; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">
-                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
-                </button>
+                <h3 id="lab-section-title" style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Diagnostic Tests & Master Catalog</h3>
+                <span id="lab-section-subtitle" style="font-size: 12px; color: #576561;">Select a test management module from the left menu</span>
             </div>
         </div>
 
-        <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
-                <thead>
-                    <tr style="border-bottom: 2px solid #e8e6df; color: #576561;">
-                        <th style="padding: 10px;">Order ID</th>
-                        <th style="padding: 10px;">Patient Name</th>
-                        <th style="padding: 10px;">Age / Gender</th>
-                        <th style="padding: 10px;">Tests Ordered</th>
-                        <th style="padding: 10px;">Clinical Notes</th>
-                        <th style="padding: 10px;">Referred By</th>
-                        <th style="padding: 10px;">Status</th>
-                        <th style="padding: 10px; text-align: right;">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="lab-orders-table-body">
-                    <tr>
-                        <td colspan="8" style="text-align: center; padding: 36px 16px; color: #576561;">
-                            <i class="fa-solid fa-vial" style="font-size: 26px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>
-                            No investigation orders in queue.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <!-- 1. New Test Entry -->
+        <div id="lab-subview-new-test" class="lab-subview" style="display: block; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">New Test Entry</h4>
+            <p style="font-size: 13px; color: #576561;">Configure test name, department, sample type, price, and reference ranges.</p>
+        </div>
+
+        <!-- 2. Test Price List -->
+        <div id="lab-subview-test-list" class="lab-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Test Price List</h4>
+        </div>
+
+        <!-- 3. Create Health Package -->
+        <div id="lab-subview-create-package" class="lab-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Create Health Package</h4>
+        </div>
+
+        <!-- 4. All Packages -->
+        <div id="lab-subview-package-list" class="lab-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">All Packages</h4>
+        </div>
+
+        <!-- 5. Lab Categories -->
+        <div id="lab-subview-categories" class="lab-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Lab Categories</h4>
+        </div>
+
+        <!-- 6. Quick Template Setup -->
+        <div id="lab-subview-quick-setup" class="lab-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Quick Template Setup</h4>
         </div>
     </div>
 </section>
@@ -8654,12 +8699,36 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       loadPharmacyStock();
     }
   }
+window.toggleLabSubmenu = function(btn) {
+  const submenu = document.getElementById('subnav-investigations');
+  const chevron = document.getElementById('lab-chevron');
+  if (!submenu) return;
+  const isClosed = (submenu.style.display === 'none' || !submenu.style.display);
+  submenu.style.display = isClosed ? 'block' : 'none';
+  if (chevron) chevron.style.transform = isClosed ? 'rotate(180deg)' : 'rotate(0deg)';
+};
 
+window.openLabSection = function(sectionKey) {
+  if (typeof switchTab === 'function') {
+    switchTab('lab');
+  }
+  document.querySelectorAll('.lab-subview').forEach(el => el.style.display = 'none');
+  const activeView = document.getElementById('lab-subview-' + sectionKey);
+  if (activeView) activeView.style.display = 'block';
+};
     function switchTab(tabId, targetBtn) {
     const cleanId = tabId.startsWith('tab-') ? tabId.replace('tab-', '') : tabId;
     const targetSectionId = 'tab-' + cleanId;
     const isOpd = (cleanId === 'opd');
-
+if (cleanId === 'dashboard') {
+  const role = (currentUser?.role || '').toLowerCase();
+  const isLab = role === 'labtech';
+  const labDash = document.getElementById('labtech-dashboard-view');
+  const hospDash = document.getElementById('hospital-admin-dashboard-view');
+  if (labDash) labDash.style.display = isLab ? 'block' : 'none';
+  if (hospDash) hospDash.style.display = isLab ? 'none' : 'block';
+  if (isLab && typeof loadLabOrders === 'function') loadLabOrders();
+}
     // 1. Hide ALL tab panels
     document.querySelectorAll('.tab-content, main > section').forEach(el => {
       el.classList.remove('active');
