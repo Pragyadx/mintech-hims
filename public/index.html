@@ -5163,11 +5163,120 @@
         </div>
 
         <!-- 3. Sample List -->
-        <div id="lab-patient-subview-samples" class="lab-patient-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
-            <h4 style="margin-top: 0; color: #134e4a;">Sample List</h4>
-            <p style="font-size: 13px; color: #576561;">Specimen collection status and barcode tracking.</p>
+        <div id="lab-patient-subview-samples" class="lab-patient-subview" style="display: none;">
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
+                
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <div>
+                        <h4 style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Specimen & Sample Collection Register</h4>
+                        <span style="font-size: 12px; color: #576561;">Track specimen types, container tubes, barcodes, and collection status across booked appointments.</span>
+                    </div>
+                    <button type="button" onclick="openLabPatientSection('appointments')" style="background: #e6f4f1; color: #134e4a; border: 1px solid #99f6e4; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                        <i class="fa-solid fa-calendar-check"></i> Back to Appointments
+                    </button>
+                </div>
+
+                <!-- Show Entries & Search Bar -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: #fafaf8; padding: 12px 14px; border: 1px solid #e8e6df; border-radius: 6px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <span>Show</span>
+                        <select id="smp-page-size" onchange="changeLabSmpPageSize(this.value)" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; background: #ffffff;">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span>entries</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <label for="smp-search-input">Search:</label>
+                        <input type="text" id="smp-search-input" oninput="filterLabSmpTable(this.value)" placeholder="Search ID, patient, barcode, or type..." style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; width: 240px;">
+                    </div>
+                </div>
+
+                <!-- Sample Collection Table -->
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                <th style="padding: 10px;">ID</th>
+                                <th style="padding: 10px;">Patient</th>
+                                <th style="padding: 10px;">Sample Types</th>
+                                <th style="padding: 10px;">Barcodes</th>
+                                <th style="padding: 10px;">Date</th>
+                                <th style="padding: 10px;">Status</th>
+                                <th style="padding: 10px; text-align: center;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lab-samples-tbody">
+                            <tr>
+                                <td colspan="7" style="text-align: center; padding: 32px; color: #576561;">No specimens queued yet. Book a patient under <strong>Appointment</strong> to manage samples here.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e6df; font-size: 13px; color: #576561;">
+                    <div id="smp-showing-info">Showing 0 to 0 of 0 entries</div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button type="button" onclick="changeLabSmpPage(-1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Previous</button>
+                        <span id="smp-page-indicator" style="padding: 6px 12px; background: #134e4a; color: #ffffff; border-radius: 5px; font-weight: 600;">1</span>
+                        <button type="button" onclick="changeLabSmpPage(1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Next</button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <!-- Modal: View Sample Details (Read-Only) -->
+        <div id="modal-view-sample-details" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+            <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 680px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.18);">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 style="margin: 0; font-size: 15px; font-weight: 700;"><i class="fa-solid fa-vial" style="margin-right: 8px;"></i>Sample Details</h4>
+                    <button type="button" onclick="closeViewSampleModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px;">
+                    <div id="view-sample-patient-header" style="font-size: 15px; font-weight: 700; color: #1c2826; margin-bottom: 14px;"></div>
+                    <div style="overflow-x: auto; margin-bottom: 16px;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                    <th style="padding: 9px;">Test Name</th>
+                                    <th style="padding: 9px;">Sample Type</th>
+                                    <th style="padding: 9px;">Container</th>
+                                    <th style="padding: 9px;">Barcode</th>
+                                    <th style="padding: 9px;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="view-sample-details-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 10px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closeViewSampleModal()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Edit Sample Details -->
+        <div id="modal-edit-sample-details" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+            <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 760px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.18);">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 id="edit-sample-modal-title" style="margin: 0; font-size: 15px; font-weight: 700;"><i class="fa-solid fa-pen-to-square" style="margin-right: 8px;"></i>Edit Sample Details</h4>
+                    <button type="button" onclick="closeEditSampleModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px; max-height: 76vh; overflow-y: auto;">
+                    <input type="hidden" id="edit-sample-booking-idx" value="-1">
+                    <div id="edit-sample-rows-container" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;"></div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closeEditSampleModal()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+                        <button type="button" onclick="saveEditedSampleDetails()" style="background: #0f766e; color: #ffffff; border: none; padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 </section>
 
         <!-- =================================================== -->
@@ -16392,6 +16501,237 @@ window.exportLabReportsCSV = function() {
   a.download = `ArvionHIMS_Report_Register_${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
+};
+// =========================================================
+// LAB SPECIMEN & SAMPLE COLLECTION ENGINE
+// =========================================================
+let smpTableState = { page: 1, pageSize: 10, search: '' };
+
+function ensureBookingSamples(b) {
+  if (!b.samples || b.samples.length === 0) {
+    const baseBarcode = b.barcodeId || ('SMP-' + b.bookingId);
+    b.samples = (b.items && b.items.length > 0 ? b.items : [{ name: b.note || 'Diagnostic Panel' }]).map((it, idx) => ({
+      testName: it.name,
+      sampleType: 'Whole Blood',
+      container: 'EDTA',
+      barcode: b.items && b.items.length > 1 ? `${baseBarcode}-${idx + 1}` : baseBarcode,
+      status: b.sampleStatus === 'Collected' ? 'Collected' : 'Pending'
+    }));
+  }
+  return b.samples;
+}
+
+window.loadLabSamplesView = function() {
+  hospitalLabBookings = JSON.parse(localStorage.getItem('arvion_lab_bookings') || '[]');
+  renderLabSamplesTable();
+};
+
+window.changeLabSmpPageSize = function(val) {
+  smpTableState.pageSize = Number(val) || 10;
+  smpTableState.page = 1;
+  renderLabSamplesTable();
+};
+
+window.filterLabSmpTable = function(q) {
+  smpTableState.search = (q || '').toLowerCase().trim();
+  smpTableState.page = 1;
+  renderLabSamplesTable();
+};
+
+window.changeLabSmpPage = function(delta) {
+  smpTableState.page += delta;
+  if (smpTableState.page < 1) smpTableState.page = 1;
+  renderLabSamplesTable();
+};
+
+window.renderLabSamplesTable = function() {
+  const tbody = document.getElementById('lab-samples-tbody');
+  const info = document.getElementById('smp-showing-info');
+  const pageInd = document.getElementById('smp-page-indicator');
+  if (!tbody) return;
+
+  const q = smpTableState.search;
+  const activeBookings = hospitalLabBookings.filter(b => b.status !== 'Cancelled' && b.sampleHidden !== true);
+
+  const filtered = !q
+    ? activeBookings
+    : activeBookings.filter(b => {
+        const samples = ensureBookingSamples(b);
+        const typeStr = samples.map(s => s.sampleType).join(' ').toLowerCase();
+        const barStr = samples.map(s => s.barcode).join(' ').toLowerCase();
+        return (
+          String(b.bookingId || '').toLowerCase().includes(q) ||
+          (b.patientName || '').toLowerCase().includes(q) ||
+          typeStr.includes(q) ||
+          barStr.includes(q)
+        );
+      });
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / smpTableState.pageSize));
+  if (smpTableState.page > totalPages) smpTableState.page = totalPages;
+
+  const startIdx = (smpTableState.page - 1) * smpTableState.pageSize;
+  const pageItems = filtered.slice(startIdx, startIdx + smpTableState.pageSize);
+
+  if (pageInd) pageInd.textContent = `${smpTableState.page} / ${totalPages}`;
+  if (info) {
+    info.textContent = total === 0
+      ? 'Showing 0 to 0 of 0 entries'
+      : `Showing ${startIdx + 1} to ${Math.min(startIdx + smpTableState.pageSize, total)} of ${total} entries`;
+  }
+
+  if (pageItems.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 32px; color: #576561;">No specimen records found. Create a booking under <strong>Appointment</strong> to track samples.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = pageItems.map(b => {
+    const globalIdx = hospitalLabBookings.indexOf(b);
+    const samples = ensureBookingSamples(b);
+    const uniqueTypes = [...new Set(samples.map(s => s.sampleType))];
+    const allCollected = samples.every(s => s.status === 'Collected');
+    const overallStatus = allCollected ? 'Collected' : (samples.some(s => s.status === 'Collected') ? 'Partial' : 'Pending');
+
+    const typeBadges = uniqueTypes.map(t =>
+      `<span style="background: #0f766e; color: #ffffff; padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block; margin: 2px;">${t}</span>`
+    ).join('');
+
+    const barcodeBadges = samples.map(s =>
+      `<span style="background: #e8e6df; color: #1c2826; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; display: inline-block; margin: 2px;">${s.barcode || '-'}</span>`
+    ).join('');
+
+    const statusBg = overallStatus === 'Collected' ? '#dcfce7' : (overallStatus === 'Partial' ? '#fef3c7' : '#f1f5f9');
+    const statusColor = overallStatus === 'Collected' ? '#15803d' : (overallStatus === 'Partial' ? '#92400e' : '#576561');
+
+    return `
+      <tr style="border-bottom: 1px solid #e8e6df;">
+        <td style="padding: 10px; font-weight: 700; color: #134e4a;">${b.bookingId}</td>
+        <td style="padding: 10px; font-weight: 600; color: #1c2826;">${b.patientName}</td>
+        <td style="padding: 10px;">${typeBadges}</td>
+        <td style="padding: 10px;">${barcodeBadges}</td>
+        <td style="padding: 10px; color: #1c2826;">${(b.sampleCollectedAt || b.reportDate || '').slice(0, 10)}</td>
+        <td style="padding: 10px;">
+          <span style="background: ${statusBg}; color: ${statusColor}; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700;">${overallStatus}</span>
+        </td>
+        <td style="padding: 10px; text-align: center; white-space: nowrap;">
+          <button type="button" onclick="openViewSampleModal(${globalIdx})" style="background: #0f766e; color: #ffffff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; margin-right: 4px;">View</button>
+          <button type="button" onclick="openEditSampleModal(${globalIdx})" style="background: #134e4a; color: #ffffff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; margin-right: 4px;">Edit</button>
+          <button type="button" onclick="deleteSampleRecord(${globalIdx})" style="background: #b91c1c; color: #ffffff; border: none; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Delete</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+};
+
+window.openViewSampleModal = function(idx) {
+  const b = hospitalLabBookings[idx];
+  if (!b) return;
+  const samples = ensureBookingSamples(b);
+  document.getElementById('view-sample-patient-header').textContent = `Patient: ${b.patientName} (Booking #${b.bookingId})`;
+  document.getElementById('view-sample-details-tbody').innerHTML = samples.map(s => `
+    <tr style="border-bottom: 1px solid #e8e6df;">
+      <td style="padding: 9px; font-weight: 600; color: #1c2826;">${s.testName}</td>
+      <td style="padding: 9px; color: #1c2826;">${s.sampleType}</td>
+      <td style="padding: 9px; color: #576561;">${s.container || '-'}</td>
+      <td style="padding: 9px; font-weight: 700; color: #134e4a;">${s.barcode || '-'}</td>
+      <td style="padding: 9px;">
+        <span style="background: ${s.status === 'Collected' ? '#dcfce7' : '#f1f5f9'}; color: ${s.status === 'Collected' ? '#15803d' : '#576561'}; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 700;">${s.status}</span>
+      </td>
+    </tr>
+  `).join('');
+  document.getElementById('modal-view-sample-details').style.display = 'flex';
+};
+
+window.closeViewSampleModal = function() {
+  document.getElementById('modal-view-sample-details').style.display = 'none';
+};
+
+window.openEditSampleModal = function(idx) {
+  const b = hospitalLabBookings[idx];
+  if (!b) return;
+  const samples = ensureBookingSamples(b);
+  document.getElementById('edit-sample-booking-idx').value = idx;
+  document.getElementById('edit-sample-modal-title').innerHTML = `<i class="fa-solid fa-pen-to-square" style="margin-right: 8px;"></i>Edit Sample Details — ${b.patientName}`;
+
+  const sampleTypes = ['Whole Blood', 'Serum', 'Plasma', 'Urine', 'Swab', 'Stool', 'CSF', 'Sputum'];
+  const containers = ['EDTA', 'SST / Gel Tube', 'Sodium Fluoride', 'Sodium Citrate', 'Sterile Container', 'Plain Vial'];
+  const statuses = ['Pending', 'Collected', 'In Lab', 'Rejected'];
+
+  document.getElementById('edit-sample-rows-container').innerHTML = samples.map((s, sIdx) => `
+    <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 0.9fr; gap: 10px; align-items: end; background: #fafaf8; padding: 12px; border: 1px solid #e8e6df; border-radius: 6px;">
+      <div>
+        <label style="display: block; font-size: 11px; font-weight: 700; color: #576561; margin-bottom: 4px;">Test</label>
+        <div style="font-size: 13px; font-weight: 600; color: #1c2826; padding: 6px 0;">${s.testName}</div>
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Sample Type</label>
+        <select class="smp-edit-type" style="width: 100%; padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 12px; background: #ffffff;">
+          ${sampleTypes.map(t => `<option value="${t}" ${s.sampleType === t ? 'selected' : ''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Container</label>
+        <select class="smp-edit-container" style="width: 100%; padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 12px; background: #ffffff;">
+          ${containers.map(c => `<option value="${c}" ${s.container === c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Barcode</label>
+        <input type="text" class="smp-edit-barcode" value="${(s.barcode || '').replace(/"/g, '&quot;')}" style="width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 12px;">
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Status</label>
+        <select class="smp-edit-status" style="width: 100%; padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 12px; background: #ffffff;">
+          ${statuses.map(st => `<option value="${st}" ${s.status === st ? 'selected' : ''}>${st}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('modal-edit-sample-details').style.display = 'flex';
+};
+
+window.closeEditSampleModal = function() {
+  document.getElementById('modal-edit-sample-details').style.display = 'none';
+};
+
+window.saveEditedSampleDetails = function() {
+  const idx = Number(document.getElementById('edit-sample-booking-idx').value);
+  const b = hospitalLabBookings[idx];
+  if (!b) return;
+  const samples = ensureBookingSamples(b);
+
+  const types = document.querySelectorAll('.smp-edit-type');
+  const containers = document.querySelectorAll('.smp-edit-container');
+  const barcodes = document.querySelectorAll('.smp-edit-barcode');
+  const statuses = document.querySelectorAll('.smp-edit-status');
+
+  samples.forEach((s, i) => {
+    s.sampleType = types[i]?.value || s.sampleType;
+    s.container = containers[i]?.value || s.container;
+    s.barcode = barcodes[i]?.value.trim() || s.barcode;
+    s.status = statuses[i]?.value || s.status;
+  });
+
+  b.samples = samples;
+  b.sampleStatus = samples.every(s => s.status === 'Collected') ? 'Collected' : 'Pending';
+  if (b.sampleStatus === 'Collected' && !b.sampleCollectedAt) {
+    b.sampleCollectedAt = new Date().toISOString().slice(0, 16).replace('T', ' ');
+  }
+
+  persistLabBookings();
+  closeEditSampleModal();
+  renderLabSamplesTable();
+};
+
+window.deleteSampleRecord = function(idx) {
+  const b = hospitalLabBookings[idx];
+  if (!b) return;
+  if (!confirm(`Remove sample record for ${b.patientName} (Booking #${b.bookingId}) from the sample list?`)) return;
+  b.sampleHidden = true;
+  persistLabBookings();
+  renderLabSamplesTable();
 };
   
 
