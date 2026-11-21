@@ -3887,9 +3887,117 @@
         </div>
 
         <!-- 1. New Test Entry -->
-        <div id="lab-subview-new-test" class="lab-subview" style="display: block; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
-            <h4 style="margin-top: 0; color: #134e4a;">New Test Entry</h4>
-            <p style="font-size: 13px; color: #576561;">Configure test name, department, sample type, price, and reference ranges.</p>
+        <div id="lab-subview-new-test" class="lab-subview" style="display: block;">
+            <div style="display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start;">
+                
+                <!-- Left Panel: Master Lookup & Quick Add -->
+                <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px;">
+                    <button type="button" onclick="openCustomTestModal()" style="width: 100%; background: #134e4a; color: #ffffff; border: none; padding: 10px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px;">
+                        <i class="fa-solid fa-plus"></i> Create Custom Test
+                    </button>
+
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; text-transform: uppercase; margin-bottom: 6px;">Search Master Catalog</label>
+                    <div style="position: relative; margin-bottom: 14px;">
+                        <input type="text" id="lab-master-search" oninput="filterMasterLabTests(this.value)" placeholder="Type test name or code..." style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #1c2826;">
+                    </div>
+
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #576561; margin-bottom: 6px;">Or pick from existing catalog</label>
+                    <select id="lab-existing-test-select" onchange="selectMasterTestToStage(this.value)" style="width: 100%; padding: 9px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; color: #1c2826; background: #ffffff;">
+                        <option value="">-- Select a Diagnostic Test --</option>
+                    </select>
+                </div>
+
+                <!-- Right Panel: Staged Test Configuration Card -->
+                <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; font-size: 16px; color: #1c2826; font-weight: 700;">Configure Diagnostic Test</h4>
+                        <span id="staged-tests-badge" style="background: #e6f4f1; color: #134e4a; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 12px;">0 Staged</span>
+                    </div>
+
+                    <p style="margin: 0 0 18px; font-size: 13px; color: #576561; background: #f8faf9; border-left: 3px solid #0f766e; padding: 10px 12px; border-radius: 4px;">
+                        Rates entered here apply as the hospital's base tariff. Custom pricing tiers for TPA, insurance, or corporate panels can be adjusted anytime from the <strong>Test Price List</strong>.
+                    </p>
+
+                    <div style="overflow-x: auto; margin-bottom: 18px;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                    <th style="padding: 10px;">Test Name</th>
+                                    <th style="padding: 10px;">Test Code</th>
+                                    <th style="padding: 10px;">Range Min</th>
+                                    <th style="padding: 10px;">Range Max</th>
+                                    <th style="padding: 10px;">Unit</th>
+                                    <th style="padding: 10px;">Base Fee (₹)</th>
+                                    <th style="padding: 10px;">Discount (%)</th>
+                                    <th style="padding: 10px; text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staged-new-tests-body">
+                                <tr id="staged-empty-row">
+                                    <td colspan="8" style="text-align: center; padding: 28px 12px; color: #576561;">
+                                        Select a test from the left catalog or click <strong>+ Create Custom Test</strong> to begin configuring.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Accessible Save & Cancel Action Bar -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid #e8e6df; flex-wrap: wrap; gap: 10px;">
+                        <button type="button" onclick="openLabSection('test-list')" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-angles-left"></i> View Price List
+                        </button>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" onclick="cancelStagedLabTests()" style="background: #ffffff; color: #b91c1c; border: 1px solid #fca5a5; padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                <i class="fa-solid fa-xmark"></i> Cancel & Clear
+                            </button>
+                            <button type="button" id="btn-save-staged-tests" onclick="saveStagedLabTests()" style="background: #134e4a; color: #ffffff; border: none; padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                                <i class="fa-solid fa-check"></i> Save Test to Catalog
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Create Custom Master Test -->
+        <div id="modal-create-custom-test" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+            <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15);">
+                <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 style="margin: 0; font-size: 15px; font-weight: 600;"><i class="fa-solid fa-flask-vial" style="margin-right: 8px;"></i>New Diagnostic Test</h4>
+                    <button type="button" onclick="closeCustomTestModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px;">
+                    <div style="margin-bottom: 14px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #1c2826; margin-bottom: 6px;">Test Name <span style="color: #dc2626;">*</span></label>
+                        <input type="text" id="custom-test-name" placeholder="e.g., Complete Blood Count (CBC)" style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                        <div>
+                            <label style="display: block; font-size: 13px; font-weight: 600; color: #1c2826; margin-bottom: 6px;">Test Code</label>
+                            <input type="text" id="custom-test-code" placeholder="e.g., LAB-CBC" style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 13px; font-weight: 600; color: #1c2826; margin-bottom: 6px;">Department</label>
+                            <select id="custom-test-category" style="width: 100%; padding: 9px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
+                                <option value="Pathology">Pathology</option>
+                                <option value="Hematology">Hematology</option>
+                                <option value="Biochemistry">Biochemistry</option>
+                                <option value="Microbiology">Microbiology</option>
+                                <option value="Radiology">Radiology</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 18px;">
+                        <label style="display: block; font-size: 13px; font-weight: 600; color: #1c2826; margin-bottom: 6px;">Clinical Description / Notes</label>
+                        <textarea id="custom-test-desc" rows="3" placeholder="Sample requirement, fasting instructions, or methodology..." style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; resize: vertical;"></textarea>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 12px; border-top: 1px solid #e8e6df;">
+                        <button type="button" onclick="closeCustomTestModal()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Close</button>
+                        <button type="button" onclick="stageCustomTestFromModal()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Add to Configuration</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 2. Test Price List -->
@@ -8709,6 +8817,194 @@ window.toggleLabSubmenu = function(btn) {
 };
 
 window.openLabSection = function(sectionKey) {
+  let masterLabCatalog = [];
+  let stagedLabTests = [];
+
+  window.loadMasterLabCatalog = async function() {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/investigations/tests', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        masterLabCatalog = Array.isArray(data) ? data : (data.tests || data.data || []);
+        populateMasterTestDropdown(masterLabCatalog);
+      }
+    } catch (err) {
+      console.warn('Could not load master test catalog:', err);
+    }
+  };
+
+  function populateMasterTestDropdown(list) {
+    const sel = document.getElementById('lab-existing-test-select');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- Select a Diagnostic Test --</option>';
+    list.forEach((t, idx) => {
+      const name = t.testName || t.name || 'Unnamed Test';
+      const code = t.testCode || t.code || '';
+      sel.innerHTML += `<option value="${idx}">${name} ${code ? '(' + code + ')' : ''}</option>`;
+    });
+  }
+
+  window.filterMasterLabTests = function(query) {
+    const q = (query || '').toLowerCase().trim();
+    const filtered = masterLabCatalog.filter(t =>
+      (t.testName || t.name || '').toLowerCase().includes(q) ||
+      (t.testCode || t.code || '').toLowerCase().includes(q)
+    );
+    populateMasterTestDropdown(filtered);
+  };
+
+  window.selectMasterTestToStage = function(idxStr) {
+    if (idxStr === '') return;
+    const t = masterLabCatalog[Number(idxStr)];
+    if (!t) return;
+    stagedLabTests.push({
+      testName: t.testName || t.name || '',
+      testCode: t.testCode || t.code || ('TST-' + Math.floor(1000 + Math.random() * 9000)),
+      category: t.category || 'Pathology',
+      rangeMin: t.rangeMin || '',
+      rangeMax: t.rangeMax || '',
+      unit: t.unit || '',
+      price: t.price || t.basePrice || 0,
+      discount: 0,
+      description: t.description || ''
+    });
+    renderStagedLabTests();
+    document.getElementById('lab-existing-test-select').value = '';
+  };
+
+  window.openCustomTestModal = function() {
+    const m = document.getElementById('modal-create-custom-test');
+    if (m) m.style.display = 'flex';
+  };
+
+  window.closeCustomTestModal = function() {
+    const m = document.getElementById('modal-create-custom-test');
+    if (m) m.style.display = 'none';
+  };
+
+  window.stageCustomTestFromModal = function() {
+    const name = document.getElementById('custom-test-name').value.trim();
+    if (!name) {
+      alert('Please enter a Test Name.');
+      return;
+    }
+    const code = document.getElementById('custom-test-code').value.trim() || ('TST-' + Math.floor(1000 + Math.random() * 9000));
+    const category = document.getElementById('custom-test-category').value;
+    const desc = document.getElementById('custom-test-desc').value.trim();
+
+    stagedLabTests.push({
+      testName: name,
+      testCode: code,
+      category: category,
+      rangeMin: '',
+      rangeMax: '',
+      unit: '',
+      price: 0,
+      discount: 0,
+      description: desc
+    });
+
+    document.getElementById('custom-test-name').value = '';
+    document.getElementById('custom-test-code').value = '';
+    document.getElementById('custom-test-desc').value = '';
+    closeCustomTestModal();
+    renderStagedLabTests();
+  };
+
+  window.renderStagedLabTests = function() {
+    const tbody = document.getElementById('staged-new-tests-body');
+    const badge = document.getElementById('staged-tests-badge');
+    if (badge) badge.textContent = `${stagedLabTests.length} Staged`;
+    if (!tbody) return;
+
+    if (stagedLabTests.length === 0) {
+      tbody.innerHTML = `
+        <tr id="staged-empty-row">
+          <td colspan="8" style="text-align: center; padding: 28px 12px; color: #576561;">
+            Select a test from the left catalog or click <strong>+ Create Custom Test</strong> to begin configuring.
+          </td>
+        </tr>`;
+      return;
+    }
+
+    tbody.innerHTML = stagedLabTests.map((item, i) => `
+      <tr style="border-bottom: 1px solid #e8e6df;">
+        <td style="padding: 8px;"><input type="text" value="${item.testName}" onchange="stagedLabTests[${i}].testName=this.value" style="width: 140px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="text" value="${item.testCode}" onchange="stagedLabTests[${i}].testCode=this.value" style="width: 90px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="text" value="${item.rangeMin}" placeholder="Min" onchange="stagedLabTests[${i}].rangeMin=this.value" style="width: 65px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="text" value="${item.rangeMax}" placeholder="Max" onchange="stagedLabTests[${i}].rangeMax=this.value" style="width: 65px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="text" value="${item.unit}" placeholder="mg/dL" onchange="stagedLabTests[${i}].unit=this.value" style="width: 70px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="number" min="0" value="${item.price}" onchange="stagedLabTests[${i}].price=Number(this.value)" style="width: 85px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px;"><input type="number" min="0" max="100" value="${item.discount}" onchange="stagedLabTests[${i}].discount=Number(this.value)" style="width: 65px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 13px;"></td>
+        <td style="padding: 8px; text-align: center;">
+          <button type="button" onclick="removeStagedTest(${i})" title="Remove row" style="background: #fee2e2; color: #b91c1c; border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer;">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  };
+
+  window.removeStagedTest = function(index) {
+    stagedLabTests.splice(index, 1);
+    renderStagedLabTests();
+  };
+
+  window.cancelStagedLabTests = function() {
+    if (stagedLabTests.length === 0) return;
+    if (confirm('Discard all unsaved test entries in this table?')) {
+      stagedLabTests = [];
+      renderStagedLabTests();
+    }
+  };
+
+  window.saveStagedLabTests = async function() {
+    if (stagedLabTests.length === 0) {
+      alert('Please add or select at least one diagnostic test before saving.');
+      return;
+    }
+    const btn = document.getElementById('btn-save-staged-tests');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; }
+
+    try {
+      const token = localStorage.getItem('token');
+      for (const test of stagedLabTests) {
+        const res = await fetch('/api/investigations/tests', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            testName: test.testName,
+            testCode: test.testCode,
+            category: test.category,
+            price: test.price,
+            discountPercent: test.discount,
+            normalRange: (test.rangeMin || test.rangeMax) ? `${test.rangeMin} - ${test.rangeMax} ${test.unit}`.trim() : '',
+            unit: test.unit,
+            description: test.description
+          })
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.message || `Failed to save ${test.testName}`);
+        }
+      }
+
+      alert('Diagnostic test(s) saved to your hospital catalog!');
+      stagedLabTests = [];
+      renderStagedLabTests();
+      loadMasterLabCatalog();
+    } catch (err) {
+      alert('Error saving test: ' + err.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Test to Catalog'; }
+    }
+  };
   if (typeof switchTab === 'function') {
     switchTab('lab');
   }
