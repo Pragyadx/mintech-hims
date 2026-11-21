@@ -5482,6 +5482,117 @@
             </div>
         </div>
 </section>
+<!-- ========================================== -->
+<!-- TAB: TOTAL SHARE & COMMISSION LEDGER       -->
+<!-- ========================================== -->
+<section id="tab-lab-total-share" class="tab-content" style="display: none; padding: 20px;">
+    <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
+        
+        <!-- Header & Actions -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+            <div>
+                <h4 style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Total Referral Share & Commission Ledger</h4>
+                <span style="font-size: 12px; color: #576561;">Calculated from referred patient bookings and doctor share rules, with manual adjustment and settlement tracking.</span>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" onclick="recalculateAllDoctorShares()" style="background: #e6f4f1; color: #134e4a; border: 1px solid #99f6e4; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-rotate"></i> Sync from Bookings
+                </button>
+                <button type="button" onclick="exportTotalShareCSV()" style="background: #0f766e; color: #ffffff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-file-export"></i> Export Ledger (CSV)
+                </button>
+            </div>
+        </div>
+
+        <!-- Show Entries & Search Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: #fafaf8; padding: 12px 14px; border: 1px solid #e8e6df; border-radius: 6px; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                <span>Show</span>
+                <select id="tshare-page-size" onchange="changeTotalSharePageSize(this.value)" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; background: #ffffff;">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                <span>entries</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                <label for="tshare-search-input">Search:</label>
+                <input type="text" id="tshare-search-input" oninput="filterTotalShareTable(this.value)" placeholder="Search doctor, clinic, or address..." style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; width: 240px;">
+            </div>
+        </div>
+
+        <!-- Total Share Table -->
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                        <th style="padding: 10px;">Doctor Name</th>
+                        <th style="padding: 10px;">Share Rate</th>
+                        <th style="padding: 10px;">Share Total (₹)</th>
+                        <th style="padding: 10px;">Clinic Name</th>
+                        <th style="padding: 10px;">Clinic Address</th>
+                        <th style="padding: 10px;">Payout Status</th>
+                        <th style="padding: 10px; text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="lab-total-share-tbody">
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 32px; color: #576561;">No referral doctors configured yet. Add doctors under <strong>Referral Doctors</strong> to track total share.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Footer -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e6df; font-size: 13px; color: #576561;">
+            <div id="tshare-showing-info">Showing 0 to 0 of 0 entries</div>
+            <div style="display: flex; gap: 6px; align-items: center;">
+                <button type="button" onclick="changeTotalSharePage(-1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Previous</button>
+                <span id="tshare-page-indicator" style="padding: 6px 12px; background: #134e4a; color: #ffffff; border-radius: 5px; font-weight: 600;">1</span>
+                <button type="button" onclick="changeTotalSharePage(1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Edit / Adjust Doctor Total Share -->
+    <div id="modal-edit-total-share" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+        <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.18);">
+            <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h4 id="modal-tshare-title" style="margin: 0; font-size: 15px; font-weight: 700;"><i class="fa-solid fa-pen-to-square" style="margin-right: 8px;"></i>Adjust Doctor Total Share</h4>
+                <button type="button" onclick="closeEditTotalShareModal()" style="background: transparent; border: none; color: #ffffff; font-size: 18px; cursor: pointer;">&times;</button>
+            </div>
+            <div style="padding: 20px;">
+                <input type="hidden" id="tshare-edit-idx" value="-1">
+                <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Doctor Name</label>
+                    <input type="text" id="tshare-doc-name" readonly style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #f8faf9; font-weight: 600;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Commission Rate (%)</label>
+                        <input type="number" id="tshare-rate-input" min="0" max="100" step="0.5" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Total Share Amount (₹)</label>
+                        <input type="number" id="tshare-amount-input" min="0" step="0.01" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #0f766e; border-radius: 6px; font-size: 13px; font-weight: 700;">
+                    </div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: #1c2826; margin-bottom: 4px;">Settlement Status</label>
+                    <select id="tshare-payout-status" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
+                        <option value="Pending">Pending Settlement</option>
+                        <option value="Settled">Settled / Paid</option>
+                    </select>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 12px; border-top: 1px solid #e8e6df;">
+                    <button type="button" onclick="closeEditTotalShareModal()" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+                    <button type="button" onclick="saveEditedTotalShare()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
         <!-- =================================================== -->
   <!-- TAB: INPATIENT DEPARTMENT (IPD) MANAGEMENT          -->
@@ -7948,8 +8059,8 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       pharmacy: ["pharmacy", "billing"],
       PHARMACIST: ["pharmacy", "billing"],
       cashier: ["billing", "pharmacy"],
-      labtech: ["dashboard", "lab", "lab-patients", "lab-doctors"],
-      LABTECH: ["dashboard", "lab", "lab-patients", "lab-doctors"],
+      labtech: ["dashboard", "lab", "lab-patients", "lab-doctors", "lab-total-share"],
+      LABTECH: ["dashboard", "lab", "lab-patients", "lab-doctors", "lab-total-share"],
     };
 
     const tabMeta = {
@@ -7964,6 +8075,7 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       abdm: { label: "ABDM & FHIR", icon: "fa-shield-halved", title: "ABDM / ABHA Standards" },
       'lab-patients': { label: "Patient", icon: "fa-user-group", title: "Lab Patients & Appointments" },
       'lab-doctors': { label: "Referral Doctors", icon: "fa-user-doctor", title: "Referral Doctors & Share" },
+      'lab-total-share': { label: "Total Share", icon: "fa-percent", title: "Doctor Commission & Total Share" },
     };
 
 // Toggle the Invoices & Billing sidebar dropdown
@@ -10265,7 +10377,10 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
           const btn = document.createElement("button");
           btn.className = `nav-btn ${idx === 0 ? "active" : ""}`;
           btn.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${meta.label}`;
-          btn.onclick = (e) => switchTab(tabId, e.currentTarget);
+          btn.onclick = (e) => {
+  switchTab(tabId, e.currentTarget);
+  if (tabId === 'lab-total-share' && typeof loadLabTotalShareView === 'function') loadLabTotalShareView();
+};
           navContainer.appendChild(btn);
         }
       });
@@ -16308,6 +16423,213 @@ window.deleteDoctorDirectoryRecord = function(idx) {
   hospitalReferralDoctors.splice(idx, 1);
   persistReferralDoctors();
   renderDoctorDirectoryTable();
+};
+// =========================================================
+// TOTAL SHARE & COMMISSION LEDGER ENGINE
+// =========================================================
+let totalShareState = { page: 1, pageSize: 10, search: '' };
+
+function computeDoctorBookingShare(doc) {
+  const bookings = typeof hospitalLabBookings !== 'undefined' ? hospitalLabBookings : [];
+  const docNameLower = (doc.doctorName || '').trim().toLowerCase();
+  const rate = Number(doc.sharePercent) || 0;
+  let totalCommission = 0;
+  let refCount = 0;
+
+  bookings.forEach(b => {
+    if (b.status === 'Cancelled') return;
+    if ((b.refDoctor || '').trim().toLowerCase() === docNameLower) {
+      refCount++;
+      totalCommission += ((Number(b.payableAmount) || 0) * rate) / 100;
+    }
+  });
+
+  return {
+    calculatedAmount: Number(totalCommission.toFixed(2)),
+    referralCount: refCount
+  };
+}
+
+window.loadLabTotalShareView = function() {
+  hospitalReferralDoctors = JSON.parse(localStorage.getItem('arvion_lab_referral_doctors') || '[]');
+  hospitalLabBookings = JSON.parse(localStorage.getItem('arvion_lab_bookings') || '[]');
+  renderTotalShareTable();
+};
+
+window.recalculateAllDoctorShares = function() {
+  hospitalReferralDoctors.forEach(doc => {
+    const calc = computeDoctorBookingShare(doc);
+    doc.manualShareTotal = calc.calculatedAmount;
+  });
+  persistReferralDoctors();
+  renderTotalShareTable();
+  alert('Recalculated all doctor commission totals from active bookings!');
+};
+
+window.changeTotalSharePageSize = function(val) {
+  totalShareState.pageSize = Number(val) || 10;
+  totalShareState.page = 1;
+  renderTotalShareTable();
+};
+
+window.filterTotalShareTable = function(q) {
+  totalShareState.search = (q || '').toLowerCase().trim();
+  totalShareState.page = 1;
+  renderTotalShareTable();
+};
+
+window.changeTotalSharePage = function(delta) {
+  totalShareState.page += delta;
+  if (totalShareState.page < 1) totalShareState.page = 1;
+  renderTotalShareTable();
+};
+
+window.renderTotalShareTable = function() {
+  const tbody = document.getElementById('lab-total-share-tbody');
+  const info = document.getElementById('tshare-showing-info');
+  const pageInd = document.getElementById('tshare-page-indicator');
+  if (!tbody) return;
+
+  const q = totalShareState.search;
+  const filtered = !q
+    ? hospitalReferralDoctors
+    : hospitalReferralDoctors.filter(d =>
+        (d.doctorName || '').toLowerCase().includes(q) ||
+        (d.clinicName || '').toLowerCase().includes(q) ||
+        (d.clinicAddress || '').toLowerCase().includes(q)
+      );
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / totalShareState.pageSize));
+  if (totalShareState.page > totalPages) totalShareState.page = totalPages;
+
+  const startIdx = (totalShareState.page - 1) * totalShareState.pageSize;
+  const pageItems = filtered.slice(startIdx, startIdx + totalShareState.pageSize);
+
+  if (pageInd) pageInd.textContent = `${totalShareState.page} / ${totalPages}`;
+  if (info) {
+    info.textContent = total === 0
+      ? 'Showing 0 to 0 of 0 entries'
+      : `Showing ${startIdx + 1} to ${Math.min(startIdx + totalShareState.pageSize, total)} of ${total} entries`;
+  }
+
+  if (pageItems.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 32px; color: #576561;">No doctor commission records found. Configure doctors in <strong>Referral Doctors</strong> first.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = pageItems.map(d => {
+    const globalIdx = hospitalReferralDoctors.indexOf(d);
+    const calc = computeDoctorBookingShare(d);
+    const shareTotal = d.manualShareTotal !== undefined ? Number(d.manualShareTotal) : calc.calculatedAmount;
+    const isSettled = d.payoutStatus === 'Settled';
+
+    return `
+      <tr style="border-bottom: 1px solid #e8e6df;">
+        <td style="padding: 10px; font-weight: 700; color: #1c2826;">
+          ${d.doctorName}
+          <div style="font-size: 11px; color: #576561; font-weight: 400;">${calc.referralCount} referred booking(s)</div>
+        </td>
+        <td style="padding: 10px;">
+          <span style="background: #e6f4f1; color: #134e4a; padding: 3px 9px; border-radius: 12px; font-size: 12px; font-weight: 700;">${d.sharePercent ?? 0}%</span>
+        </td>
+        <td style="padding: 10px; font-weight: 700; color: #134e4a; font-size: 14px;">₹${shareTotal.toFixed(2)}</td>
+        <td style="padding: 10px; color: #1c2826;">${d.clinicName || '-'}</td>
+        <td style="padding: 10px; color: #576561; max-width: 260px;">${d.clinicAddress || '-'}</td>
+        <td style="padding: 10px;">
+          <button type="button" onclick="toggleDoctorPayoutStatus(${globalIdx})" title="Click to toggle Settled / Pending" style="background: ${isSettled ? '#dcfce7' : '#fef3c7'}; color: ${isSettled ? '#15803d' : '#92400e'}; border: none; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;">
+            ${isSettled ? 'Settled' : 'Pending'}
+          </button>
+        </td>
+        <td style="padding: 10px; text-align: center; white-space: nowrap;">
+          <button type="button" onclick="viewDoctorReferralBreakdown(${globalIdx})" title="View Referred Bookings" style="background: #f1f5f9; color: #1c2826; border: 1px solid #cbd5e1; padding: 5px 9px; border-radius: 5px; cursor: pointer; margin-right: 4px;">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+          <button type="button" onclick="openEditTotalShareModal(${globalIdx})" title="Edit Total Share" style="background: #e6f4f1; color: #134e4a; border: none; padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer;">
+            <i class="fa-solid fa-pen-to-square"></i> Edit
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+};
+
+window.toggleDoctorPayoutStatus = function(idx) {
+  const d = hospitalReferralDoctors[idx];
+  if (!d) return;
+  d.payoutStatus = d.payoutStatus === 'Settled' ? 'Pending' : 'Settled';
+  persistReferralDoctors();
+  renderTotalShareTable();
+};
+
+window.viewDoctorReferralBreakdown = function(idx) {
+  const d = hospitalReferralDoctors[idx];
+  if (!d) return;
+  const docNameLower = (d.doctorName || '').trim().toLowerCase();
+  const matches = (hospitalLabBookings || []).filter(b => b.status !== 'Cancelled' && (b.refDoctor || '').trim().toLowerCase() === docNameLower);
+  if (matches.length === 0) {
+    alert(`Doctor: ${d.doctorName} (${d.sharePercent || 0}% share)\nClinic: ${d.clinicName || '-'}\n\nNo patient bookings currently list "${d.doctorName}" as Referring Doctor.`);
+    return;
+  }
+  const lines = matches.map((b, i) => {
+    const share = (((Number(b.payableAmount) || 0) * (Number(d.sharePercent) || 0)) / 100).toFixed(2);
+    return `${i + 1}. Booking #${b.bookingId} — ${b.patientName} | Bill: ₹${b.payableAmount} | Share: ₹${share}`;
+  }).join('\n');
+  alert(`Referral Breakdown: ${d.doctorName} (${d.sharePercent}%)\n\n${lines}`);
+};
+
+window.openEditTotalShareModal = function(idx) {
+  const d = hospitalReferralDoctors[idx];
+  if (!d) return;
+  const calc = computeDoctorBookingShare(d);
+  const currentTotal = d.manualShareTotal !== undefined ? Number(d.manualShareTotal) : calc.calculatedAmount;
+
+  document.getElementById('tshare-edit-idx').value = idx;
+  document.getElementById('tshare-doc-name').value = d.doctorName || '';
+  document.getElementById('tshare-rate-input').value = d.sharePercent ?? 0;
+  document.getElementById('tshare-amount-input').value = currentTotal.toFixed(2);
+  document.getElementById('tshare-payout-status').value = d.payoutStatus || 'Pending';
+  document.getElementById('modal-edit-total-share').style.display = 'flex';
+};
+
+window.closeEditTotalShareModal = function() {
+  document.getElementById('modal-edit-total-share').style.display = 'none';
+};
+
+window.saveEditedTotalShare = function() {
+  const idx = Number(document.getElementById('tshare-edit-idx').value);
+  const d = hospitalReferralDoctors[idx];
+  if (!d) return;
+  d.sharePercent = Number(document.getElementById('tshare-rate-input').value) || 0;
+  d.manualShareTotal = Number(document.getElementById('tshare-amount-input').value) || 0;
+  d.payoutStatus = document.getElementById('tshare-payout-status').value;
+  persistReferralDoctors();
+  closeEditTotalShareModal();
+  renderTotalShareTable();
+};
+
+window.exportTotalShareCSV = function() {
+  const headers = ['Doctor Name', 'Share Rate (%)', 'Share Total (INR)', 'Clinic Name', 'Clinic Address', 'Payout Status'];
+  const rows = hospitalReferralDoctors.map(d => {
+    const calc = computeDoctorBookingShare(d);
+    const total = d.manualShareTotal !== undefined ? Number(d.manualShareTotal) : calc.calculatedAmount;
+    return [
+      `"${(d.doctorName || '').replace(/"/g, '""')}"`,
+      d.sharePercent ?? 0,
+      total.toFixed(2),
+      `"${(d.clinicName || '').replace(/"/g, '""')}"`,
+      `"${(d.clinicAddress || '').replace(/"/g, '""')}"`,
+      `"${d.payoutStatus || 'Pending'}"`
+    ].join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ArvionHIMS_Total_Share_Ledger_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 };
 
 // =========================================================
