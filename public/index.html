@@ -6521,7 +6521,57 @@
     </div>
     <div id="lab-mis-subview-lis-machines" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">LIS Machines</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure LIS Machines.</p></div></div>
     <div id="lab-mis-subview-lis-results" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">LIS Results</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure LIS Results.</p></div></div>
-    <div id="lab-mis-subview-change-password" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Change Password</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Change Password.</p></div></div>
+    <!-- 8. MIS: Change Password -->
+    <div id="lab-mis-subview-change-password" class="lab-mis-subview" style="display: none;">
+        <div style="max-width: 520px; margin: 24px auto;">
+            <h3 style="margin: 0 0 10px 0; font-size: 19px; font-weight: 500; color: #1c2826;">Change Password</h3>
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 6px; padding: 24px 26px 20px 26px; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);">
+                <div style="display: flex; flex-direction: column; gap: 16px; font-size: 13px;">
+                    <!-- Old Password -->
+                    <div style="display: grid; grid-template-columns: 145px 1fr; align-items: center; gap: 14px;">
+                        <label for="mis-cp-old" style="font-weight: 700; color: #1c2826; text-align: right;">Old Password<span style="color: #dc2626;">*</span></label>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="mis-cp-old" placeholder="Old Password" style="width: 100%; padding: 8px 34px 8px 11px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 13px; color: #1c2826; box-sizing: border-box;">
+                            <button type="button" onclick="toggleMisPasswordVisibility('mis-cp-old', this)" title="Show / Hide Password" style="position: absolute; right: 8px; background: transparent; border: none; color: #64748b; cursor: pointer; padding: 2px 4px;">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- New Password -->
+                    <div style="display: grid; grid-template-columns: 145px 1fr; align-items: center; gap: 14px;">
+                        <label for="mis-cp-new" style="font-weight: 700; color: #1c2826; text-align: right;">New Password<span style="color: #dc2626;">*</span></label>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="mis-cp-new" placeholder="Enter new password" style="width: 100%; padding: 8px 34px 8px 11px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 13px; color: #1c2826; box-sizing: border-box;">
+                            <button type="button" onclick="toggleMisPasswordVisibility('mis-cp-new', this)" title="Show / Hide Password" style="position: absolute; right: 8px; background: transparent; border: none; color: #64748b; cursor: pointer; padding: 2px 4px;">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Retype Password -->
+                    <div style="display: grid; grid-template-columns: 145px 1fr; align-items: center; gap: 14px;">
+                        <label for="mis-cp-confirm" style="font-weight: 700; color: #1c2826; text-align: right;">Retype Password<span style="color: #dc2626;">*</span></label>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="mis-cp-confirm" placeholder="Retype new password" style="width: 100%; padding: 8px 34px 8px 11px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 13px; color: #1c2826; box-sizing: border-box;">
+                            <button type="button" onclick="toggleMisPasswordVisibility('mis-cp-confirm', this)" title="Show / Hide Password" style="position: absolute; right: 8px; background: transparent; border: none; color: #64748b; cursor: pointer; padding: 2px 4px;">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inline Status Message -->
+                <div id="mis-cp-feedback" style="display: none; margin-top: 14px; padding: 8px 12px; border-radius: 4px; font-size: 12.5px; font-weight: 600;"></div>
+
+                <!-- Footer Buttons: Cancel (Left) & Save (Right) -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 22px; padding-top: 14px; border-top: 1px solid #e8e6df;">
+                    <button type="button" onclick="resetMisChangePasswordForm()" style="background: #e5e7eb; color: #374151; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer;">Cancel</button>
+                    <button type="button" onclick="submitMisChangePassword()" style="background: #134e4a; color: #ffffff; border: none; border-radius: 4px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="lab-mis-subview-change-mobile" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Change Mobile No.</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Change Mobile No.</p></div></div>
     <div id="lab-mis-subview-change-email" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Change Email</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Change Email.</p></div></div>
     <div id="lab-mis-subview-add-coordinator" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Add Coordinator</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Add Coordinator.</p></div></div>
@@ -19395,6 +19445,8 @@ window.openLabMisSection = function(sectionKey) {
 } else if (sectionKey === 'report-templates') {
   closeMisRepTplForm();
   renderMisRepTplTable();
+} else if (sectionKey === 'change-password') {
+  resetMisChangePasswordForm();
 }
 };
 let misLabsList = JSON.parse(localStorage.getItem('arvion_mis_my_labs') || '[]');
@@ -20580,6 +20632,64 @@ window.deleteMisRepTplRecord = function(idx) {
   misReportTemplatesList.forEach((item, i) => item.id = i + 1);
   persistMisReportTemplates();
   renderMisRepTplTable();
+};
+window.toggleMisPasswordVisibility = function(inputId, btnEl) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const isPwd = input.type === 'password';
+  input.type = isPwd ? 'text' : 'password';
+  if (btnEl) {
+    btnEl.innerHTML = isPwd ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
+  }
+};
+
+window.resetMisChangePasswordForm = function() {
+  ['mis-cp-old', 'mis-cp-new', 'mis-cp-confirm'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = '';
+      el.type = 'password';
+    }
+  });
+  const fb = document.getElementById('mis-cp-feedback');
+  if (fb) {
+    fb.style.display = 'none';
+    fb.textContent = '';
+  }
+};
+
+window.submitMisChangePassword = function() {
+  const oldPass = (document.getElementById('mis-cp-old')?.value || '').trim();
+  const newPass = (document.getElementById('mis-cp-new')?.value || '').trim();
+  const confirmPass = (document.getElementById('mis-cp-confirm')?.value || '').trim();
+  const fb = document.getElementById('mis-cp-feedback');
+
+  function showCpFeedback(msg, isError) {
+    if (!fb) { alert(msg); return; }
+    fb.style.display = 'block';
+    fb.textContent = msg;
+    fb.style.background = isError ? '#fef2f2' : '#f0fdf4';
+    fb.style.color = isError ? '#b91c1c' : '#134e4a';
+    fb.style.border = isError ? '1px solid #fecaca' : '1px solid #bbf7d0';
+  }
+
+  if (!oldPass) { showCpFeedback('Please enter your Old Password.', true); return; }
+  if (!newPass || newPass.length < 6) { showCpFeedback('New Password must be at least 6 characters long.', true); return; }
+  if (newPass !== confirmPass) { showCpFeedback('New Password and Retype Password do not match.', true); return; }
+  if (oldPass === newPass) { showCpFeedback('New Password must be different from Old Password.', true); return; }
+
+  const secData = JSON.parse(localStorage.getItem('arvion_mis_account_security') || '{}');
+  if (secData.password && secData.password !== oldPass) {
+    showCpFeedback('Old Password does not match the saved password.', true);
+    return;
+  }
+
+  secData.password = newPass;
+  secData.passwordUpdatedAt = new Date().toISOString();
+  localStorage.setItem('arvion_mis_account_security', JSON.stringify(secData));
+
+  resetMisChangePasswordForm();
+  showCpFeedback('Password updated successfully.', false);
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
