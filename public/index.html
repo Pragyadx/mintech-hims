@@ -6572,7 +6572,71 @@
             </div>
         </div>
     </div>
-    <div id="lab-mis-subview-change-mobile" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Change Mobile No.</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Change Mobile No.</p></div></div>
+    <!-- 9. MIS: Change Mobile Number -->
+    <div id="lab-mis-subview-change-mobile" class="lab-mis-subview" style="display: none;">
+        <div style="max-width: 520px; margin: 24px auto;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
+                <h3 style="margin: 0; font-size: 19px; font-weight: 500; color: #1c2826;">Change Mobile Number</h3>
+                <span id="mis-cm-current-badge" style="font-size: 12px; color: #0f766e; font-weight: 600;"></span>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 6px; padding: 22px 26px 20px 26px; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);">
+                <!-- Step 1: Verification Inputs -->
+                <div style="display: flex; flex-direction: column; gap: 16px; font-size: 13px;">
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px;">
+                        <span style="font-weight: 500; color: #1c2826;">Do you have old mobile number:</span>
+                        <label style="display: inline-flex; align-items: center; gap: 5px; cursor: pointer; color: #1c2826;">
+                            <input type="radio" name="mis-cm-has-old" value="No" checked onchange="onMisCmOldMobileOptionChange()" style="accent-color: #134e4a;"> No
+                        </label>
+                        <label style="display: inline-flex; align-items: center; gap: 5px; cursor: pointer; color: #1c2826;">
+                            <input type="radio" name="mis-cm-has-old" value="Yes" onchange="onMisCmOldMobileOptionChange()" style="accent-color: #134e4a;"> Yes
+                        </label>
+                    </div>
+
+                    <!-- Optional Old Mobile Input when 'Yes' is selected -->
+                    <div id="mis-cm-old-mobile-row" style="display: none; grid-template-columns: 145px 1fr; align-items: center; gap: 14px;">
+                        <label for="mis-cm-old-mobile" style="font-weight: 700; color: #1c2826; text-align: right;">Old Mobile No.<span style="color: #dc2626;">*</span></label>
+                        <input type="text" id="mis-cm-old-mobile" maxlength="10" placeholder="Enter 10-digit old mobile" style="width: 100%; padding: 8px 11px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 13px; color: #1c2826; box-sizing: border-box;">
+                    </div>
+
+                    <!-- Password Verification -->
+                    <div style="display: grid; grid-template-columns: 145px 1fr; align-items: center; gap: 14px;">
+                        <label for="mis-cm-password" style="font-weight: 700; color: #1c2826; text-align: right; line-height: 1.3;">Enter your Password<span style="color: #dc2626;">*</span></label>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="mis-cm-password" placeholder="Old Password" style="width: 100%; padding: 8px 34px 8px 11px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 13px; color: #1c2826; box-sizing: border-box;">
+                            <button type="button" onclick="toggleMisPasswordVisibility('mis-cm-password', this)" title="Show / Hide Password" style="position: absolute; right: 8px; background: transparent; border: none; color: #64748b; cursor: pointer; padding: 2px 4px;">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Unlocked New Mobile Number Section (Appears after Verify) -->
+                    <div id="mis-cm-new-mobile-section" style="display: none; padding-top: 14px; border-top: 1px dashed #d6d3c9; flex-direction: column; gap: 14px;">
+                        <div style="display: grid; grid-template-columns: 145px 1fr; align-items: center; gap: 14px;">
+                            <label for="mis-cm-new-mobile" style="font-weight: 700; color: #1c2826; text-align: right;">New Mobile No.<span style="color: #dc2626;">*</span></label>
+                            <input type="text" id="mis-cm-new-mobile" maxlength="10" placeholder="Enter 10-digit new mobile" style="width: 100%; padding: 8px 11px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 13px; color: #1c2826; box-sizing: border-box;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 145px 1fr; align-items: center; gap: 14px;">
+                            <label for="mis-cm-confirm-mobile" style="font-weight: 700; color: #1c2826; text-align: right;">Confirm Mobile<span style="color: #dc2626;">*</span></label>
+                            <input type="text" id="mis-cm-confirm-mobile" maxlength="10" placeholder="Re-enter 10-digit mobile" style="width: 100%; padding: 8px 11px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 13px; color: #1c2826; box-sizing: border-box;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inline Feedback Message -->
+                <div id="mis-cm-feedback" style="display: none; margin-top: 14px; padding: 8px 12px; border-radius: 4px; font-size: 12.5px; font-weight: 600;"></div>
+
+                <!-- Footer Buttons: Reset (Left) & Verify / Update (Right) -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 22px; padding-top: 14px; border-top: 1px solid #e8e6df;">
+                    <button type="button" onclick="resetMisChangeMobileForm()" style="background: #e5e7eb; color: #374151; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer;">Reset</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" id="mis-cm-verify-btn" onclick="verifyMisChangeMobile()" style="background: #134e4a; color: #ffffff; border: none; border-radius: 4px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Verify</button>
+                        <button type="button" id="mis-cm-save-btn" onclick="saveMisNewMobileNumber()" style="display: none; background: #0f766e; color: #ffffff; border: none; border-radius: 4px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Update Mobile</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="lab-mis-subview-change-email" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Change Email</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Change Email.</p></div></div>
     <div id="lab-mis-subview-add-coordinator" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Add Coordinator</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Add Coordinator.</p></div></div>
     <div id="lab-mis-subview-pdf-setting" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">PDF Setting</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure PDF Setting.</p></div></div>
@@ -19447,6 +19511,8 @@ window.openLabMisSection = function(sectionKey) {
   renderMisRepTplTable();
 } else if (sectionKey === 'change-password') {
   resetMisChangePasswordForm();
+} else if (sectionKey === 'change-mobile') {
+  resetMisChangeMobileForm();
 }
 };
 let misLabsList = JSON.parse(localStorage.getItem('arvion_mis_my_labs') || '[]');
@@ -20690,6 +20756,113 @@ window.submitMisChangePassword = function() {
 
   resetMisChangePasswordForm();
   showCpFeedback('Password updated successfully.', false);
+};
+window.onMisCmOldMobileOptionChange = function() {
+  const hasOld = document.querySelector('input[name="mis-cm-has-old"]:checked')?.value || 'No';
+  const row = document.getElementById('mis-cm-old-mobile-row');
+  if (row) row.style.display = hasOld === 'Yes' ? 'grid' : 'none';
+};
+
+window.resetMisChangeMobileForm = function() {
+  const noRadio = document.querySelector('input[name="mis-cm-has-old"][value="No"]');
+  if (noRadio) noRadio.checked = true;
+  onMisCmOldMobileOptionChange();
+
+  ['mis-cm-old-mobile', 'mis-cm-password', 'mis-cm-new-mobile', 'mis-cm-confirm-mobile'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  const pwdEl = document.getElementById('mis-cm-password');
+  if (pwdEl) pwdEl.type = 'password';
+
+  const newSec = document.getElementById('mis-cm-new-mobile-section');
+  const verifyBtn = document.getElementById('mis-cm-verify-btn');
+  const saveBtn = document.getElementById('mis-cm-save-btn');
+  if (newSec) newSec.style.display = 'none';
+  if (verifyBtn) verifyBtn.style.display = 'inline-block';
+  if (saveBtn) saveBtn.style.display = 'none';
+
+  const fb = document.getElementById('mis-cm-feedback');
+  if (fb) {
+    fb.style.display = 'none';
+    fb.textContent = '';
+  }
+
+  const secData = JSON.parse(localStorage.getItem('arvion_mis_account_security') || '{}');
+  const badge = document.getElementById('mis-cm-current-badge');
+  if (badge) {
+    badge.textContent = secData.mobile ? `Current Mobile: ${secData.mobile}` : '';
+  }
+};
+
+function showMisCmFeedback(msg, isError) {
+  const fb = document.getElementById('mis-cm-feedback');
+  if (!fb) { alert(msg); return; }
+  fb.style.display = 'block';
+  fb.textContent = msg;
+  fb.style.background = isError ? '#fef2f2' : '#f0fdf4';
+  fb.style.color = isError ? '#b91c1c' : '#134e4a';
+  fb.style.border = isError ? '1px solid #fecaca' : '1px solid #bbf7d0';
+}
+
+window.verifyMisChangeMobile = function() {
+  const hasOld = document.querySelector('input[name="mis-cm-has-old"]:checked')?.value || 'No';
+  const oldMobile = (document.getElementById('mis-cm-old-mobile')?.value || '').trim();
+  const password = (document.getElementById('mis-cm-password')?.value || '').trim();
+  const secData = JSON.parse(localStorage.getItem('arvion_mis_account_security') || '{}');
+
+  if (hasOld === 'Yes') {
+    if (!/^\d{10}$/.test(oldMobile)) {
+      showMisCmFeedback('Please enter a valid 10-digit Old Mobile Number.', true);
+      return;
+    }
+    if (secData.mobile && secData.mobile !== oldMobile) {
+      showMisCmFeedback('Old Mobile Number does not match the registered mobile number.', true);
+      return;
+    }
+  }
+
+  if (!password) {
+    showMisCmFeedback('Please enter your Password to verify.', true);
+    return;
+  }
+
+  if (secData.password && secData.password !== password) {
+    showMisCmFeedback('Password verification failed. Please check your password.', true);
+    return;
+  }
+
+  const newSec = document.getElementById('mis-cm-new-mobile-section');
+  const verifyBtn = document.getElementById('mis-cm-verify-btn');
+  const saveBtn = document.getElementById('mis-cm-save-btn');
+  if (newSec) newSec.style.display = 'flex';
+  if (verifyBtn) verifyBtn.style.display = 'none';
+  if (saveBtn) saveBtn.style.display = 'inline-block';
+
+  showMisCmFeedback('Identity verified. Enter and confirm your new 10-digit mobile number below.', false);
+};
+
+window.saveMisNewMobileNumber = function() {
+  const newMobile = (document.getElementById('mis-cm-new-mobile')?.value || '').trim();
+  const confirmMobile = (document.getElementById('mis-cm-confirm-mobile')?.value || '').trim();
+
+  if (!/^\d{10}$/.test(newMobile)) {
+    showMisCmFeedback('Please enter a valid 10-digit New Mobile Number.', true);
+    return;
+  }
+  if (newMobile !== confirmMobile) {
+    showMisCmFeedback('New Mobile Number and Confirm Mobile do not match.', true);
+    return;
+  }
+
+  const secData = JSON.parse(localStorage.getItem('arvion_mis_account_security') || '{}');
+  secData.mobile = newMobile;
+  secData.mobileUpdatedAt = new Date().toISOString();
+  localStorage.setItem('arvion_mis_account_security', JSON.stringify(secData));
+
+  resetMisChangeMobileForm();
+  showMisCmFeedback(`Mobile number updated to ${newMobile} successfully.`, false);
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
