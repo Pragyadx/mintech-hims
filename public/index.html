@@ -5668,6 +5668,23 @@
         </div>
     </div>
 </section>
+<!-- ========================================== -->
+<!-- SECTION: LAB MIS (12 SUB-FEATURES SHELL)   -->
+<!-- ========================================== -->
+<section id="tab-lab-mis" class="tab-content" style="display: none; padding: 20px;">
+    <div id="lab-mis-subview-my-lab-list" class="lab-mis-subview" style="display: block;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">My Lab List</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure My Lab List.</p></div></div>
+    <div id="lab-mis-subview-my-users" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">My Users</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure My Users.</p></div></div>
+    <div id="lab-mis-subview-doctor-signature" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Doctor's Signature</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Doctor's Signature.</p></div></div>
+    <div id="lab-mis-subview-all-templates" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">All Templates</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure All Templates.</p></div></div>
+    <div id="lab-mis-subview-report-templates" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Report Templates</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Report Templates.</p></div></div>
+    <div id="lab-mis-subview-lis-machines" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">LIS Machines</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure LIS Machines.</p></div></div>
+    <div id="lab-mis-subview-lis-results" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">LIS Results</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure LIS Results.</p></div></div>
+    <div id="lab-mis-subview-change-password" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Change Password</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Change Password.</p></div></div>
+    <div id="lab-mis-subview-change-mobile" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Change Mobile No.</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Change Mobile No.</p></div></div>
+    <div id="lab-mis-subview-change-email" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Change Email</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Change Email.</p></div></div>
+    <div id="lab-mis-subview-add-coordinator" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Add Coordinator</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Add Coordinator.</p></div></div>
+    <div id="lab-mis-subview-pdf-setting" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">PDF Setting</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure PDF Setting.</p></div></div>
+</section>
         <!-- =================================================== -->
   <!-- TAB: INPATIENT DEPARTMENT (IPD) MANAGEMENT          -->
   <!-- =================================================== -->
@@ -8133,8 +8150,8 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       pharmacy: ["pharmacy", "billing"],
       PHARMACIST: ["pharmacy", "billing"],
       cashier: ["billing", "pharmacy"],
-      labtech: ["dashboard", "lab", "lab-patients", "lab-doctors", "lab-total-share", "lab-accounting", "lab-abha"],
-      LABTECH: ["dashboard", "lab", "lab-patients", "lab-doctors", "lab-total-share", "lab-accounting", "lab-abha"],
+      labtech: ["dashboard", "lab", "lab-patients", "lab-doctors", "lab-total-share", "lab-accounting", "lab-abha", "lab-mis"],
+      LABTECH: ["dashboard", "lab", "lab-patients", "lab-doctors", "lab-total-share", "lab-accounting", "lab-abha", "lab-mis"],
     };
 
     const tabMeta = {
@@ -8152,6 +8169,7 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       'lab-total-share': { label: "Total Share", icon: "fa-percent", title: "Doctor Commission & Total Share" },
       'lab-accounting': { label: "Accounting", icon: "fa-indian-rupee-sign", title: "Lab Invoices & Accounting" },
       'lab-abha': { label: "ABHA", icon: "fa-id-card-clip", title: "ABHA & ABDM Integration" },
+      'lab-mis': { label: "MIS", icon: "fa-gear", title: "MIS (Management Information System)" },
     };
 
 // Toggle the Invoices & Billing sidebar dropdown
@@ -10361,9 +10379,10 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     const userRoleKey = (currentUser && currentUser.role) ? currentUser.role.toLowerCase() : '';
     let allowedTabs = roleRoutes[userRoleKey] || roleRoutes[currentUser?.role] || defaultTabs;
     if ((userRoleKey || '').includes('lab')) {
-  allowedTabs = (allowedTabs || []).filter(t => t !== 'billing');
-  if (!allowedTabs.includes('lab-abha')) allowedTabs.push('lab-abha');
-}
+    allowedTabs = (allowedTabs || []).filter(t => t !== 'billing');
+    if (!allowedTabs.includes('lab-abha')) allowedTabs.push('lab-abha');
+    if (!allowedTabs.includes('lab-mis')) allowedTabs.push('lab-mis');
+  }
     const navContainer = document.getElementById("sidebar-nav") || document.querySelector(".nav-links") || document.querySelector("nav");
     if (navContainer) {
       navContainer.innerHTML = "";
@@ -10481,6 +10500,32 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
             <div id="subnav-lab-abha" style="display: none; background: rgba(0, 0, 0, 0.16); padding: 6px 0 6px 28px; border-radius: 0 0 6px 6px;">
               <a href="javascript:void(0)" onclick="openLabAbhaSection('patient-abha')" class="subnav-link" style="display: block; padding: 6px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; Patient ABHA</a>
               <a href="javascript:void(0)" onclick="openLabAbhaSection('abdm-facilities')" class="subnav-link" style="display: block; padding: 6px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; ABDM Facilities</a>
+            </div>
+          `;
+          navContainer.appendChild(groupDiv);
+          } else if (tabId === 'lab-mis') {
+          const groupDiv = document.createElement("div");
+          groupDiv.innerHTML = `
+            <button type="button" class="nav-btn" id="nav-btn-lab-mis" onclick="switchTab('lab-mis', this); toggleLabMisSubmenu();" style="justify-content: space-between; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid ${meta.icon}"></i>
+                <span>${meta.label}</span>
+              </div>
+              <i class="fa-solid fa-chevron-down submenu-chevron" id="lab-mis-chevron" style="font-size: 11px; transition: transform 0.2s;"></i>
+            </button>
+            <div id="subnav-lab-mis" style="display: none; background: rgba(0, 0, 0, 0.16); padding: 6px 0 6px 28px; border-radius: 0 0 6px 6px;">
+              <a href="javascript:void(0)" onclick="openLabMisSection('my-lab-list')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; My Lab List</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('my-users')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; My Users</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('doctor-signature')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; Doctor's Signature</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('all-templates')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; All Templates</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('report-templates')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; Report Templates</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('lis-machines')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; LIS Machines</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('lis-results')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; LIS Results</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('change-password')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; Change Password</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('change-mobile')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; Change Mobile No.</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('change-email')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; Change Email</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('add-coordinator')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; Add Coordinator</a>
+              <a href="javascript:void(0)" onclick="openLabMisSection('pdf-setting')" class="subnav-link" style="display: block; padding: 5px 10px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 12.5px;">&bull; PDF Setting</a>
             </div>
           `;
           navContainer.appendChild(groupDiv);
@@ -18476,6 +18521,23 @@ window.deleteAbdmFacilityRecord = function(idx) {
   abdmFacilitiesList.forEach((item, i) => item.id = i + 1);
   persistAbdmFacilities();
   renderAbdmFacilitiesTable();
+};
+window.toggleLabMisSubmenu = function() {
+  const menu = document.getElementById('subnav-lab-mis');
+  const chevron = document.getElementById('lab-mis-chevron');
+  if (!menu) return;
+  const isHidden = menu.style.display === 'none' || menu.style.display === '';
+  menu.style.display = isHidden ? 'block' : 'none';
+  if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+};
+
+window.openLabMisSection = function(sectionKey) {
+  if (typeof switchTab === 'function') {
+    switchTab('lab-mis');
+  }
+  document.querySelectorAll('.lab-mis-subview').forEach(el => el.style.display = 'none');
+  const activeView = document.getElementById('lab-mis-subview-' + sectionKey);
+  if (activeView) activeView.style.display = 'block';
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
