@@ -6257,7 +6257,144 @@
             </div>
         </div>
     </div>
-    <div id="lab-mis-subview-all-templates" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">All Templates</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure All Templates.</p></div></div>
+    <!-- 4. MIS: All Templates (List + Rich-Text Report Template Editor) -->
+    <div id="lab-mis-subview-all-templates" class="lab-mis-subview" style="display: none;">
+        <!-- PANEL A: ALL TEMPLATES LIST -->
+        <div id="mis-all-templates-list-panel" style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 17px; font-weight: 600; color: #1c2826;">All Templates List</h3>
+                    <span style="font-size: 12px; color: #576561;">Create and customize reusable radiology, pathology, and clinical narrative report templates</span>
+                </div>
+                <button type="button" onclick="openMisTemplateForm(-1)" style="background: #134e4a; color: #ffffff; border: none; border-radius: 5px; padding: 8px 15px; font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-plus"></i> Add New Template
+                </button>
+            </div>
+
+            <!-- Toolbar: Show Entries & Search -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; background: #f3f2ed; padding: 7px 12px; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #1c2826;">
+                    <span>Show</span>
+                    <select id="mis-tpl-page-size" onchange="changeMisTemplatePageSize()" style="padding: 4px 8px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; font-size: 12.5px; min-width: 72px; cursor: pointer;">
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>Entries</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; background: #f3f2ed; padding: 7px 12px; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #1c2826;">
+                    <label for="mis-tpl-search" style="margin: 0;">Search:</label>
+                    <input type="text" id="mis-tpl-search" oninput="onMisTemplateSearch()" placeholder="" style="padding: 5px 10px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; font-size: 12.5px; width: 210px;">
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; color: #1c2826;">
+                    <thead>
+                        <tr style="border-bottom: 1.5px solid #cbd5e1; background: #ffffff; text-align: left;">
+                            <th onclick="sortMisTemplatesTable('id')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">ID <span style="color: #134e4a; font-size: 10px;">&#9660;</span></th>
+                            <th onclick="sortMisTemplatesTable('templateName')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Template Name <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisTemplatesTable('createdDate')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Created Date <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th style="padding: 10px 8px; font-weight: 700; white-space: nowrap;">Status</th>
+                            <th style="padding: 10px 8px; font-weight: 700; white-space: nowrap;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mis-all-templates-tbody">
+                        <tr>
+                            <td colspan="5" style="padding: 14px 10px; text-align: center; color: #576561; border-bottom: 1px solid #cbd5e1;">No data available in table</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; font-size: 12.5px; color: #475569;">
+                <div id="mis-tpl-info">Showing 0 to 0 of 0 entries</div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <button type="button" onclick="changeMisTemplatePage(-1)" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; color: #64748b; cursor: pointer;">Previous</button>
+                    <span id="mis-tpl-page-num" style="display: none; background: #134e4a; color: #ffffff; border-radius: 4px; padding: 4px 10px; font-weight: 600;">1</span>
+                    <button type="button" onclick="changeMisTemplatePage(1)" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; color: #64748b; cursor: pointer;">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL B: ADD / EDIT TEMPLATE FORM -->
+        <div id="mis-all-templates-form-panel" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px 24px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; margin-bottom: 18px; border-bottom: 1px solid #e8e6df;">
+                <h3 id="mis-tpl-form-heading" style="margin: 0; font-size: 17px; font-weight: 600; color: #1c2826;">Add / Edit Report Template</h3>
+                <button type="button" onclick="closeMisTemplateForm()" style="background: #f3f2ed; color: #1c2826; border: 1px solid #d6d3c9; border-radius: 5px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Templates List
+                </button>
+            </div>
+
+            <input type="hidden" id="mis-tpl-edit-idx" value="-1">
+
+            <div style="display: flex; flex-direction: column; gap: 18px; font-size: 12.5px; margin-bottom: 20px; max-width: 920px;">
+                <!-- Template Name -->
+                <div style="display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 14px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Template Name<span style="color: #dc2626;">*</span></label>
+                    <input type="text" id="mis-tpl-name" placeholder="Enter Template Name" style="padding: 8px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <!-- Report Template Rich-Text Editor -->
+                <div style="display: grid; grid-template-columns: 150px 1fr; align-items: start; gap: 14px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right; padding-top: 8px;">Report Template<span style="color: #dc2626;">*</span></label>
+                    <div style="border: 1px solid #cbd5e1; border-radius: 5px; overflow: hidden; background: #ffffff;">
+                        <!-- Formatting Toolbar -->
+                        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px; padding: 7px 10px; background: #f8f7f3; border-bottom: 1px solid #e2e8f0;">
+                            <select onchange="execMisTplBlockFormat(this)" style="padding: 4px 8px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12px; background: #ffffff; cursor: pointer;">
+                                <option value="P">Paragraph</option>
+                                <option value="H2">Heading 1</option>
+                                <option value="H3">Heading 2</option>
+                                <option value="H4">Subheading</option>
+                            </select>
+                            <span style="width: 1px; height: 18px; background: #d6d3c9; margin: 0 3px;"></span>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('bold');" title="Bold" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; font-weight: 700; cursor: pointer;">B</button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('italic');" title="Italic" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 9px; font-style: italic; cursor: pointer;">I</button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('underline');" title="Underline" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; text-decoration: underline; cursor: pointer;">U</button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('strikeThrough');" title="Strikethrough" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; text-decoration: line-through; cursor: pointer;">S</button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('subscript');" title="Subscript" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 7px; font-size: 11px; cursor: pointer;">X<sub>2</sub></button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('superscript');" title="Superscript" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 7px; font-size: 11px; cursor: pointer;">X<sup>2</sup></button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('removeFormat');" title="Clear Formatting" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; font-size: 11px; cursor: pointer;"><i class="fa-solid fa-eraser"></i></button>
+                            <span style="width: 1px; height: 18px; background: #d6d3c9; margin: 0 3px;"></span>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertUnorderedList');" title="Bulleted List" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; cursor: pointer;"><i class="fa-solid fa-list-ul"></i></button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertOrderedList');" title="Numbered List" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; cursor: pointer;"><i class="fa-solid fa-list-ol"></i></button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('outdent');" title="Decrease Indent" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; cursor: pointer;"><i class="fa-solid fa-outdent"></i></button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('indent');" title="Increase Indent" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; cursor: pointer;"><i class="fa-solid fa-indent"></i></button>
+                            <span style="width: 1px; height: 18px; background: #d6d3c9; margin: 0 3px;"></span>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('justifyLeft');" title="Align Left" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; cursor: pointer;"><i class="fa-solid fa-align-left"></i></button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('justifyCenter');" title="Align Center" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; cursor: pointer;"><i class="fa-solid fa-align-center"></i></button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('justifyRight');" title="Align Right" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; cursor: pointer;"><i class="fa-solid fa-align-right"></i></button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('insertHorizontalRule');" title="Insert Horizontal Line" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; cursor: pointer;">&mdash;</button>
+                            <span style="width: 1px; height: 18px; background: #d6d3c9; margin: 0 3px;"></span>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('undo');" title="Undo" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; cursor: pointer;"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button type="button" onmousedown="event.preventDefault(); document.execCommand('redo');" title="Redo" style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 3px; padding: 4px 8px; cursor: pointer;"><i class="fa-solid fa-rotate-right"></i></button>
+                        </div>
+
+                        <!-- Editable Clinical Body -->
+                        <div id="mis-tpl-editor" contenteditable="true" data-placeholder="Write clinical history and report findings here..." style="min-height: 290px; padding: 14px 16px; outline: none; font-size: 13px; line-height: 1.55; color: #1c2826; background: #ffffff;"></div>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div style="display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 14px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Status</label>
+                    <select id="mis-tpl-status" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; max-width: 220px;">
+                        <option value="Active" selected>Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; padding-top: 12px; border-top: 1px solid #e8e6df; max-width: 920px;">
+                <button type="button" onclick="closeMisTemplateForm()" style="background: #ffffff; color: #1c2826; border: 1px solid #d6d3c9; border-radius: 5px; padding: 9px 16px; font-size: 13px; cursor: pointer;">Cancel</button>
+                <button type="button" id="mis-tpl-submit-btn" onclick="saveMisTemplateRecord()" style="background: #134e4a; color: #ffffff; border: none; border-radius: 5px; padding: 9px 22px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Template</button>
+            </div>
+        </div>
+    </div>
     <div id="lab-mis-subview-report-templates" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Report Templates</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Report Templates.</p></div></div>
     <div id="lab-mis-subview-lis-machines" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">LIS Machines</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure LIS Machines.</p></div></div>
     <div id="lab-mis-subview-lis-results" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">LIS Results</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure LIS Results.</p></div></div>
@@ -19129,6 +19266,9 @@ window.openLabMisSection = function(sectionKey) {
 } else if (sectionKey === 'doctor-signature') {
   closeMisDocSigForm();
   renderMisDocSigTable();
+} else if (sectionKey === 'all-templates') {
+  closeMisTemplateForm();
+  renderMisTemplatesTable();
 }
 };
 let misLabsList = JSON.parse(localStorage.getItem('arvion_mis_my_labs') || '[]');
@@ -19860,6 +20000,187 @@ window.deleteMisDocSigRecord = function(idx) {
   misDocSignaturesList.forEach((item, i) => item.id = i + 1);
   persistMisDocSignatures();
   renderMisDocSigTable();
+};
+let misAllTemplatesList = JSON.parse(localStorage.getItem('arvion_mis_all_templates') || '[]');
+let misTemplatesState = {
+  page: 1,
+  pageSize: 10,
+  search: '',
+  sortKey: 'id',
+  sortAsc: false
+};
+
+function persistMisTemplates() {
+  localStorage.setItem('arvion_mis_all_templates', JSON.stringify(misAllTemplatesList));
+}
+
+window.execMisTplBlockFormat = function(selectEl) {
+  const tag = selectEl.value || 'P';
+  document.execCommand('formatBlock', false, '<' + tag + '>');
+};
+
+window.changeMisTemplatePageSize = function() {
+  misTemplatesState.pageSize = Number(document.getElementById('mis-tpl-page-size')?.value || 10);
+  misTemplatesState.page = 1;
+  renderMisTemplatesTable();
+};
+
+window.onMisTemplateSearch = function() {
+  misTemplatesState.search = (document.getElementById('mis-tpl-search')?.value || '').toLowerCase().trim();
+  misTemplatesState.page = 1;
+  renderMisTemplatesTable();
+};
+
+window.sortMisTemplatesTable = function(key) {
+  if (misTemplatesState.sortKey === key) {
+    misTemplatesState.sortAsc = !misTemplatesState.sortAsc;
+  } else {
+    misTemplatesState.sortKey = key;
+    misTemplatesState.sortAsc = true;
+  }
+  renderMisTemplatesTable();
+};
+
+window.changeMisTemplatePage = function(delta) {
+  misTemplatesState.page = Math.max(1, misTemplatesState.page + delta);
+  renderMisTemplatesTable();
+};
+
+window.toggleMisTemplateStatus = function(idx) {
+  if (!misAllTemplatesList[idx]) return;
+  misAllTemplatesList[idx].status = misAllTemplatesList[idx].status === 'Active' ? 'Inactive' : 'Active';
+  persistMisTemplates();
+  renderMisTemplatesTable();
+};
+
+window.renderMisTemplatesTable = function() {
+  const tbody = document.getElementById('mis-all-templates-tbody');
+  const infoEl = document.getElementById('mis-tpl-info');
+  const pageNumEl = document.getElementById('mis-tpl-page-num');
+  if (!tbody) return;
+
+  let filtered = misAllTemplatesList.map((item, idx) => ({ ...item, _idx: idx })).filter(row => {
+    if (!misTemplatesState.search) return true;
+    const hay = [row.id, row.templateName, row.createdDate, row.status].join(' ').toLowerCase();
+    return hay.includes(misTemplatesState.search);
+  });
+
+  const k = misTemplatesState.sortKey;
+  const dir = misTemplatesState.sortAsc ? 1 : -1;
+  filtered.sort((a, b) => String(a[k] ?? '').localeCompare(String(b[k] ?? ''), undefined, { numeric: true }) * dir);
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / misTemplatesState.pageSize));
+  if (misTemplatesState.page > totalPages) misTemplatesState.page = totalPages;
+
+  if (total === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="padding: 14px 10px; text-align: center; color: #576561; border-bottom: 1px solid #cbd5e1;">No data available in table</td></tr>';
+    if (infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 entries';
+    if (pageNumEl) pageNumEl.style.display = 'none';
+    return;
+  }
+
+  const startIdx = (misTemplatesState.page - 1) * misTemplatesState.pageSize;
+  const slice = filtered.slice(startIdx, startIdx + misTemplatesState.pageSize);
+
+  tbody.innerHTML = slice.map(row => {
+    const isActive = row.status !== 'Inactive';
+    return `
+      <tr style="border-bottom: 1px solid #e2e8f0;">
+        <td style="padding: 9px 8px;">${row.id}</td>
+        <td style="padding: 9px 8px; font-weight: 600; color: #134e4a;">${row.templateName}</td>
+        <td style="padding: 9px 8px; white-space: nowrap;">${row.createdDate || '-'}</td>
+        <td style="padding: 9px 8px;">
+          <button type="button" onclick="toggleMisTemplateStatus(${row._idx})" title="${isActive ? 'Active (Click to deactivate)' : 'Inactive (Click to activate)'}" style="background: ${isActive ? '#134e4a' : '#94a3b8'}; color: #ffffff; border: none; border-radius: 4px; width: 28px; height: 22px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;">
+            <i class="fa-solid ${isActive ? 'fa-check' : 'fa-ban'}" style="font-size: 11px;"></i>
+          </button>
+        </td>
+        <td style="padding: 9px 8px; white-space: nowrap;">
+          <button type="button" onclick="openMisTemplateForm(${row._idx})" title="View / Edit Template" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #134e4a; border-radius: 4px; padding: 3px 8px; cursor: pointer; margin-right: 4px;"><i class="fa-solid fa-eye"></i></button>
+          <button type="button" onclick="deleteMisTemplateRecord(${row._idx})" title="Delete Template" style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 4px; padding: 3px 8px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  if (infoEl) infoEl.textContent = `Showing ${startIdx + 1} to ${startIdx + slice.length} of ${total} entries`;
+  if (pageNumEl) {
+    pageNumEl.style.display = 'inline-block';
+    pageNumEl.textContent = String(misTemplatesState.page);
+  }
+};
+
+window.openMisTemplateForm = function(idx = -1) {
+  const listPanel = document.getElementById('mis-all-templates-list-panel');
+  const formPanel = document.getElementById('mis-all-templates-form-panel');
+  const editorEl = document.getElementById('mis-tpl-editor');
+  if (!listPanel || !formPanel || !editorEl) return;
+
+  listPanel.style.display = 'none';
+  formPanel.style.display = 'block';
+  document.getElementById('mis-tpl-edit-idx').value = idx;
+
+  if (idx >= 0 && misAllTemplatesList[idx]) {
+    const t = misAllTemplatesList[idx];
+    document.getElementById('mis-tpl-form-heading').textContent = 'Edit Report Template';
+    document.getElementById('mis-tpl-submit-btn').textContent = 'Update';
+    document.getElementById('mis-tpl-name').value = t.templateName || '';
+    document.getElementById('mis-tpl-status').value = t.status || 'Active';
+    editorEl.innerHTML = t.contentHtml || '';
+  } else {
+    document.getElementById('mis-tpl-form-heading').textContent = 'Add / Edit Report Template';
+    document.getElementById('mis-tpl-submit-btn').textContent = 'Save Template';
+    document.getElementById('mis-tpl-name').value = '';
+    document.getElementById('mis-tpl-status').value = 'Active';
+    editorEl.innerHTML = '';
+  }
+};
+
+window.closeMisTemplateForm = function() {
+  const listPanel = document.getElementById('mis-all-templates-list-panel');
+  const formPanel = document.getElementById('mis-all-templates-form-panel');
+  if (listPanel) listPanel.style.display = 'block';
+  if (formPanel) formPanel.style.display = 'none';
+};
+
+window.saveMisTemplateRecord = function() {
+  const idx = Number(document.getElementById('mis-tpl-edit-idx').value);
+  const templateName = document.getElementById('mis-tpl-name').value.trim();
+  const editorEl = document.getElementById('mis-tpl-editor');
+  const contentHtml = editorEl ? editorEl.innerHTML.trim() : '';
+  const plainText = editorEl ? editorEl.innerText.trim() : '';
+  const status = document.getElementById('mis-tpl-status').value || 'Active';
+
+  if (!templateName) { alert('Please enter Template Name.'); return; }
+  if (!plainText) { alert('Please write the Report Template content.'); return; }
+
+  const record = {
+    id: idx >= 0 && misAllTemplatesList[idx] ? misAllTemplatesList[idx].id : misAllTemplatesList.length + 1,
+    templateName,
+    contentHtml,
+    status,
+    createdDate: idx >= 0 && misAllTemplatesList[idx] ? misAllTemplatesList[idx].createdDate : formatMisUserTimestamp()
+  };
+
+  if (idx >= 0 && misAllTemplatesList[idx]) {
+    misAllTemplatesList[idx] = record;
+  } else {
+    misAllTemplatesList.unshift(record);
+    misAllTemplatesList.forEach((item, i) => item.id = i + 1);
+  }
+
+  persistMisTemplates();
+  closeMisTemplateForm();
+  renderMisTemplatesTable();
+};
+
+window.deleteMisTemplateRecord = function(idx) {
+  if (!misAllTemplatesList[idx]) return;
+  if (!confirm(`Delete template "${misAllTemplatesList[idx].templateName}"?`)) return;
+  misAllTemplatesList.splice(idx, 1);
+  misAllTemplatesList.forEach((item, i) => item.id = i + 1);
+  persistMisTemplates();
+  renderMisTemplatesTable();
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
