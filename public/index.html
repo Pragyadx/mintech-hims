@@ -6685,7 +6685,124 @@
             </div>
         </div>
     </div>
-    <div id="lab-mis-subview-add-coordinator" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Add Coordinator</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Add Coordinator.</p></div></div>
+    <!-- 11. MIS: Add Coordinator (Add Clinic Coordinator + CC List) -->
+    <div id="lab-mis-subview-add-coordinator" class="lab-mis-subview" style="display: none;">
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 18px; align-items: start;">
+            <!-- LEFT CARD: ADD / EDIT CLINIC COORDINATOR -->
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 6px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); overflow: hidden;">
+                <div style="background: #f3f2ed; padding: 13px 20px; border-bottom: 1px solid #e8e6df; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 id="mis-cc-form-heading" style="margin: 0; font-size: 16px; font-weight: 600; color: #1c2826;">Add Clinic Coordinator</h3>
+                    <span style="font-size: 11.5px; color: #576561;">Configure coordinator identity and billing access</span>
+                </div>
+
+                <div style="padding: 18px 20px;">
+                    <input type="hidden" id="mis-cc-edit-idx" value="-1">
+
+                    <!-- 2-Column Field Cards Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 12px 16px; font-size: 12.5px; margin-bottom: 16px;">
+                        <!-- First Name -->
+                        <div style="display: grid; grid-template-columns: 125px 1fr; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e8e6df; border-radius: 5px; background: #ffffff;">
+                            <label for="mis-cc-first-name" style="font-weight: 700; color: #1c2826;">First Name<span style="color: #dc2626;">*</span></label>
+                            <input type="text" id="mis-cc-first-name" placeholder="First Name" style="width: 100%; padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; box-sizing: border-box;">
+                        </div>
+
+                        <!-- Last Name -->
+                        <div style="display: grid; grid-template-columns: 125px 1fr; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e8e6df; border-radius: 5px; background: #ffffff;">
+                            <label for="mis-cc-last-name" style="font-weight: 700; color: #1c2826;">Last Name<span style="color: #dc2626;">*</span></label>
+                            <input type="text" id="mis-cc-last-name" placeholder="Last Name" style="width: 100%; padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; box-sizing: border-box;">
+                        </div>
+
+                        <!-- Display Name -->
+                        <div style="display: grid; grid-template-columns: 125px 1fr; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e8e6df; border-radius: 5px; background: #ffffff;">
+                            <label for="mis-cc-display-name" style="font-weight: 700; color: #1c2826;">Display Name</label>
+                            <input type="text" id="mis-cc-display-name" placeholder="Display Name" style="width: 100%; padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; box-sizing: border-box;">
+                        </div>
+
+                        <!-- Gender -->
+                        <div style="display: grid; grid-template-columns: 125px 1fr; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e8e6df; border-radius: 5px; background: #ffffff;">
+                            <label for="mis-cc-gender" style="font-weight: 700; color: #1c2826;">Gender<span style="color: #dc2626;">*</span></label>
+                            <select id="mis-cc-gender" style="width: 100%; padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; background: #ffffff; box-sizing: border-box;">
+                                <option value="">Select Gender*</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Email Address -->
+                        <div style="display: grid; grid-template-columns: 125px 1fr; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e8e6df; border-radius: 5px; background: #ffffff;">
+                            <label for="mis-cc-email" style="font-weight: 700; color: #1c2826;">Email Address<span style="color: #dc2626;">*</span></label>
+                            <input type="email" id="mis-cc-email" placeholder="Enter Email" style="width: 100%; padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; box-sizing: border-box;">
+                        </div>
+
+                        <!-- Mobile Number -->
+                        <div style="display: grid; grid-template-columns: 125px 1fr; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e8e6df; border-radius: 5px; background: #ffffff;">
+                            <label for="mis-cc-mobile" style="font-weight: 700; color: #1c2826;">Mobile Number<span style="color: #dc2626;">*</span></label>
+                            <input type="text" id="mis-cc-mobile" maxlength="10" placeholder="Enter Mobile Number" style="width: 100%; padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; box-sizing: border-box;">
+                        </div>
+
+                        <!-- Aadhaar Number -->
+                        <div style="display: grid; grid-template-columns: 125px 1fr; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e8e6df; border-radius: 5px; background: #ffffff;">
+                            <label for="mis-cc-aadhaar" style="font-weight: 700; color: #1c2826;">Aadhaar Number<span style="color: #dc2626;">*</span></label>
+                            <input type="text" id="mis-cc-aadhaar" maxlength="12" placeholder="Enter Aadhaar Number" style="width: 100%; padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; box-sizing: border-box;">
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div style="display: grid; grid-template-columns: 125px 1fr; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e8e6df; border-radius: 5px; background: #ffffff;">
+                            <label for="mis-cc-image-file" style="font-weight: 700; color: #1c2826;">Image</label>
+                            <div>
+                                <input type="file" id="mis-cc-image-file" accept="image/*" onchange="handleMisCcImageUpload(this)" style="font-size: 12px; width: 100%;">
+                                <span id="mis-cc-image-status" style="display: block; font-size: 11px; color: #0f766e; margin-top: 2px;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Invoice Permission Radio Group -->
+                    <div style="max-width: 440px; border: 1px solid #e8e6df; border-radius: 5px; background: #ffffff; overflow: hidden; font-size: 12.5px; margin-bottom: 18px;">
+                        <label style="display: flex; align-items: flex-start; gap: 9px; padding: 10px 14px; border-bottom: 1px solid #e8e6df; cursor: pointer; color: #1c2826;">
+                            <input type="radio" name="mis-cc-permission" value="generate_change_print" checked style="margin-top: 3px; accent-color: #134e4a;">
+                            <span>This CC can generate invoice, change price and print invoice</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: 9px; padding: 10px 14px; border-bottom: 1px solid #e8e6df; cursor: pointer; color: #1c2826;">
+                            <input type="radio" name="mis-cc-permission" value="no_price_change" style="margin-top: 3px; accent-color: #134e4a;">
+                            <span>This CC can not change price at invoice generation time</span>
+                        </label>
+                        <label style="display: flex; align-items: flex-start; gap: 9px; padding: 10px 14px; cursor: pointer; color: #1c2826;">
+                            <input type="radio" name="mis-cc-permission" value="only_print" style="margin-top: 3px; accent-color: #134e4a;">
+                            <span>This CC can only print invoice</span>
+                        </label>
+                    </div>
+
+                    <!-- Inline Feedback -->
+                    <div id="mis-cc-feedback" style="display: none; margin-bottom: 14px; padding: 8px 12px; border-radius: 4px; font-size: 12.5px; font-weight: 600;"></div>
+
+                    <!-- Save / Reset Bar -->
+                    <div style="background: #f8f7f3; border: 1px solid #e8e6df; border-radius: 5px; padding: 12px 16px; display: flex; align-items: center; gap: 12px;">
+                        <button type="button" id="mis-cc-submit-btn" onclick="saveMisCoordinatorRecord()" style="background: #134e4a; color: #ffffff; border: none; border-radius: 4px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer; margin-left: 110px;">Save</button>
+                        <button type="button" onclick="resetMisCoordinatorForm()" style="background: #ffffff; color: #1c2826; border: 1px solid #d6d3c9; border-radius: 4px; padding: 8px 14px; font-size: 12.5px; cursor: pointer;">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT CARD: CC LIST -->
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #0f766e; border-radius: 6px; padding: 16px 18px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+                <h3 style="margin: 0 0 12px 0; font-size: 18px; font-weight: 500; color: #1c2826;">CC List</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; color: #1c2826;">
+                    <thead>
+                        <tr style="border-bottom: 1.5px solid #e2e8f0; text-align: left;">
+                            <th style="padding: 8px 6px; font-weight: 700;">Name</th>
+                            <th style="padding: 8px 6px; font-weight: 700; text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mis-cc-list-tbody">
+                        <tr>
+                            <td colspan="2" style="padding: 12px 6px; color: #576561;">No Result found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     <div id="lab-mis-subview-pdf-setting" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">PDF Setting</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure PDF Setting.</p></div></div>
 </section>
         <!-- =================================================== -->
@@ -19562,6 +19679,9 @@ window.openLabMisSection = function(sectionKey) {
   resetMisChangeMobileForm();
 } else if (sectionKey === 'change-email') {
   resetMisChangeEmailForm();
+} else if (sectionKey === 'add-coordinator') {
+  resetMisCoordinatorForm();
+  renderMisCoordinatorsList();
 }
 };
 let misLabsList = JSON.parse(localStorage.getItem('arvion_mis_my_labs') || '[]');
@@ -20996,6 +21116,169 @@ window.saveMisNewEmail = function() {
 
   resetMisChangeEmailForm();
   showMisCeFeedback(`Email updated to ${newEmail} successfully.`, false);
+};
+let misCoordinatorsList = JSON.parse(localStorage.getItem('arvion_mis_coordinators') || '[]');
+let misCcTempPhoto = '';
+
+const MIS_CC_PERM_LABELS = {
+  generate_change_print: 'Generate, Edit Price & Print Invoice',
+  no_price_change: 'Generate & Print Invoice (No Price Change)',
+  only_print: 'Print Invoice Only'
+};
+
+function persistMisCoordinators() {
+  localStorage.setItem('arvion_mis_coordinators', JSON.stringify(misCoordinatorsList));
+}
+
+window.handleMisCcImageUpload = function(inputEl) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    misCcTempPhoto = e.target.result;
+    const st = document.getElementById('mis-cc-image-status');
+    if (st) st.textContent = 'Selected: ' + file.name;
+  };
+  reader.readAsDataURL(file);
+};
+
+function showMisCcFeedback(msg, isError) {
+  const fb = document.getElementById('mis-cc-feedback');
+  if (!fb) { alert(msg); return; }
+  fb.style.display = 'block';
+  fb.textContent = msg;
+  fb.style.background = isError ? '#fef2f2' : '#f0fdf4';
+  fb.style.color = isError ? '#b91c1c' : '#134e4a';
+  fb.style.border = isError ? '1px solid #fecaca' : '1px solid #bbf7d0';
+}
+
+window.resetMisCoordinatorForm = function() {
+  document.getElementById('mis-cc-edit-idx').value = '-1';
+  const heading = document.getElementById('mis-cc-form-heading');
+  const submitBtn = document.getElementById('mis-cc-submit-btn');
+  if (heading) heading.textContent = 'Add Clinic Coordinator';
+  if (submitBtn) submitBtn.textContent = 'Save';
+
+  ['mis-cc-first-name', 'mis-cc-last-name', 'mis-cc-display-name', 'mis-cc-email', 'mis-cc-mobile', 'mis-cc-aadhaar'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const genderEl = document.getElementById('mis-cc-gender');
+  if (genderEl) genderEl.value = '';
+  const fileEl = document.getElementById('mis-cc-image-file');
+  if (fileEl) fileEl.value = '';
+  const imgSt = document.getElementById('mis-cc-image-status');
+  if (imgSt) imgSt.textContent = '';
+  misCcTempPhoto = '';
+
+  const defaultPerm = document.querySelector('input[name="mis-cc-permission"][value="generate_change_print"]');
+  if (defaultPerm) defaultPerm.checked = true;
+
+  const fb = document.getElementById('mis-cc-feedback');
+  if (fb) {
+    fb.style.display = 'none';
+    fb.textContent = '';
+  }
+};
+
+window.renderMisCoordinatorsList = function() {
+  const tbody = document.getElementById('mis-cc-list-tbody');
+  if (!tbody) return;
+
+  if (misCoordinatorsList.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="2" style="padding: 12px 6px; color: #576561;">No Result found</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = misCoordinatorsList.map((cc, idx) => {
+    const title = cc.displayName || `${cc.firstName} ${cc.lastName}`.trim();
+    const permText = MIS_CC_PERM_LABELS[cc.permission] || '';
+    return `
+      <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 9px 6px;">
+          <div style="font-weight: 600; color: #134e4a;">${title}</div>
+          <div style="font-size: 11px; color: #576561;">${cc.mobile} &bull; ${permText}</div>
+        </td>
+        <td style="padding: 9px 6px; text-align: right; white-space: nowrap;">
+          <button type="button" onclick="editMisCoordinatorRecord(${idx})" title="Edit Coordinator" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #134e4a; border-radius: 4px; padding: 3px 7px; cursor: pointer; margin-right: 3px;"><i class="fa-solid fa-pen"></i></button>
+          <button type="button" onclick="deleteMisCoordinatorRecord(${idx})" title="Delete Coordinator" style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 4px; padding: 3px 7px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+};
+
+window.editMisCoordinatorRecord = function(idx) {
+  const cc = misCoordinatorsList[idx];
+  if (!cc) return;
+
+  document.getElementById('mis-cc-edit-idx').value = idx;
+  document.getElementById('mis-cc-form-heading').textContent = 'Edit Clinic Coordinator';
+  document.getElementById('mis-cc-submit-btn').textContent = 'Update';
+  document.getElementById('mis-cc-first-name').value = cc.firstName || '';
+  document.getElementById('mis-cc-last-name').value = cc.lastName || '';
+  document.getElementById('mis-cc-display-name').value = cc.displayName || '';
+  document.getElementById('mis-cc-gender').value = cc.gender || '';
+  document.getElementById('mis-cc-email').value = cc.email || '';
+  document.getElementById('mis-cc-mobile').value = cc.mobile || '';
+  document.getElementById('mis-cc-aadhaar').value = cc.aadhaar || '';
+  misCcTempPhoto = cc.photo || '';
+  const imgSt = document.getElementById('mis-cc-image-status');
+  if (imgSt) imgSt.textContent = misCcTempPhoto ? 'Coordinator image saved' : '';
+
+  const permRadio = document.querySelector(`input[name="mis-cc-permission"][value="${cc.permission || 'generate_change_print'}"]`);
+  if (permRadio) permRadio.checked = true;
+};
+
+window.saveMisCoordinatorRecord = function() {
+  const idx = Number(document.getElementById('mis-cc-edit-idx').value);
+  const firstName = document.getElementById('mis-cc-first-name').value.trim();
+  const lastName = document.getElementById('mis-cc-last-name').value.trim();
+  const displayName = document.getElementById('mis-cc-display-name').value.trim();
+  const gender = document.getElementById('mis-cc-gender').value;
+  const email = document.getElementById('mis-cc-email').value.trim();
+  const mobile = document.getElementById('mis-cc-mobile').value.trim();
+  const aadhaar = document.getElementById('mis-cc-aadhaar').value.trim();
+  const permission = document.querySelector('input[name="mis-cc-permission"]:checked')?.value || 'generate_change_print';
+
+  if (!firstName) { showMisCcFeedback('Please enter First Name.', true); return; }
+  if (!lastName) { showMisCcFeedback('Please enter Last Name.', true); return; }
+  if (!gender) { showMisCcFeedback('Please select Gender.', true); return; }
+  if (!email) { showMisCcFeedback('Please enter Email Address.', true); return; }
+  if (!/^\d{10}$/.test(mobile)) { showMisCcFeedback('Please enter a valid 10-digit Mobile Number.', true); return; }
+  if (!/^\d{12}$/.test(aadhaar)) { showMisCcFeedback('Please enter a valid 12-digit Aadhaar Number.', true); return; }
+
+  const record = {
+    firstName,
+    lastName,
+    displayName: displayName || `${firstName} ${lastName}`,
+    gender,
+    email,
+    mobile,
+    aadhaar,
+    photo: misCcTempPhoto,
+    permission
+  };
+
+  if (idx >= 0 && misCoordinatorsList[idx]) {
+    misCoordinatorsList[idx] = record;
+  } else {
+    misCoordinatorsList.unshift(record);
+  }
+
+  persistMisCoordinators();
+  resetMisCoordinatorForm();
+  renderMisCoordinatorsList();
+  showMisCcFeedback(`Coordinator "${record.displayName}" saved successfully.`, false);
+};
+
+window.deleteMisCoordinatorRecord = function(idx) {
+  if (!misCoordinatorsList[idx]) return;
+  const name = misCoordinatorsList[idx].displayName || misCoordinatorsList[idx].firstName;
+  if (!confirm(`Delete coordinator "${name}"?`)) return;
+  misCoordinatorsList.splice(idx, 1);
+  persistMisCoordinators();
+  renderMisCoordinatorsList();
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
