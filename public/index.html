@@ -10214,8 +10214,11 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     // Ensure all tabs including billing are always available
     const defaultTabs = ['dashboard', 'registration', 'opd', 'billing', 'lab', 'ipd', 'beds', 'pharmacy', 'abdm'];
     const userRoleKey = (currentUser && currentUser.role) ? currentUser.role.toLowerCase() : '';
-    const allowedTabs = roleRoutes[userRoleKey] || roleRoutes[currentUser?.role] || defaultTabs;
-    
+    let allowedTabs = roleRoutes[userRoleKey] || roleRoutes[currentUser?.role] || defaultTabs;
+    if ((userRoleKey || '').includes('lab')) {
+  allowedTabs = (allowedTabs || []).filter(t => t !== 'billing');
+  if (!allowedTabs.includes('lab-abha')) allowedTabs.push('lab-abha');
+}
     const navContainer = document.getElementById("sidebar-nav") || document.querySelector(".nav-links") || document.querySelector("nav");
     if (navContainer) {
       navContainer.innerHTML = "";
