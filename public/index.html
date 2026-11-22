@@ -5510,10 +5510,92 @@
 <!-- SECTION: LAB ABHA & ABDM (MENU SHELL)      -->
 <!-- ========================================== -->
 <section id="tab-lab-abha" class="tab-content" style="display: none; padding: 20px;">
+    <!-- 1. Patient ABHA (Patient Profile Share List) -->
     <div id="lab-abha-subview-patient-abha" class="lab-abha-subview" style="display: block;">
-        <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;">
-            <h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Patient ABHA</h3>
-            <p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Patient ABHA module.</p>
+        <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+            <!-- Top Row: Title + Date Filter Box + Quick Range Dropdown + Add Entry -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px;">
+                <h3 style="margin: 0; font-size: 17px; font-weight: 600; color: #1c2826;">Patient Profile Share List</h3>
+
+                <!-- Date Range Filter Container -->
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: #f8f7f3; border: 1px solid #e8e6df; border-radius: 6px; padding: 7px 12px;">
+                    <span style="font-size: 13.5px; font-weight: 600; color: #134e4a; margin-right: 4px;">Date</span>
+                    <input type="date" id="abha-share-start-date" title="Select start Date" style="padding: 6px 10px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; color: #1c2826; background: #ffffff;">
+                    <input type="date" id="abha-share-end-date" title="Select end Date" style="padding: 6px 10px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; color: #1c2826; background: #ffffff;">
+                    <button type="button" onclick="applyPatientAbhaDateFilter()" style="background: #134e4a; color: #ffffff; border: none; border-radius: 4px; padding: 6px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer;">Show</button>
+                </div>
+
+                <!-- Right Controls: Quick Range Selector + Link/Share ABHA Profile -->
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="background: #f8f7f3; border: 1px solid #e8e6df; border-radius: 6px; padding: 6px 8px;">
+                        <select id="abha-share-quick-range" onchange="onPatientAbhaQuickRangeChange()" style="padding: 5px 10px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; color: #1c2826; background: #ffffff; min-width: 130px; cursor: pointer;">
+                            <option value="today" selected>Today</option>
+                            <option value="week">1 Week</option>
+                            <option value="month">1 Month</option>
+                            <option value="60days">Last 60 Days</option>
+                            <option value="lifetime">Lifetime</option>
+                        </select>
+                    </div>
+                    <button type="button" onclick="openPatientAbhaShareModal(-1)" style="background: #0f766e; color: #ffffff; border: none; border-radius: 5px; padding: 8px 13px; font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-plus"></i> Link / Share ABHA
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table Toolbar: Show Entries & Search -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; background: #f3f2ed; padding: 7px 12px; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #1c2826;">
+                    <span>Show</span>
+                    <select id="abha-share-page-size" onchange="changePatientAbhaPageSize()" style="padding: 4px 8px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; font-size: 12.5px; min-width: 72px; cursor: pointer;">
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>entries</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; background: #f3f2ed; padding: 7px 12px; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #1c2826;">
+                    <label for="abha-share-search" style="margin: 0;">Search:</label>
+                    <input type="text" id="abha-share-search" oninput="onPatientAbhaSearch()" placeholder="" style="padding: 5px 10px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; font-size: 12.5px; width: 210px;">
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; color: #1c2826;">
+                    <thead>
+                        <tr style="border-bottom: 1.5px solid #cbd5e1; background: #ffffff; text-align: left;">
+                            <th onclick="sortPatientAbhaTable('id')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">ID <span style="color: #134e4a; font-size: 10px;">&#9650;</span></th>
+                            <th onclick="sortPatientAbhaTable('tokenNo')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Token No <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortPatientAbhaTable('hipCode')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">HIP Code <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortPatientAbhaTable('patientId')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Patient ID <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortPatientAbhaTable('patientName')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Patient Name <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortPatientAbhaTable('mobile')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Mobile No. <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortPatientAbhaTable('gender')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Gender <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortPatientAbhaTable('abhaAddress')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Abha Address <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortPatientAbhaTable('healthIdNo')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Health ID No. <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th style="padding: 10px 8px; font-weight: 700; white-space: nowrap;">View</th>
+                            <th onclick="sortPatientAbhaTable('entryDate')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Entry Date <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="patient-abha-share-tbody">
+                        <tr>
+                            <td colspan="11" style="padding: 14px 10px; text-align: center; color: #576561; border-bottom: 1px solid #cbd5e1;">No data available in table</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer: Showing entries & Pagination -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; font-size: 12.5px; color: #475569;">
+                <div id="patient-abha-share-info">Showing 0 to 0 of 0 entries</div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <button type="button" id="patient-abha-prev-btn" onclick="changePatientAbhaPage(-1)" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; color: #64748b; cursor: pointer;">Previous</button>
+                    <span id="patient-abha-page-num" style="display: none; background: #134e4a; color: #ffffff; border-radius: 4px; padding: 4px 10px; font-weight: 600;">1</span>
+                    <button type="button" id="patient-abha-next-btn" onclick="changePatientAbhaPage(1)" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; color: #64748b; cursor: pointer;">Next</button>
+                </div>
+            </div>
         </div>
     </div>
     <div id="lab-abha-subview-abdm-facilities" class="lab-abha-subview" style="display: none;">
@@ -17910,6 +17992,239 @@ window.openLabAbhaSection = function(sectionKey) {
   document.querySelectorAll('.lab-abha-subview').forEach(el => el.style.display = 'none');
   const activeView = document.getElementById('lab-abha-subview-' + sectionKey);
   if (activeView) activeView.style.display = 'block';
+  if (sectionKey === 'patient-abha') {
+    renderPatientAbhaShareTable();
+  }
+};
+
+let patientAbhaShares = JSON.parse(localStorage.getItem('arvion_patient_abha_shares') || '[]');
+let patientAbhaState = {
+  page: 1,
+  pageSize: 10,
+  search: '',
+  quickRange: 'today',
+  startDate: '',
+  endDate: '',
+  sortKey: 'id',
+  sortAsc: true
+};
+
+function persistPatientAbhaShares() {
+  localStorage.setItem('arvion_patient_abha_shares', JSON.stringify(patientAbhaShares));
+}
+
+window.onPatientAbhaQuickRangeChange = function() {
+  const sel = document.getElementById('abha-share-quick-range');
+  patientAbhaState.quickRange = sel ? sel.value : 'today';
+  patientAbhaState.startDate = '';
+  patientAbhaState.endDate = '';
+  const sEl = document.getElementById('abha-share-start-date');
+  const eEl = document.getElementById('abha-share-end-date');
+  if (sEl) sEl.value = '';
+  if (eEl) eEl.value = '';
+  patientAbhaState.page = 1;
+  renderPatientAbhaShareTable();
+};
+
+window.applyPatientAbhaDateFilter = function() {
+  patientAbhaState.startDate = document.getElementById('abha-share-start-date')?.value || '';
+  patientAbhaState.endDate = document.getElementById('abha-share-end-date')?.value || '';
+  if (patientAbhaState.startDate || patientAbhaState.endDate) {
+    patientAbhaState.quickRange = 'custom';
+  }
+  patientAbhaState.page = 1;
+  renderPatientAbhaShareTable();
+};
+
+window.changePatientAbhaPageSize = function() {
+  const val = Number(document.getElementById('abha-share-page-size')?.value || 10);
+  patientAbhaState.pageSize = val;
+  patientAbhaState.page = 1;
+  renderPatientAbhaShareTable();
+};
+
+window.onPatientAbhaSearch = function() {
+  patientAbhaState.search = (document.getElementById('abha-share-search')?.value || '').toLowerCase().trim();
+  patientAbhaState.page = 1;
+  renderPatientAbhaShareTable();
+};
+
+window.sortPatientAbhaTable = function(key) {
+  if (patientAbhaState.sortKey === key) {
+    patientAbhaState.sortAsc = !patientAbhaState.sortAsc;
+  } else {
+    patientAbhaState.sortKey = key;
+    patientAbhaState.sortAsc = true;
+  }
+  renderPatientAbhaShareTable();
+};
+
+window.changePatientAbhaPage = function(delta) {
+  patientAbhaState.page = Math.max(1, patientAbhaState.page + delta);
+  renderPatientAbhaShareTable();
+};
+
+function matchesPatientAbhaDateFilter(entryDateStr) {
+  if (!entryDateStr) return true;
+  const entry = new Date(entryDateStr + 'T00:00:00');
+  if (isNaN(entry.getTime())) return true;
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  if (patientAbhaState.quickRange === 'custom') {
+    if (patientAbhaState.startDate && entry < new Date(patientAbhaState.startDate + 'T00:00:00')) return false;
+    if (patientAbhaState.endDate && entry > new Date(patientAbhaState.endDate + 'T23:59:59')) return false;
+    return true;
+  }
+  if (patientAbhaState.quickRange === 'lifetime') return true;
+  if (patientAbhaState.quickRange === 'today') return entry >= todayStart;
+
+  const daysMap = { week: 7, month: 30, '60days': 60 };
+  const days = daysMap[patientAbhaState.quickRange] || 0;
+  const cutoff = new Date(todayStart);
+  cutoff.setDate(cutoff.getDate() - days);
+  return entry >= cutoff;
+}
+
+window.renderPatientAbhaShareTable = function() {
+  const tbody = document.getElementById('patient-abha-share-tbody');
+  const infoEl = document.getElementById('patient-abha-share-info');
+  const pageNumEl = document.getElementById('patient-abha-page-num');
+  if (!tbody) return;
+
+  let filtered = patientAbhaShares.map((item, idx) => ({ ...item, _idx: idx })).filter(row => {
+    if (!matchesPatientAbhaDateFilter(row.entryDate)) return false;
+    if (!patientAbhaState.search) return true;
+    const hay = [row.id, row.tokenNo, row.hipCode, row.patientId, row.patientName, row.mobile, row.gender, row.abhaAddress, row.healthIdNo, row.entryDate].join(' ').toLowerCase();
+    return hay.includes(patientAbhaState.search);
+  });
+
+  const k = patientAbhaState.sortKey;
+  const dir = patientAbhaState.sortAsc ? 1 : -1;
+  filtered.sort((a, b) => String(a[k] ?? '').localeCompare(String(b[k] ?? ''), undefined, { numeric: true }) * dir);
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / patientAbhaState.pageSize));
+  if (patientAbhaState.page > totalPages) patientAbhaState.page = totalPages;
+
+  if (total === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" style="padding: 14px 10px; text-align: center; color: #576561; border-bottom: 1px solid #cbd5e1;">No data available in table</td></tr>';
+    if (infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 entries';
+    if (pageNumEl) pageNumEl.style.display = 'none';
+    return;
+  }
+
+  const startIdx = (patientAbhaState.page - 1) * patientAbhaState.pageSize;
+  const slice = filtered.slice(startIdx, startIdx + patientAbhaState.pageSize);
+
+  tbody.innerHTML = slice.map(row => `
+    <tr style="border-bottom: 1px solid #e2e8f0;">
+      <td style="padding: 9px 8px;">${row.id}</td>
+      <td style="padding: 9px 8px; font-weight: 600;">${row.tokenNo || '-'}</td>
+      <td style="padding: 9px 8px;">${row.hipCode || '-'}</td>
+      <td style="padding: 9px 8px;">${row.patientId || '-'}</td>
+      <td style="padding: 9px 8px; font-weight: 600; color: #134e4a;">${row.patientName}</td>
+      <td style="padding: 9px 8px;">${row.mobile}</td>
+      <td style="padding: 9px 8px;">${row.gender}</td>
+      <td style="padding: 9px 8px; font-weight: 600; color: #0f766e;">${row.abhaAddress}</td>
+      <td style="padding: 9px 8px;">${row.healthIdNo || '-'}</td>
+      <td style="padding: 9px 8px; white-space: nowrap;">
+        <button type="button" onclick="openPatientAbhaShareModal(${row._idx})" title="View / Edit" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #134e4a; border-radius: 4px; padding: 3px 8px; cursor: pointer; margin-right: 4px;"><i class="fa-solid fa-eye"></i></button>
+        <button type="button" onclick="deletePatientAbhaShareRecord(${row._idx})" title="Delete" style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 4px; padding: 3px 8px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+      </td>
+      <td style="padding: 9px 8px;">${row.entryDate}</td>
+    </tr>
+  `).join('');
+
+  if (infoEl) infoEl.textContent = `Showing ${startIdx + 1} to ${startIdx + slice.length} of ${total} entries`;
+  if (pageNumEl) {
+    pageNumEl.style.display = 'inline-block';
+    pageNumEl.textContent = String(patientAbhaState.page);
+  }
+};
+
+window.openPatientAbhaShareModal = function(idx = -1) {
+  const modal = document.getElementById('modal-patient-abha-share');
+  if (!modal) return;
+  document.body.appendChild(modal);
+  document.getElementById('abha-form-edit-idx').value = idx;
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  if (idx >= 0 && patientAbhaShares[idx]) {
+    const r = patientAbhaShares[idx];
+    document.getElementById('modal-patient-abha-title').textContent = 'View / Edit Patient ABHA Profile';
+    document.getElementById('abha-form-token').value = r.tokenNo || '';
+    document.getElementById('abha-form-hip').value = r.hipCode || '';
+    document.getElementById('abha-form-patient-id').value = r.patientId || '';
+    document.getElementById('abha-form-patient-name').value = r.patientName || '';
+    document.getElementById('abha-form-mobile').value = r.mobile || '';
+    document.getElementById('abha-form-gender').value = r.gender || '';
+    document.getElementById('abha-form-address').value = r.abhaAddress || '';
+    document.getElementById('abha-form-health-id').value = r.healthIdNo || '';
+    document.getElementById('abha-form-entry-date').value = r.entryDate || todayStr;
+  } else {
+    document.getElementById('modal-patient-abha-title').textContent = 'Link / Share Patient ABHA Profile';
+    document.getElementById('abha-form-token').value = '';
+    document.getElementById('abha-form-hip').value = '';
+    document.getElementById('abha-form-patient-id').value = '';
+    document.getElementById('abha-form-patient-name').value = '';
+    document.getElementById('abha-form-mobile').value = '';
+    document.getElementById('abha-form-gender').value = '';
+    document.getElementById('abha-form-address').value = '';
+    document.getElementById('abha-form-health-id').value = '';
+    document.getElementById('abha-form-entry-date').value = todayStr;
+  }
+  modal.style.display = 'flex';
+};
+
+window.closePatientAbhaShareModal = function() {
+  const modal = document.getElementById('modal-patient-abha-share');
+  if (modal) modal.style.display = 'none';
+};
+
+window.savePatientAbhaShareRecord = function() {
+  const idx = Number(document.getElementById('abha-form-edit-idx').value);
+  const patientName = document.getElementById('abha-form-patient-name').value.trim();
+  const mobile = document.getElementById('abha-form-mobile').value.trim();
+  const gender = document.getElementById('abha-form-gender').value;
+  const abhaAddress = document.getElementById('abha-form-address').value.trim();
+
+  if (!patientName) { alert('Please enter Patient Name.'); return; }
+  if (!mobile || mobile.length < 10) { alert('Please enter a valid 10-digit Mobile No.'); return; }
+  if (!gender) { alert('Please select Gender.'); return; }
+  if (!abhaAddress) { alert('Please enter ABHA Address.'); return; }
+
+  const record = {
+    id: idx >= 0 && patientAbhaShares[idx] ? patientAbhaShares[idx].id : patientAbhaShares.length + 1,
+    tokenNo: document.getElementById('abha-form-token').value.trim(),
+    hipCode: document.getElementById('abha-form-hip').value.trim(),
+    patientId: document.getElementById('abha-form-patient-id').value.trim(),
+    patientName,
+    mobile,
+    gender,
+    abhaAddress,
+    healthIdNo: document.getElementById('abha-form-health-id').value.trim(),
+    entryDate: document.getElementById('abha-form-entry-date').value || new Date().toISOString().slice(0, 10)
+  };
+
+  if (idx >= 0 && patientAbhaShares[idx]) {
+    patientAbhaShares[idx] = record;
+  } else {
+    patientAbhaShares.unshift(record);
+    patientAbhaShares.forEach((item, i) => item.id = i + 1);
+  }
+  persistPatientAbhaShares();
+  closePatientAbhaShareModal();
+  renderPatientAbhaShareTable();
+};
+
+window.deletePatientAbhaShareRecord = function(idx) {
+  if (!patientAbhaShares[idx]) return;
+  if (!confirm(`Delete ABHA profile share record for ${patientAbhaShares[idx].patientName}?`)) return;
+  patientAbhaShares.splice(idx, 1);
+  patientAbhaShares.forEach((item, i) => item.id = i + 1);
+  persistPatientAbhaShares();
+  renderPatientAbhaShareTable();
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
@@ -18264,6 +18579,65 @@ window.openLabAbhaSection = function(sectionKey) {
         <div style="background: #ffffff; border-top: 1px solid #e8e6df; padding: 12px 20px; display: flex; justify-content: flex-end; gap: 10px;">
             <button type="button" onclick="closeLabBookingModal()" style="background: #ffffff; color: #1c2826; border: 1px solid #cbd5e1; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
             <button type="button" onclick="submitLabBookingForm()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Submit</button>
+        </div>
+    </div>
+</div>
+<!-- ========================================== -->
+<!-- MODAL: PATIENT ABHA PROFILE SHARE / EDIT   -->
+<!-- ========================================== -->
+<div id="modal-patient-abha-share" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.55); z-index: 2147483647; align-items: center; justify-content: center; padding: 14px;">
+    <div style="background: #ffffff; border-radius: 8px; width: 100%; max-width: 620px; border-top: 4px solid #134e4a; box-shadow: 0 18px 40px rgba(15, 23, 42, 0.25); overflow: hidden;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: #f8f7f3; border-bottom: 1px solid #e8e6df;">
+            <h4 id="modal-patient-abha-title" style="margin: 0; font-size: 15.5px; color: #134e4a; font-weight: 700;">Link / Share Patient ABHA Profile</h4>
+            <button type="button" onclick="closePatientAbhaShareModal()" style="background: transparent; border: none; font-size: 18px; color: #576561; cursor: pointer;">&times;</button>
+        </div>
+        <div style="padding: 16px 18px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 12.5px;">
+            <input type="hidden" id="abha-form-edit-idx" value="-1">
+            <div>
+                <label style="display: block; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Token No</label>
+                <input type="text" id="abha-form-token" placeholder="e.g. TKN-101" style="width: 100%; padding: 7px 9px; border: 1px solid #d6d3c9; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; color: #1c2826; margin-bottom: 4px;">HIP Code</label>
+                <input type="text" id="abha-form-hip" placeholder="e.g. IN0910000123" style="width: 100%; padding: 7px 9px; border: 1px solid #d6d3c9; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Patient ID</label>
+                <input type="text" id="abha-form-patient-id" placeholder="e.g. PAT-2026-01" style="width: 100%; padding: 7px 9px; border: 1px solid #d6d3c9; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Patient Name *</label>
+                <input type="text" id="abha-form-patient-name" placeholder="Full Name" style="width: 100%; padding: 7px 9px; border: 1px solid #d6d3c9; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Mobile No. *</label>
+                <input type="text" id="abha-form-mobile" maxlength="10" placeholder="10-digit mobile" style="width: 100%; padding: 7px 9px; border: 1px solid #d6d3c9; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Gender *</label>
+                <select id="abha-form-gender" style="width: 100%; padding: 7px 9px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; box-sizing: border-box;">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; color: #1c2826; margin-bottom: 4px;">ABHA Address *</label>
+                <input type="text" id="abha-form-address" placeholder="username@abdm" style="width: 100%; padding: 7px 9px; border: 1px solid #d6d3c9; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div>
+                <label style="display: block; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Health ID No. (14-digit)</label>
+                <input type="text" id="abha-form-health-id" placeholder="XX-XXXX-XXXX-XXXX" style="width: 100%; padding: 7px 9px; border: 1px solid #d6d3c9; border-radius: 4px; box-sizing: border-box;">
+            </div>
+            <div style="grid-column: span 2;">
+                <label style="display: block; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Entry Date</label>
+                <input type="date" id="abha-form-entry-date" style="width: 100%; padding: 7px 9px; border: 1px solid #d6d3c9; border-radius: 4px; box-sizing: border-box;">
+            </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px; background: #f8f7f3; border-top: 1px solid #e8e6df;">
+            <button type="button" onclick="closePatientAbhaShareModal()" style="background: #ffffff; border: 1px solid #d6d3c9; color: #1c2826; border-radius: 4px; padding: 7px 14px; font-size: 12.5px; cursor: pointer;">Cancel</button>
+            <button type="button" onclick="savePatientAbhaShareRecord()" style="background: #134e4a; border: none; color: #ffffff; border-radius: 4px; padding: 7px 16px; font-size: 12.5px; font-weight: 600; cursor: pointer;">Save ABHA Profile</button>
         </div>
     </div>
 </div>
