@@ -5593,7 +5593,32 @@
         </div>
     </div>
 </section>
+<!-- ========================================== -->
+<!-- TAB: LAB INVOICES & ACCOUNTING             -->
+<!-- ========================================== -->
+<section id="tab-lab-accounting" class="tab-content" style="display: none; padding: 20px;">
+    <div id="lab-accounting-workspace">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 14px 20px; margin-bottom: 20px;">
+            <div>
+                <h3 id="lab-accounting-section-title" style="margin: 0; font-size: 17px; color: #1c2826; font-weight: 700;">Lab Invoices & Accounting</h3>
+                <span id="lab-accounting-section-subtitle" style="font-size: 12px; color: #576561;">Track patient diagnostic invoices, GST billing totals, and daily lab revenue ledgers</span>
+            </div>
+        </div>
 
+        <!-- 1. Invoice -->
+        <div id="lab-accounting-subview-invoice" class="lab-accounting-subview" style="display: block; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Invoice</h4>
+            <p style="font-size: 13px; color: #576561;">Diagnostic billing invoices, GST breakdown, and receipt records.</p>
+        </div>
+
+        <!-- 2. Accounting -->
+        <div id="lab-accounting-subview-accounting" class="lab-accounting-subview" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
+            <h4 style="margin-top: 0; color: #134e4a;">Accounting</h4>
+            <p style="font-size: 13px; color: #576561;">Daily collections, payment mode summaries, and lab financial ledger.</p>
+        </div>
+    </div>
+</section>
         <!-- =================================================== -->
   <!-- TAB: INPATIENT DEPARTMENT (IPD) MANAGEMENT          -->
   <!-- =================================================== -->
@@ -8059,8 +8084,8 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       pharmacy: ["pharmacy", "billing"],
       PHARMACIST: ["pharmacy", "billing"],
       cashier: ["billing", "pharmacy"],
-      labtech: ["dashboard", "lab", "lab-patients", "lab-doctors", "lab-total-share"],
-      LABTECH: ["dashboard", "lab", "lab-patients", "lab-doctors", "lab-total-share"],
+      labtech: ["dashboard", "lab", "lab-patients", "lab-doctors", "lab-total-share", "lab-accounting"],
+      LABTECH: ["dashboard", "lab", "lab-patients", "lab-doctors", "lab-total-share", "lab-accounting"],
     };
 
     const tabMeta = {
@@ -8076,6 +8101,7 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
       'lab-patients': { label: "Patient", icon: "fa-user-group", title: "Lab Patients & Appointments" },
       'lab-doctors': { label: "Referral Doctors", icon: "fa-user-doctor", title: "Referral Doctors & Share" },
       'lab-total-share': { label: "Total Share", icon: "fa-percent", title: "Doctor Commission & Total Share" },
+      'lab-accounting': { label: "Accounting", icon: "fa-indian-rupee-sign", title: "Lab Invoices & Accounting" },
     };
 
 // Toggle the Invoices & Billing sidebar dropdown
@@ -10373,7 +10399,22 @@ function openPrintPrescription(uhid, name, doctor, complaints, vitals, rx) {
     </div>
   `;
   navContainer.appendChild(groupDiv);
-} else {
+} else if (tabId === 'lab-accounting') {
+  const groupDiv = document.createElement("div");
+  groupDiv.innerHTML = `
+    <button type="button" class="nav-btn" id="nav-btn-lab-accounting" onclick="switchTab('lab-accounting', this); toggleLabAccountingSubmenu();" style="justify-content: space-between; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid ${meta.icon}"></i>
+        <span>${meta.label}</span>
+      </div>
+      <i class="fa-solid fa-chevron-down submenu-chevron" id="lab-accounting-chevron" style="font-size: 11px; transition: transform 0.2s;"></i>
+    </button>
+    <div id="subnav-lab-accounting" style="display: none; background: rgba(0, 0, 0, 0.16); padding: 6px 0 6px 28px; border-radius: 0 0 6px 6px;">
+      <a href="javascript:void(0)" onclick="openLabAccountingSection('invoice')" class="subnav-link" style="display: block; padding: 7px 10px; color: #e2e8f0; font-size: 13px; text-decoration: none;">• Invoice</a>
+      <a href="javascript:void(0)" onclick="openLabAccountingSection('accounting')" class="subnav-link" style="display: block; padding: 7px 10px; color: #e2e8f0; font-size: 13px; text-decoration: none;">• Accounting</a>
+    </div>
+  `;
+  navContainer.appendChild(groupDiv);
           const btn = document.createElement("button");
           btn.className = `nav-btn ${idx === 0 ? "active" : ""}`;
           btn.innerHTML = `<i class="fa-solid ${meta.icon}"></i> ${meta.label}`;
@@ -16089,6 +16130,25 @@ function openLabDoctorSection(sectionKey) {
   if (activeView) activeView.style.display = 'block';
   if (sectionKey === 'referral-share' && typeof loadLabReferralShareView === 'function') loadLabReferralShareView();
   if (sectionKey === 'doctor-directory' && typeof loadLabDoctorDirectoryView === 'function') loadLabDoctorDirectoryView();
+}
+function toggleLabAccountingSubmenu() {
+  const menu = document.getElementById('subnav-lab-accounting');
+  const chevron = document.getElementById('lab-accounting-chevron');
+  if (!menu) return;
+  const isHidden = menu.style.display === 'none' || menu.style.display === '';
+  menu.style.display = isHidden ? 'block' : 'none';
+  if (chevron) chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function openLabAccountingSection(sectionKey) {
+  if (typeof switchTab === 'function') {
+    switchTab('lab-accounting');
+  }
+  document.querySelectorAll('.lab-accounting-subview').forEach(el => el.style.display = 'none');
+  const activeView = document.getElementById('lab-accounting-subview-' + sectionKey);
+  if (activeView) activeView.style.display = 'block';
+  if (sectionKey === 'invoice' && typeof loadLabInvoicesView === 'function') loadLabInvoicesView();
+  if (sectionKey === 'accounting' && typeof loadLabAccountingLedgerView === 'function') loadLabAccountingLedgerView();
 }
 // =========================================================
 // REFERRAL DOCTORS & COMMISSION SHARE ENGINE
