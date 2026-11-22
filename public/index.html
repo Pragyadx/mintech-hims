@@ -5672,7 +5672,284 @@
 <!-- SECTION: LAB MIS (12 SUB-FEATURES SHELL)   -->
 <!-- ========================================== -->
 <section id="tab-lab-mis" class="tab-content" style="display: none; padding: 20px;">
-    <div id="lab-mis-subview-my-lab-list" class="lab-mis-subview" style="display: block;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">My Lab List</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure My Lab List.</p></div></div>
+    <!-- 1. MIS: My Lab List (List + Add/Edit Lab Details) -->
+    <div id="lab-mis-subview-my-lab-list" class="lab-mis-subview" style="display: block;">
+        <!-- PANEL A: MY ALL LAB LIST TABLE -->
+        <div id="mis-my-lab-list-panel" style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 17px; font-weight: 600; color: #1c2826;">My All Lab List</h3>
+                    <span style="font-size: 12px; color: #576561;">Configure hospital pathology branches, timings, letterhead branding, and report print preferences</span>
+                </div>
+                <button type="button" onclick="openMisLabForm(-1)" style="background: #134e4a; color: #ffffff; border: none; border-radius: 5px; padding: 8px 15px; font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-plus"></i> Add New Lab
+                </button>
+            </div>
+
+            <!-- Toolbar: Show Entries & Search -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; background: #f3f2ed; padding: 7px 12px; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #1c2826;">
+                    <span>Show</span>
+                    <select id="mis-lab-page-size" onchange="changeMisLabPageSize()" style="padding: 4px 8px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; font-size: 12.5px; min-width: 72px; cursor: pointer;">
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>Entries</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; background: #f3f2ed; padding: 7px 12px; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #1c2826;">
+                    <label for="mis-lab-search" style="margin: 0;">Search:</label>
+                    <input type="text" id="mis-lab-search" oninput="onMisLabSearch()" placeholder="" style="padding: 5px 10px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; font-size: 12.5px; width: 210px;">
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; color: #1c2826;">
+                    <thead>
+                        <tr style="border-bottom: 1.5px solid #cbd5e1; background: #ffffff; text-align: left;">
+                            <th onclick="sortMisLabsTable('id')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">ID <span style="color: #134e4a; font-size: 10px;">&#9650;</span></th>
+                            <th onclick="sortMisLabsTable('labName')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Pathlab Name <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisLabsTable('address')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Address <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisLabsTable('weeklyOff')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Weekly Off <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisLabsTable('openTime')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Open Time <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisLabsTable('closeTime')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Close Time <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisLabsTable('mobile')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Mobile Number <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th style="padding: 10px 8px; font-weight: 700; white-space: nowrap;">Status</th>
+                            <th style="padding: 10px 8px; font-weight: 700; white-space: nowrap;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mis-my-lab-tbody">
+                        <tr>
+                            <td colspan="9" style="padding: 14px 10px; text-align: center; color: #576561; border-bottom: 1px solid #cbd5e1;">No data available in table</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; font-size: 12.5px; color: #475569;">
+                <div id="mis-lab-info">Showing 0 to 0 of 0 entries</div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <button type="button" onclick="changeMisLabPage(-1)" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; color: #64748b; cursor: pointer;">Previous</button>
+                    <span id="mis-lab-page-num" style="display: none; background: #134e4a; color: #ffffff; border-radius: 4px; padding: 4px 10px; font-weight: 600;">1</span>
+                    <button type="button" onclick="changeMisLabPage(1)" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; color: #64748b; cursor: pointer;">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL B: ADD / EDIT LAB DETAILS FORM -->
+        <div id="mis-my-lab-form-panel" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px 24px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; margin-bottom: 18px; border-bottom: 1px solid #e8e6df;">
+                <h3 id="mis-lab-form-heading" style="margin: 0; font-size: 17px; font-weight: 600; color: #1c2826;">Add / Edit Lab Details</h3>
+                <button type="button" onclick="closeMisLabForm()" style="background: #f3f2ed; color: #1c2826; border: 1px solid #d6d3c9; border-radius: 5px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Lab List
+                </button>
+            </div>
+
+            <input type="hidden" id="mis-lab-edit-idx" value="-1">
+
+            <!-- Section 1: Lab Identity & Location -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px 28px; font-size: 12.5px; margin-bottom: 22px;">
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Mobile Number<span style="color: #dc2626;">*</span></label>
+                    <input type="text" id="mis-lab-mobile" maxlength="10" placeholder="Mobile Number" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Pathlab Name<span style="color: #dc2626;">*</span></label>
+                    <input type="text" id="mis-lab-name" placeholder="Pathlab Name" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Email ID<span style="color: #dc2626;">*</span></label>
+                    <input type="email" id="mis-lab-email" placeholder="Email ID" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Address</label>
+                    <input type="text" id="mis-lab-address" placeholder="Address" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Locality<span style="color: #dc2626;">*</span></label>
+                    <input type="text" id="mis-lab-locality" placeholder="Locality" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">City</label>
+                    <input type="text" id="mis-lab-city" placeholder="City" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; background: #f8f7f3; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Zipcode</label>
+                    <input type="text" id="mis-lab-zipcode" placeholder="Zipcode" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Logo Image</label>
+                    <div>
+                        <input type="file" id="mis-lab-logo-file" accept="image/*" onchange="handleMisLabImageUpload(this, 'logo')" style="font-size: 12px;">
+                        <span id="mis-lab-logo-status" style="display: block; font-size: 11px; color: #0f766e; margin-top: 2px;"></span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: start; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right; padding-top: 6px;">Weekly Off</label>
+                    <div>
+                        <select id="mis-lab-weekly-off" multiple size="4" style="width: 100%; padding: 5px 8px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 12.5px; background: #ffffff;">
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                        <span style="font-size: 11px; color: #576561;">Hold Ctrl to select multiple days (leave unselected if open all days)</span>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                        <label style="font-weight: 700; color: #1c2826; text-align: right;">Header Image</label>
+                        <div>
+                            <input type="file" id="mis-lab-header-file" accept="image/*" onchange="handleMisLabImageUpload(this, 'header')" style="font-size: 12px;">
+                            <span id="mis-lab-header-status" style="display: block; font-size: 11px; color: #0f766e; margin-top: 2px;"></span>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                        <label style="font-weight: 700; color: #1c2826; text-align: right;">Open Time<span style="color: #dc2626;">*</span></label>
+                        <input type="time" id="mis-lab-open-time" value="06:00" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                        <label style="font-weight: 700; color: #1c2826; text-align: right;">Close Time<span style="color: #dc2626;">*</span></label>
+                        <input type="time" id="mis-lab-close-time" value="23:00" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Report Layout & Print Rules -->
+            <div style="border-top: 1px solid #e8e6df; padding-top: 18px; margin-bottom: 22px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px 20px; font-size: 12.5px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826;">Hide First Page<span style="color: #dc2626;">*</span></label>
+                    <select id="mis-lab-hide-first-page" style="padding: 6px 10px; border: 1px solid #d6d3c9; border-radius: 4px; min-width: 125px; background: #ffffff;">
+                        <option value="No" selected>No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826;">Patient Details Print<span style="color: #dc2626;">*</span></label>
+                    <select id="mis-lab-patient-details-print" style="padding: 6px 10px; border: 1px solid #d6d3c9; border-radius: 4px; min-width: 125px; background: #ffffff;">
+                        <option value="All Page" selected>All Page</option>
+                        <option value="First Page Only">First Page Only</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826;">Print on Own Letterhead<span style="color: #dc2626;">*</span></label>
+                    <select id="mis-lab-own-letterhead" style="padding: 6px 10px; border: 1px solid #d6d3c9; border-radius: 4px; min-width: 125px; background: #ffffff;">
+                        <option value="No" selected>No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826;">Print Header Image<span style="color: #dc2626;">*</span></label>
+                    <select id="mis-lab-print-header-img" style="padding: 6px 10px; border: 1px solid #d6d3c9; border-radius: 4px; min-width: 125px; background: #ffffff;">
+                        <option value="No" selected>No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826;">Signature at Last<span style="color: #dc2626;">*</span></label>
+                    <select id="mis-lab-signature-last" style="padding: 6px 10px; border: 1px solid #d6d3c9; border-radius: 4px; min-width: 125px; background: #ffffff;">
+                        <option value="Yes" selected>Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 3px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                        <label style="font-weight: 700; color: #1c2826;">Each Test / Group on New Page</label>
+                        <select id="mis-lab-new-page-group" style="padding: 6px 10px; border: 1px solid #d6d3c9; border-radius: 4px; min-width: 125px; background: #ffffff;">
+                            <option value="Yes" selected>Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <span style="font-size: 11px; color: #576561; text-align: right;">No = tests print one after another on the same page</span>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826;">Print "End of Report"</label>
+                    <select id="mis-lab-end-of-report" style="padding: 6px 10px; border: 1px solid #d6d3c9; border-radius: 4px; min-width: 125px; background: #ffffff;">
+                        <option value="No" selected>No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Section 3: Signature Print Order & Signatories -->
+            <div style="border-top: 1px solid #e8e6df; padding-top: 18px; margin-bottom: 22px; font-size: 12.5px;">
+                <div style="margin-bottom: 14px; max-width: 520px;">
+                    <div style="font-weight: 700; color: #1c2826; margin-bottom: 8px;">Signature Print Order <span style="font-weight: 400; color: #576561;">(1 = left; with two names the second prints on the right)</span></div>
+                    <div style="display: grid; grid-template-columns: 1fr 90px; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #e8e6df;">
+                        <span>Doctor</span>
+                        <select id="mis-lab-order-doctor" style="padding: 5px 8px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff;">
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 90px; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #e8e6df;">
+                        <span>Technician</span>
+                        <select id="mis-lab-order-tech" style="padding: 5px 8px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff;">
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 90px; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #e8e6df;">
+                        <span>Pathologist</span>
+                        <select id="mis-lab-order-patho" style="padding: 5px 8px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff;">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3" selected>3</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Doctor, Technician, Pathologist Names & Signatures -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px 28px; margin-top: 16px;">
+                    <div style="display: grid; grid-template-columns: 140px 1fr; align-items: start; gap: 10px;">
+                        <label style="font-weight: 700; color: #1c2826; text-align: right; padding-top: 6px;">Doctor Name</label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <input type="text" id="mis-lab-doctor-name" placeholder="Doctor Name" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px;">
+                            <input type="file" id="mis-lab-doctor-sig" accept="image/*" onchange="handleMisLabImageUpload(this, 'doctorSig')" style="font-size: 12px;">
+                            <span id="mis-lab-doctorSig-status" style="font-size: 11px; color: #0f766e;"></span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 140px 1fr; align-items: start; gap: 10px;">
+                        <label style="font-weight: 700; color: #1c2826; text-align: right; padding-top: 6px;">Technician Name</label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <input type="text" id="mis-lab-tech-name" placeholder="Technician Name" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px;">
+                            <input type="file" id="mis-lab-tech-sig" accept="image/*" onchange="handleMisLabImageUpload(this, 'techSig')" style="font-size: 12px;">
+                            <span id="mis-lab-techSig-status" style="font-size: 11px; color: #0f766e;"></span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 140px 1fr; align-items: start; gap: 10px;">
+                        <label style="font-weight: 700; color: #1c2826; text-align: right; padding-top: 6px;">Pathologist Name</label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <input type="text" id="mis-lab-patho-name" placeholder="Pathologist Name" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px;">
+                            <input type="file" id="mis-lab-patho-sig" accept="image/*" onchange="handleMisLabImageUpload(this, 'pathoSig')" style="font-size: 12px;">
+                            <span id="mis-lab-pathoSig-status" style="font-size: 11px; color: #0f766e;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div style="display: flex; align-items: center; gap: 10px; padding-top: 10px; border-top: 1px solid #e8e6df;">
+                <button type="button" id="mis-lab-submit-btn" onclick="saveMisLabRecord()" style="background: #134e4a; color: #ffffff; border: none; border-radius: 5px; padding: 9px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Lab Details</button>
+                <button type="button" onclick="closeMisLabForm()" style="background: #ffffff; color: #1c2826; border: 1px solid #d6d3c9; border-radius: 5px; padding: 9px 16px; font-size: 13px; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
     <div id="lab-mis-subview-my-users" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">My Users</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure My Users.</p></div></div>
     <div id="lab-mis-subview-doctor-signature" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Doctor's Signature</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Doctor's Signature.</p></div></div>
     <div id="lab-mis-subview-all-templates" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">All Templates</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure All Templates.</p></div></div>
@@ -18538,6 +18815,285 @@ window.openLabMisSection = function(sectionKey) {
   document.querySelectorAll('.lab-mis-subview').forEach(el => el.style.display = 'none');
   const activeView = document.getElementById('lab-mis-subview-' + sectionKey);
   if (activeView) activeView.style.display = 'block';
+  if (sectionKey === 'my-lab-list') {
+    closeMisLabForm();
+    renderMisLabsTable();
+  }
+};
+let misLabsList = JSON.parse(localStorage.getItem('arvion_mis_my_labs') || '[]');
+let misLabsState = {
+  page: 1,
+  pageSize: 10,
+  search: '',
+  sortKey: 'id',
+  sortAsc: true
+};
+let misLabTempUploads = { logo: '', header: '', doctorSig: '', techSig: '', pathoSig: '' };
+
+function persistMisLabs() {
+  localStorage.setItem('arvion_mis_my_labs', JSON.stringify(misLabsList));
+}
+
+window.handleMisLabImageUpload = function(inputEl, key) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    misLabTempUploads[key] = e.target.result;
+    const statusEl = document.getElementById('mis-lab-' + key + '-status');
+    if (statusEl) statusEl.textContent = 'Uploaded: ' + file.name;
+  };
+  reader.readAsDataURL(file);
+};
+
+window.changeMisLabPageSize = function() {
+  misLabsState.pageSize = Number(document.getElementById('mis-lab-page-size')?.value || 10);
+  misLabsState.page = 1;
+  renderMisLabsTable();
+};
+
+window.onMisLabSearch = function() {
+  misLabsState.search = (document.getElementById('mis-lab-search')?.value || '').toLowerCase().trim();
+  misLabsState.page = 1;
+  renderMisLabsTable();
+};
+
+window.sortMisLabsTable = function(key) {
+  if (misLabsState.sortKey === key) {
+    misLabsState.sortAsc = !misLabsState.sortAsc;
+  } else {
+    misLabsState.sortKey = key;
+    misLabsState.sortAsc = true;
+  }
+  renderMisLabsTable();
+};
+
+window.changeMisLabPage = function(delta) {
+  misLabsState.page = Math.max(1, misLabsState.page + delta);
+  renderMisLabsTable();
+};
+
+window.toggleMisLabStatus = function(idx) {
+  if (!misLabsList[idx]) return;
+  misLabsList[idx].active = !misLabsList[idx].active;
+  persistMisLabs();
+  renderMisLabsTable();
+};
+
+window.renderMisLabsTable = function() {
+  const tbody = document.getElementById('mis-my-lab-tbody');
+  const infoEl = document.getElementById('mis-lab-info');
+  const pageNumEl = document.getElementById('mis-lab-page-num');
+  if (!tbody) return;
+
+  let filtered = misLabsList.map((item, idx) => ({ ...item, _idx: idx })).filter(row => {
+    if (!misLabsState.search) return true;
+    const hay = [row.id, row.labName, row.address, row.locality, row.city, row.weeklyOff, row.openTime, row.closeTime, row.mobile].join(' ').toLowerCase();
+    return hay.includes(misLabsState.search);
+  });
+
+  const k = misLabsState.sortKey;
+  const dir = misLabsState.sortAsc ? 1 : -1;
+  filtered.sort((a, b) => String(a[k] ?? '').localeCompare(String(b[k] ?? ''), undefined, { numeric: true }) * dir);
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / misLabsState.pageSize));
+  if (misLabsState.page > totalPages) misLabsState.page = totalPages;
+
+  if (total === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="padding: 14px 10px; text-align: center; color: #576561; border-bottom: 1px solid #cbd5e1;">No data available in table</td></tr>';
+    if (infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 entries';
+    if (pageNumEl) pageNumEl.style.display = 'none';
+    return;
+  }
+
+  const startIdx = (misLabsState.page - 1) * misLabsState.pageSize;
+  const slice = filtered.slice(startIdx, startIdx + misLabsState.pageSize);
+
+  tbody.innerHTML = slice.map(row => {
+    const isOn = row.active !== false;
+    return `
+      <tr style="border-bottom: 1px solid #e2e8f0;">
+        <td style="padding: 9px 8px;">${row.id}</td>
+        <td style="padding: 9px 8px; font-weight: 600; color: #134e4a;">${row.labName}</td>
+        <td style="padding: 9px 8px;">${row.address || row.locality || '-'}</td>
+        <td style="padding: 9px 8px;">${row.weeklyOff || '-'}</td>
+        <td style="padding: 9px 8px;">${row.openTime || '-'}</td>
+        <td style="padding: 9px 8px;">${row.closeTime || '-'}</td>
+        <td style="padding: 9px 8px;">${row.mobile || '-'}</td>
+        <td style="padding: 9px 8px;">
+          <button type="button" onclick="toggleMisLabStatus(${row._idx})" title="${isOn ? 'Active (Click to deactivate)' : 'Inactive (Click to activate)'}" style="width: 34px; height: 18px; border-radius: 999px; border: none; background: ${isOn ? '#134e4a' : '#cbd5e1'}; position: relative; cursor: pointer; transition: background 0.2s;">
+            <span style="position: absolute; top: 2px; left: ${isOn ? '18px' : '2px'}; width: 14px; height: 14px; border-radius: 50%; background: #ffffff; transition: left 0.2s;"></span>
+          </button>
+        </td>
+        <td style="padding: 9px 8px; white-space: nowrap;">
+          <button type="button" onclick="openMisLabForm(${row._idx})" title="View / Edit Lab Details" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #134e4a; border-radius: 4px; padding: 3px 8px; cursor: pointer; margin-right: 4px;"><i class="fa-solid fa-eye"></i></button>
+          <button type="button" onclick="deleteMisLabRecord(${row._idx})" title="Delete Lab" style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 4px; padding: 3px 8px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  if (infoEl) infoEl.textContent = `Showing ${startIdx + 1} to ${startIdx + slice.length} of ${total} entries`;
+  if (pageNumEl) {
+    pageNumEl.style.display = 'inline-block';
+    pageNumEl.textContent = String(misLabsState.page);
+  }
+};
+
+window.openMisLabForm = function(idx = -1) {
+  const listPanel = document.getElementById('mis-my-lab-list-panel');
+  const formPanel = document.getElementById('mis-my-lab-form-panel');
+  if (!listPanel || !formPanel) return;
+
+  listPanel.style.display = 'none';
+  formPanel.style.display = 'block';
+  document.getElementById('mis-lab-edit-idx').value = idx;
+  const weeklySelect = document.getElementById('mis-lab-weekly-off');
+
+  if (idx >= 0 && misLabsList[idx]) {
+    const l = misLabsList[idx];
+    document.getElementById('mis-lab-form-heading').textContent = 'Edit Lab Details';
+    document.getElementById('mis-lab-submit-btn').textContent = 'Update';
+    document.getElementById('mis-lab-mobile').value = l.mobile || '';
+    document.getElementById('mis-lab-name').value = l.labName || '';
+    document.getElementById('mis-lab-email').value = l.email || '';
+    document.getElementById('mis-lab-address').value = l.address || '';
+    document.getElementById('mis-lab-locality').value = l.locality || '';
+    document.getElementById('mis-lab-city').value = l.city || '';
+    document.getElementById('mis-lab-zipcode').value = l.zipcode || '';
+    document.getElementById('mis-lab-open-time').value = l.openTime || '06:00';
+    document.getElementById('mis-lab-close-time').value = l.closeTime || '23:00';
+    document.getElementById('mis-lab-hide-first-page').value = l.hideFirstPage || 'No';
+    document.getElementById('mis-lab-patient-details-print').value = l.patientDetailsPrint || 'All Page';
+    document.getElementById('mis-lab-own-letterhead').value = l.ownLetterhead || 'No';
+    document.getElementById('mis-lab-print-header-img').value = l.printHeaderImg || 'No';
+    document.getElementById('mis-lab-signature-last').value = l.signatureAtLast || 'Yes';
+    document.getElementById('mis-lab-new-page-group').value = l.newPageGroup || 'Yes';
+    document.getElementById('mis-lab-end-of-report').value = l.endOfReport || 'No';
+    document.getElementById('mis-lab-order-doctor').value = l.orderDoctor || '1';
+    document.getElementById('mis-lab-order-tech').value = l.orderTech || '2';
+    document.getElementById('mis-lab-order-patho').value = l.orderPatho || '3';
+    document.getElementById('mis-lab-doctor-name').value = l.doctorName || '';
+    document.getElementById('mis-lab-tech-name').value = l.techName || '';
+    document.getElementById('mis-lab-patho-name').value = l.pathoName || '';
+
+    const offDays = (l.weeklyOff || '').split(',').map(s => s.trim());
+    Array.from(weeklySelect.options).forEach(opt => opt.selected = offDays.includes(opt.value));
+
+    misLabTempUploads = {
+      logo: l.logo || '',
+      header: l.header || '',
+      doctorSig: l.doctorSig || '',
+      techSig: l.techSig || '',
+      pathoSig: l.pathoSig || ''
+    };
+  } else {
+    document.getElementById('mis-lab-form-heading').textContent = 'Add / Edit Lab Details';
+    document.getElementById('mis-lab-submit-btn').textContent = 'Save Lab Details';
+    ['mis-lab-mobile', 'mis-lab-name', 'mis-lab-email', 'mis-lab-address', 'mis-lab-locality', 'mis-lab-city', 'mis-lab-zipcode', 'mis-lab-doctor-name', 'mis-lab-tech-name', 'mis-lab-patho-name'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('mis-lab-open-time').value = '06:00';
+    document.getElementById('mis-lab-close-time').value = '23:00';
+    document.getElementById('mis-lab-hide-first-page').value = 'No';
+    document.getElementById('mis-lab-patient-details-print').value = 'All Page';
+    document.getElementById('mis-lab-own-letterhead').value = 'No';
+    document.getElementById('mis-lab-print-header-img').value = 'No';
+    document.getElementById('mis-lab-signature-last').value = 'Yes';
+    document.getElementById('mis-lab-new-page-group').value = 'Yes';
+    document.getElementById('mis-lab-end-of-report').value = 'No';
+    document.getElementById('mis-lab-order-doctor').value = '1';
+    document.getElementById('mis-lab-order-tech').value = '2';
+    document.getElementById('mis-lab-order-patho').value = '3';
+    Array.from(weeklySelect.options).forEach(opt => opt.selected = false);
+    misLabTempUploads = { logo: '', header: '', doctorSig: '', techSig: '', pathoSig: '' };
+  }
+
+  ['logo', 'header', 'doctorSig', 'techSig', 'pathoSig'].forEach(k => {
+    const st = document.getElementById('mis-lab-' + k + '-status');
+    if (st) st.textContent = misLabTempUploads[k] ? 'Image saved' : '';
+  });
+};
+
+window.closeMisLabForm = function() {
+  const listPanel = document.getElementById('mis-my-lab-list-panel');
+  const formPanel = document.getElementById('mis-my-lab-form-panel');
+  if (listPanel) listPanel.style.display = 'block';
+  if (formPanel) formPanel.style.display = 'none';
+};
+
+window.saveMisLabRecord = function() {
+  const idx = Number(document.getElementById('mis-lab-edit-idx').value);
+  const mobile = document.getElementById('mis-lab-mobile').value.trim();
+  const labName = document.getElementById('mis-lab-name').value.trim();
+  const email = document.getElementById('mis-lab-email').value.trim();
+  const locality = document.getElementById('mis-lab-locality').value.trim();
+  const openTime = document.getElementById('mis-lab-open-time').value;
+  const closeTime = document.getElementById('mis-lab-close-time').value;
+
+  if (!mobile || mobile.length < 10) { alert('Please enter a valid 10-digit Mobile Number.'); return; }
+  if (!labName) { alert('Please enter Pathlab Name.'); return; }
+  if (!email) { alert('Please enter Email ID.'); return; }
+  if (!locality) { alert('Please enter Locality.'); return; }
+  if (!openTime || !closeTime) { alert('Please enter Open Time and Close Time.'); return; }
+
+  const weeklySelect = document.getElementById('mis-lab-weekly-off');
+  const weeklyOff = Array.from(weeklySelect.selectedOptions).map(o => o.value).join(', ');
+
+  const record = {
+    id: idx >= 0 && misLabsList[idx] ? misLabsList[idx].id : misLabsList.length + 1,
+    mobile,
+    labName,
+    email,
+    address: document.getElementById('mis-lab-address').value.trim(),
+    locality,
+    city: document.getElementById('mis-lab-city').value.trim(),
+    zipcode: document.getElementById('mis-lab-zipcode').value.trim(),
+    weeklyOff,
+    openTime,
+    closeTime,
+    hideFirstPage: document.getElementById('mis-lab-hide-first-page').value,
+    patientDetailsPrint: document.getElementById('mis-lab-patient-details-print').value,
+    ownLetterhead: document.getElementById('mis-lab-own-letterhead').value,
+    printHeaderImg: document.getElementById('mis-lab-print-header-img').value,
+    signatureAtLast: document.getElementById('mis-lab-signature-last').value,
+    newPageGroup: document.getElementById('mis-lab-new-page-group').value,
+    endOfReport: document.getElementById('mis-lab-end-of-report').value,
+    orderDoctor: document.getElementById('mis-lab-order-doctor').value,
+    orderTech: document.getElementById('mis-lab-order-tech').value,
+    orderPatho: document.getElementById('mis-lab-order-patho').value,
+    doctorName: document.getElementById('mis-lab-doctor-name').value.trim(),
+    techName: document.getElementById('mis-lab-tech-name').value.trim(),
+    pathoName: document.getElementById('mis-lab-patho-name').value.trim(),
+    logo: misLabTempUploads.logo,
+    header: misLabTempUploads.header,
+    doctorSig: misLabTempUploads.doctorSig,
+    techSig: misLabTempUploads.techSig,
+    pathoSig: misLabTempUploads.pathoSig,
+    active: idx >= 0 && misLabsList[idx] ? misLabsList[idx].active : true
+  };
+
+  if (idx >= 0 && misLabsList[idx]) {
+    misLabsList[idx] = record;
+  } else {
+    misLabsList.unshift(record);
+    misLabsList.forEach((item, i) => item.id = i + 1);
+  }
+
+  persistMisLabs();
+  closeMisLabForm();
+  renderMisLabsTable();
+};
+
+window.deleteMisLabRecord = function(idx) {
+  if (!misLabsList[idx]) return;
+  if (!confirm(`Delete lab "${misLabsList[idx].labName}"?`)) return;
+  misLabsList.splice(idx, 1);
+  misLabsList.forEach((item, i) => item.id = i + 1);
+  persistMisLabs();
+  renderMisLabsTable();
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
