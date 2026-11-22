@@ -6803,7 +6803,155 @@
             </div>
         </div>
     </div>
-    <div id="lab-mis-subview-pdf-setting" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">PDF Setting</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure PDF Setting.</p></div></div>
+    <!-- 12. MIS: PDF Setting (Letterhead Margin Calibration & Live Preview) -->
+    <div id="lab-mis-subview-pdf-setting" class="lab-mis-subview" style="display: none;">
+        <div style="max-width: 920px; margin: 16px auto;">
+            <div style="margin-bottom: 14px;">
+                <h3 style="margin: 0 0 3px 0; font-size: 17px; font-weight: 600; color: #1c2826;">PDF Setting</h3>
+                <span style="font-size: 12px; color: #576561;">Calibrate top header height and left margin spacing for A4 diagnostic report and prescription printing</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 24px; align-items: start;">
+                <!-- LEFT: INTERACTIVE A4 PREVIEW SHEET -->
+                <div style="background: #ffffff; border: 1px solid #d6d3c9; border-radius: 6px; padding: 12px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);">
+                    <div id="mis-pdf-a4-canvas" style="position: relative; width: 100%; height: 345px; background: #ffffff; border: 1px solid #cbd5e1; overflow: hidden; user-select: none;">
+                        <!-- Top Header Margin Overlay (Charcoal) -->
+                        <div id="mis-pdf-top-overlay" style="position: absolute; top: 0; left: 0; right: 0; height: 0%; background: #262626; z-index: 3; transition: height 0.1s ease;">
+                            <div onmousedown="startMisPdfDrag(event, 'header')" title="Drag vertically to adjust Header Height" style="position: absolute; bottom: -4px; left: 0; right: 0; height: 8px; cursor: ns-resize; display: flex; justify-content: center; align-items: center;">
+                                <span style="width: 34px; height: 3px; background: #0f766e; border-radius: 2px;"></span>
+                            </div>
+                        </div>
+
+                        <!-- Left Column Margin Overlay (Charcoal) -->
+                        <div id="mis-pdf-left-overlay" style="position: absolute; top: 0; bottom: 0; left: 0; width: 0%; background: #262626; z-index: 2; transition: width 0.1s ease;">
+                            <div onmousedown="startMisPdfDrag(event, 'left')" title="Drag horizontally to adjust Left Column" style="position: absolute; top: 0; bottom: 0; right: -4px; width: 8px; cursor: ew-resize; display: flex; justify-content: center; align-items: center;">
+                                <span style="width: 3px; height: 34px; background: #0f766e; border-radius: 2px;"></span>
+                            </div>
+                        </div>
+
+                        <!-- Generic Hospital-Agnostic Report Wireframe Preview -->
+                        <div id="mis-pdf-report-body" style="padding: 12px; font-size: 8.5px; color: #334155; transition: padding 0.1s ease;">
+                            <div id="mis-pdf-letterhead-banner" style="border-bottom: 1.5px solid #134e4a; padding-bottom: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-weight: 700; color: #134e4a; font-size: 10px;">DIAGNOSTIC LABORATORY REPORT</div>
+                                    <div style="color: #64748b; font-size: 7.5px;">Hospital / Lab Header Area</div>
+                                </div>
+                                <div style="width: 24px; height: 24px; border: 1px dashed #94a3b8; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 7px; color: #64748b;">LOGO</div>
+                            </div>
+
+                            <!-- Patient Info Box Wireframe -->
+                            <div style="border: 1px solid #94a3b8; padding: 5px 6px; margin-bottom: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; font-size: 7.5px;">
+                                <div><strong>Patient Name:</strong> —</div>
+                                <div><strong>Date / Lab ID:</strong> —</div>
+                                <div><strong>Age / Gender:</strong> —</div>
+                                <div><strong>Referred By:</strong> —</div>
+                            </div>
+
+                            <!-- Test Results Table Wireframe -->
+                            <table style="width: 100%; border-collapse: collapse; font-size: 7.5px; margin-bottom: 10px;">
+                                <thead>
+                                    <tr style="background: #f1f5f9;">
+                                        <th style="border: 1px solid #94a3b8; padding: 3px 4px; text-align: left;">Test Parameter</th>
+                                        <th style="border: 1px solid #94a3b8; padding: 3px 4px; text-align: left;">Result</th>
+                                        <th style="border: 1px solid #94a3b8; padding: 3px 4px; text-align: left;">Unit</th>
+                                        <th style="border: 1px solid #94a3b8; padding: 3px 4px; text-align: left;">Ref. Range</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">Parameter 1</td>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">—</td>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">—</td>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">—</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">Parameter 2</td>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">—</td>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">—</td>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">—</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">Parameter 3</td>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">—</td>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">—</td>
+                                        <td style="border: 1px solid #cbd5e1; padding: 3px 4px;">—</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div style="display: flex; justify-content: space-between; margin-top: 24px; font-size: 7.5px; color: #64748b;">
+                                <span>Technician Signature</span>
+                                <span>Authorized Pathologist</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 11px; color: #576561; text-align: center;">
+                        Drag dark margin bars or adjust sliders on the right
+                    </div>
+                </div>
+
+                <!-- RIGHT: SETTINGS SUMMARY & CONTROLS -->
+                <div>
+                    <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 6px; padding: 18px 22px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04); font-size: 13px; color: #1c2826;">
+                        <!-- Saved Values Rows -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
+                            <span>Your Prescription Header Height</span>
+                            <strong id="mis-pdf-saved-header" style="color: #134e4a;">0%</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9;">
+                            <span>Your Prescription Left Column</span>
+                            <strong id="mis-pdf-saved-left" style="color: #134e4a;">0%</strong>
+                        </div>
+
+                        <!-- Current Selection Heading -->
+                        <div style="padding: 12px 0 8px 0; font-weight: 700; color: #1c2826; border-bottom: 1px solid #f1f5f9;">
+                            Current Selection
+                        </div>
+
+                        <!-- Header Height Editable Control -->
+                        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
+                            <label for="mis-pdf-header-range" style="font-weight: 500;">Header Height</label>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="range" id="mis-pdf-header-range" min="0" max="40" value="0" oninput="updateMisPdfPreviewFromControls('header', this.value)" style="accent-color: #134e4a; width: 150px; cursor: pointer;">
+                                <div style="display: inline-flex; align-items: center; gap: 3px;">
+                                    <input type="number" id="mis-pdf-header-num" min="0" max="40" value="0" oninput="updateMisPdfPreviewFromControls('header', this.value)" style="width: 54px; padding: 4px 6px; border: 1px solid #d6d3c9; border-radius: 4px; text-align: right; font-size: 12.5px;">
+                                    <span>%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Left Column Editable Control -->
+                        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 0;">
+                            <label for="mis-pdf-left-range" style="font-weight: 500;">Left Column</label>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="range" id="mis-pdf-left-range" min="0" max="40" value="0" oninput="updateMisPdfPreviewFromControls('left', this.value)" style="accent-color: #134e4a; width: 150px; cursor: pointer;">
+                                <div style="display: inline-flex; align-items: center; gap: 3px;">
+                                    <input type="number" id="mis-pdf-left-num" min="0" max="40" value="0" oninput="updateMisPdfPreviewFromControls('left', this.value)" style="width: 54px; padding: 4px 6px; border: 1px solid #d6d3c9; border-radius: 4px; text-align: right; font-size: 12.5px;">
+                                    <span>%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Letterhead Mode Radio Buttons + Submit -->
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 16px; font-size: 13px; color: #1c2826;">
+                        <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="radio" name="mis-pdf-letterhead-mode" value="complete" checked onchange="onMisPdfLetterheadModeChange()" style="accent-color: #134e4a;">
+                            <span>Print Complete Letterhead</span>
+                        </label>
+                        <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="radio" name="mis-pdf-letterhead-mode" value="own" onchange="onMisPdfLetterheadModeChange()" style="accent-color: #134e4a;">
+                            <span>Print on Own Letterhead</span>
+                        </label>
+                        <button type="button" onclick="saveMisPdfSetting()" style="background: #134e4a; color: #ffffff; border: none; border-radius: 4px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer;">Submit</button>
+                    </div>
+
+                    <!-- Inline Confirmation Feedback -->
+                    <div id="mis-pdf-feedback" style="display: none; margin-top: 12px; padding: 8px 12px; border-radius: 4px; font-size: 12.5px; font-weight: 600;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
         <!-- =================================================== -->
   <!-- TAB: INPATIENT DEPARTMENT (IPD) MANAGEMENT          -->
@@ -19682,6 +19830,8 @@ window.openLabMisSection = function(sectionKey) {
 } else if (sectionKey === 'add-coordinator') {
   resetMisCoordinatorForm();
   renderMisCoordinatorsList();
+} else if (sectionKey === 'pdf-setting') {
+  loadMisPdfSetting();
 }
 };
 let misLabsList = JSON.parse(localStorage.getItem('arvion_mis_my_labs') || '[]');
@@ -21279,6 +21429,126 @@ window.deleteMisCoordinatorRecord = function(idx) {
   misCoordinatorsList.splice(idx, 1);
   persistMisCoordinators();
   renderMisCoordinatorsList();
+};
+let misPdfCurrentSelection = { header: 0, left: 0, mode: 'complete' };
+let misPdfDragState = null;
+
+function applyMisPdfPreviewVisuals() {
+  const h = Math.max(0, Math.min(40, Number(misPdfCurrentSelection.header) || 0));
+  const l = Math.max(0, Math.min(40, Number(misPdfCurrentSelection.left) || 0));
+
+  const topOverlay = document.getElementById('mis-pdf-top-overlay');
+  const leftOverlay = document.getElementById('mis-pdf-left-overlay');
+  const reportBody = document.getElementById('mis-pdf-report-body');
+  const hRange = document.getElementById('mis-pdf-header-range');
+  const hNum = document.getElementById('mis-pdf-header-num');
+  const lRange = document.getElementById('mis-pdf-left-range');
+  const lNum = document.getElementById('mis-pdf-left-num');
+
+  if (topOverlay) topOverlay.style.height = h + '%';
+  if (leftOverlay) leftOverlay.style.width = l + '%';
+  if (reportBody) {
+    reportBody.style.paddingTop = `calc(${h}% + 12px)`;
+    reportBody.style.paddingLeft = `calc(${l}% + 12px)`;
+  }
+  if (hRange) hRange.value = h;
+  if (hNum) hNum.value = h;
+  if (lRange) lRange.value = l;
+  if (lNum) lNum.value = l;
+}
+
+window.updateMisPdfPreviewFromControls = function(axis, rawVal) {
+  const val = Math.max(0, Math.min(40, Math.round(Number(rawVal) || 0)));
+  if (axis === 'header') {
+    misPdfCurrentSelection.header = val;
+  } else {
+    misPdfCurrentSelection.left = val;
+  }
+  applyMisPdfPreviewVisuals();
+};
+
+window.onMisPdfLetterheadModeChange = function() {
+  const mode = document.querySelector('input[name="mis-pdf-letterhead-mode"]:checked')?.value || 'complete';
+  misPdfCurrentSelection.mode = mode;
+  const banner = document.getElementById('mis-pdf-letterhead-banner');
+  if (banner) {
+    banner.style.opacity = mode === 'own' ? '0.25' : '1';
+  }
+};
+
+window.startMisPdfDrag = function(e, axis) {
+  e.preventDefault();
+  misPdfDragState = { axis };
+};
+
+document.addEventListener('mousemove', function(e) {
+  if (!misPdfDragState) return;
+  const canvas = document.getElementById('mis-pdf-a4-canvas');
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  if (misPdfDragState.axis === 'header') {
+    const pct = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+    misPdfCurrentSelection.header = Math.max(0, Math.min(40, pct));
+  } else {
+    const pct = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+    misPdfCurrentSelection.left = Math.max(0, Math.min(40, pct));
+  }
+  applyMisPdfPreviewVisuals();
+});
+
+document.addEventListener('mouseup', function() {
+  misPdfDragState = null;
+});
+
+window.loadMisPdfSetting = function() {
+  const saved = JSON.parse(localStorage.getItem('arvion_mis_pdf_setting') || '{"header":0,"left":0,"mode":"complete"}');
+  const savedHeaderEl = document.getElementById('mis-pdf-saved-header');
+  const savedLeftEl = document.getElementById('mis-pdf-saved-left');
+  if (savedHeaderEl) savedHeaderEl.textContent = (saved.header || 0) + '%';
+  if (savedLeftEl) savedLeftEl.textContent = (saved.left || 0) + '%';
+
+  misPdfCurrentSelection = {
+    header: Number(saved.header) || 0,
+    left: Number(saved.left) || 0,
+    mode: saved.mode || 'complete'
+  };
+
+  const modeRadio = document.querySelector(`input[name="mis-pdf-letterhead-mode"][value="${misPdfCurrentSelection.mode}"]`);
+  if (modeRadio) modeRadio.checked = true;
+  onMisPdfLetterheadModeChange();
+  applyMisPdfPreviewVisuals();
+
+  const fb = document.getElementById('mis-pdf-feedback');
+  if (fb) {
+    fb.style.display = 'none';
+    fb.textContent = '';
+  }
+};
+
+window.saveMisPdfSetting = function() {
+  const mode = document.querySelector('input[name="mis-pdf-letterhead-mode"]:checked')?.value || 'complete';
+  const payload = {
+    header: Math.max(0, Math.min(40, Number(misPdfCurrentSelection.header) || 0)),
+    left: Math.max(0, Math.min(40, Number(misPdfCurrentSelection.left) || 0)),
+    mode,
+    updatedAt: new Date().toISOString()
+  };
+
+  localStorage.setItem('arvion_mis_pdf_setting', JSON.stringify(payload));
+
+  const savedHeaderEl = document.getElementById('mis-pdf-saved-header');
+  const savedLeftEl = document.getElementById('mis-pdf-saved-left');
+  if (savedHeaderEl) savedHeaderEl.textContent = payload.header + '%';
+  if (savedLeftEl) savedLeftEl.textContent = payload.left + '%';
+
+  const fb = document.getElementById('mis-pdf-feedback');
+  if (fb) {
+    fb.style.display = 'block';
+    fb.textContent = `PDF Setting saved (Header Height: ${payload.header}%, Left Column: ${payload.left}%, Mode: ${mode === 'own' ? 'Print on Own Letterhead' : 'Print Complete Letterhead'}).`;
+    fb.style.background = '#f0fdf4';
+    fb.style.color = '#134e4a';
+    fb.style.border = '1px solid #bbf7d0';
+  }
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
