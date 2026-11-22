@@ -6144,7 +6144,119 @@
             </div>
         </div>
     </div>
-    <div id="lab-mis-subview-doctor-signature" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Doctor's Signature</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Doctor's Signature.</p></div></div>
+    <!-- 3. MIS: Doctor's Signature (List + Add/Edit Signature Form) -->
+    <div id="lab-mis-subview-doctor-signature" class="lab-mis-subview" style="display: none;">
+        <!-- PANEL A: ALL DOCTOR'S SIGNATURE LIST -->
+        <div id="mis-doc-sig-list-panel" style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 17px; font-weight: 600; color: #1c2826;">All Doctor's Signature List</h3>
+                    <span style="font-size: 12px; color: #576561;">Upload and manage authorized doctor and pathologist digital signatures for diagnostic reports</span>
+                </div>
+                <button type="button" onclick="openMisDocSigForm(-1)" style="background: #134e4a; color: #ffffff; border: none; border-radius: 5px; padding: 8px 15px; font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-plus"></i> Add New Signature
+                </button>
+            </div>
+
+            <!-- Toolbar: Show Entries & Search -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; background: #f3f2ed; padding: 7px 12px; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #1c2826;">
+                    <span>Show</span>
+                    <select id="mis-docsig-page-size" onchange="changeMisDocSigPageSize()" style="padding: 4px 8px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; font-size: 12.5px; min-width: 72px; cursor: pointer;">
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>Entries</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; background: #f3f2ed; padding: 7px 12px; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #1c2826;">
+                    <label for="mis-docsig-search" style="margin: 0;">Search:</label>
+                    <input type="text" id="mis-docsig-search" oninput="onMisDocSigSearch()" placeholder="" style="padding: 5px 10px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; font-size: 12.5px; width: 210px;">
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; color: #1c2826;">
+                    <thead>
+                        <tr style="border-bottom: 1.5px solid #cbd5e1; background: #ffffff; text-align: left;">
+                            <th onclick="sortMisDocSigTable('id')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">ID <span style="color: #134e4a; font-size: 10px;">&#9660;</span></th>
+                            <th onclick="sortMisDocSigTable('doctorName')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Doctor's Name <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th style="padding: 10px 8px; font-weight: 700; white-space: nowrap;">Signature</th>
+                            <th onclick="sortMisDocSigTable('designation')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Designation <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisDocSigTable('status')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Status <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th style="padding: 10px 8px; font-weight: 700; white-space: nowrap;">Action</th>
+                            <th onclick="sortMisDocSigTable('createdDate')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Created Date <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="mis-doc-sig-tbody">
+                        <tr>
+                            <td colspan="7" style="padding: 14px 10px; text-align: center; color: #576561; border-bottom: 1px solid #cbd5e1;">No data available in table</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; font-size: 12.5px; color: #475569;">
+                <div id="mis-docsig-info">Showing 0 to 0 of 0 entries</div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <button type="button" onclick="changeMisDocSigPage(-1)" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; color: #64748b; cursor: pointer;">Previous</button>
+                    <span id="mis-docsig-page-num" style="display: none; background: #134e4a; color: #ffffff; border-radius: 4px; padding: 4px 10px; font-weight: 600;">1</span>
+                    <button type="button" onclick="changeMisDocSigPage(1)" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; color: #64748b; cursor: pointer;">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL B: ADD / EDIT DOCTOR SIGNATURE FORM -->
+        <div id="mis-doc-sig-form-panel" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px 24px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; margin-bottom: 18px; border-bottom: 1px solid #e8e6df;">
+                <h3 id="mis-docsig-form-heading" style="margin: 0; font-size: 17px; font-weight: 600; color: #1c2826;">Add / Edit Doctor's Signature</h3>
+                <button type="button" onclick="closeMisDocSigForm()" style="background: #f3f2ed; color: #1c2826; border: 1px solid #d6d3c9; border-radius: 5px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Signature List
+                </button>
+            </div>
+
+            <input type="hidden" id="mis-docsig-edit-idx" value="-1">
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px 28px; font-size: 12.5px; margin-bottom: 22px;">
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Doctor's Name<span style="color: #dc2626;">*</span></label>
+                    <input type="text" id="mis-docsig-name" placeholder="Doctor Name" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Designation<span style="color: #dc2626;">*</span></label>
+                    <input type="text" id="mis-docsig-designation" placeholder="e.g. MBBS, MD Pathologist, Regd No." style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Status</label>
+                    <select id="mis-docsig-status" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; width: 100%; box-sizing: border-box;">
+                        <option value="1" selected>Active (1)</option>
+                        <option value="0">Inactive (0)</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: start; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right; padding-top: 6px;">Signature<span style="color: #dc2626;">*</span></label>
+                    <div>
+                        <div style="border: 1px solid #d6d3c9; border-radius: 4px; padding: 6px 8px; background: #ffffff;">
+                            <input type="file" id="mis-docsig-file" accept="image/*" onchange="handleMisDocSigUpload(this)" style="font-size: 12px; width: 100%;">
+                        </div>
+                        <div id="mis-docsig-preview-box" style="display: none; margin-top: 8px; padding: 6px 10px; border: 1px dashed #d6d3c9; border-radius: 4px; background: #f8f7f3;">
+                            <img id="mis-docsig-preview-img" src="" alt="Signature Preview" style="max-height: 46px; max-width: 180px; display: block;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; padding-top: 10px; border-top: 1px solid #e8e6df;">
+                <button type="button" id="mis-docsig-submit-btn" onclick="saveMisDocSigRecord()" style="background: #134e4a; color: #ffffff; border: none; border-radius: 5px; padding: 9px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Signature</button>
+                <button type="button" onclick="closeMisDocSigForm()" style="background: #ffffff; color: #1c2826; border: 1px solid #d6d3c9; border-radius: 5px; padding: 9px 16px; font-size: 13px; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
     <div id="lab-mis-subview-all-templates" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">All Templates</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure All Templates.</p></div></div>
     <div id="lab-mis-subview-report-templates" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Report Templates</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Report Templates.</p></div></div>
     <div id="lab-mis-subview-lis-machines" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">LIS Machines</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure LIS Machines.</p></div></div>
@@ -19014,6 +19126,9 @@ window.openLabMisSection = function(sectionKey) {
 } else if (sectionKey === 'my-users') {
   closeMisUserForm();
   renderMisUsersTable();
+} else if (sectionKey === 'doctor-signature') {
+  closeMisDocSigForm();
+  renderMisDocSigTable();
 }
 };
 let misLabsList = JSON.parse(localStorage.getItem('arvion_mis_my_labs') || '[]');
@@ -19539,6 +19654,212 @@ window.deleteMisUserRecord = function(idx) {
   misUsersList.forEach((item, i) => item.id = i + 1);
   persistMisUsers();
   renderMisUsersTable();
+};
+let misDocSignaturesList = JSON.parse(localStorage.getItem('arvion_mis_doctor_signatures') || '[]');
+let misDocSigState = {
+  page: 1,
+  pageSize: 10,
+  search: '',
+  sortKey: 'id',
+  sortAsc: false
+};
+let misDocSigTempImage = '';
+
+function persistMisDocSignatures() {
+  localStorage.setItem('arvion_mis_doctor_signatures', JSON.stringify(misDocSignaturesList));
+}
+
+window.handleMisDocSigUpload = function(inputEl) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    misDocSigTempImage = e.target.result;
+    const box = document.getElementById('mis-docsig-preview-box');
+    const img = document.getElementById('mis-docsig-preview-img');
+    if (img) img.src = misDocSigTempImage;
+    if (box) box.style.display = 'inline-block';
+  };
+  reader.readAsDataURL(file);
+};
+
+window.changeMisDocSigPageSize = function() {
+  misDocSigState.pageSize = Number(document.getElementById('mis-docsig-page-size')?.value || 10);
+  misDocSigState.page = 1;
+  renderMisDocSigTable();
+};
+
+window.onMisDocSigSearch = function() {
+  misDocSigState.search = (document.getElementById('mis-docsig-search')?.value || '').toLowerCase().trim();
+  misDocSigState.page = 1;
+  renderMisDocSigTable();
+};
+
+window.sortMisDocSigTable = function(key) {
+  if (misDocSigState.sortKey === key) {
+    misDocSigState.sortAsc = !misDocSigState.sortAsc;
+  } else {
+    misDocSigState.sortKey = key;
+    misDocSigState.sortAsc = true;
+  }
+  renderMisDocSigTable();
+};
+
+window.changeMisDocSigPage = function(delta) {
+  misDocSigState.page = Math.max(1, misDocSigState.page + delta);
+  renderMisDocSigTable();
+};
+
+window.toggleMisDocSigStatus = function(idx) {
+  if (!misDocSignaturesList[idx]) return;
+  misDocSignaturesList[idx].status = String(misDocSignaturesList[idx].status) === '1' ? '0' : '1';
+  persistMisDocSignatures();
+  renderMisDocSigTable();
+};
+
+window.renderMisDocSigTable = function() {
+  const tbody = document.getElementById('mis-doc-sig-tbody');
+  const infoEl = document.getElementById('mis-docsig-info');
+  const pageNumEl = document.getElementById('mis-docsig-page-num');
+  if (!tbody) return;
+
+  let filtered = misDocSignaturesList.map((item, idx) => ({ ...item, _idx: idx })).filter(row => {
+    if (!misDocSigState.search) return true;
+    const hay = [row.id, row.doctorName, row.designation, row.status, row.createdDate].join(' ').toLowerCase();
+    return hay.includes(misDocSigState.search);
+  });
+
+  const k = misDocSigState.sortKey;
+  const dir = misDocSigState.sortAsc ? 1 : -1;
+  filtered.sort((a, b) => String(a[k] ?? '').localeCompare(String(b[k] ?? ''), undefined, { numeric: true }) * dir);
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / misDocSigState.pageSize));
+  if (misDocSigState.page > totalPages) misDocSigState.page = totalPages;
+
+  if (total === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="padding: 14px 10px; text-align: center; color: #576561; border-bottom: 1px solid #cbd5e1;">No data available in table</td></tr>';
+    if (infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 entries';
+    if (pageNumEl) pageNumEl.style.display = 'none';
+    return;
+  }
+
+  const startIdx = (misDocSigState.page - 1) * misDocSigState.pageSize;
+  const slice = filtered.slice(startIdx, startIdx + misDocSigState.pageSize);
+
+  tbody.innerHTML = slice.map(row => {
+    const isActive = String(row.status) === '1';
+    const sigHtml = row.signatureImg
+      ? `<img src="${row.signatureImg}" alt="${row.doctorName}" style="max-height: 40px; max-width: 140px; display: block;">`
+      : '<span style="color: #94a3b8; font-size: 11.5px;">No signature</span>';
+    return `
+      <tr style="border-bottom: 1px solid #e2e8f0;">
+        <td style="padding: 9px 8px;">${row.id}</td>
+        <td style="padding: 9px 8px; font-weight: 600; color: #134e4a;">${row.doctorName}</td>
+        <td style="padding: 9px 8px;">${sigHtml}</td>
+        <td style="padding: 9px 8px;">${row.designation || '-'}</td>
+        <td style="padding: 9px 8px;">
+          <button type="button" onclick="toggleMisDocSigStatus(${row._idx})" title="Click to toggle status (1 = Active, 0 = Inactive)" style="background: ${isActive ? '#f0fdf4' : '#f1f5f9'}; border: 1px solid ${isActive ? '#bbf7d0' : '#cbd5e1'}; color: ${isActive ? '#134e4a' : '#64748b'}; border-radius: 4px; padding: 2px 9px; font-weight: 700; cursor: pointer;">${isActive ? '1' : '0'}</button>
+        </td>
+        <td style="padding: 9px 8px; white-space: nowrap;">
+          <button type="button" onclick="openMisDocSigForm(${row._idx})" title="View / Edit Signature" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #134e4a; border-radius: 4px; padding: 3px 8px; cursor: pointer; margin-right: 4px;"><i class="fa-solid fa-eye"></i></button>
+          <button type="button" onclick="deleteMisDocSigRecord(${row._idx})" title="Delete Signature" style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 4px; padding: 3px 8px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+        </td>
+        <td style="padding: 9px 8px; white-space: nowrap;">${row.createdDate || '-'}</td>
+      </tr>
+    `;
+  }).join('');
+
+  if (infoEl) infoEl.textContent = `Showing ${startIdx + 1} to ${startIdx + slice.length} of ${total} entries`;
+  if (pageNumEl) {
+    pageNumEl.style.display = 'inline-block';
+    pageNumEl.textContent = String(misDocSigState.page);
+  }
+};
+
+window.openMisDocSigForm = function(idx = -1) {
+  const listPanel = document.getElementById('mis-doc-sig-list-panel');
+  const formPanel = document.getElementById('mis-doc-sig-form-panel');
+  if (!listPanel || !formPanel) return;
+
+  listPanel.style.display = 'none';
+  formPanel.style.display = 'block';
+  document.getElementById('mis-docsig-edit-idx').value = idx;
+  const previewBox = document.getElementById('mis-docsig-preview-box');
+  const previewImg = document.getElementById('mis-docsig-preview-img');
+  const fileInput = document.getElementById('mis-docsig-file');
+  if (fileInput) fileInput.value = '';
+
+  if (idx >= 0 && misDocSignaturesList[idx]) {
+    const s = misDocSignaturesList[idx];
+    document.getElementById('mis-docsig-form-heading').textContent = 'Edit Doctor\'s Signature';
+    document.getElementById('mis-docsig-submit-btn').textContent = 'Update';
+    document.getElementById('mis-docsig-name').value = s.doctorName || '';
+    document.getElementById('mis-docsig-designation').value = s.designation || '';
+    document.getElementById('mis-docsig-status').value = String(s.status ?? '1');
+    misDocSigTempImage = s.signatureImg || '';
+    if (misDocSigTempImage && previewBox && previewImg) {
+      previewImg.src = misDocSigTempImage;
+      previewBox.style.display = 'inline-block';
+    } else if (previewBox) {
+      previewBox.style.display = 'none';
+    }
+  } else {
+    document.getElementById('mis-docsig-form-heading').textContent = 'Add / Edit Doctor\'s Signature';
+    document.getElementById('mis-docsig-submit-btn').textContent = 'Save Signature';
+    document.getElementById('mis-docsig-name').value = '';
+    document.getElementById('mis-docsig-designation').value = '';
+    document.getElementById('mis-docsig-status').value = '1';
+    misDocSigTempImage = '';
+    if (previewBox) previewBox.style.display = 'none';
+  }
+};
+
+window.closeMisDocSigForm = function() {
+  const listPanel = document.getElementById('mis-doc-sig-list-panel');
+  const formPanel = document.getElementById('mis-doc-sig-form-panel');
+  if (listPanel) listPanel.style.display = 'block';
+  if (formPanel) formPanel.style.display = 'none';
+};
+
+window.saveMisDocSigRecord = function() {
+  const idx = Number(document.getElementById('mis-docsig-edit-idx').value);
+  const doctorName = document.getElementById('mis-docsig-name').value.trim();
+  const designation = document.getElementById('mis-docsig-designation').value.trim();
+  const status = document.getElementById('mis-docsig-status').value || '1';
+
+  if (!doctorName) { alert('Please enter Doctor\'s Name.'); return; }
+  if (!designation) { alert('Please enter Designation.'); return; }
+  if (!misDocSigTempImage) { alert('Please choose a Signature image file.'); return; }
+
+  const record = {
+    id: idx >= 0 && misDocSignaturesList[idx] ? misDocSignaturesList[idx].id : misDocSignaturesList.length + 1,
+    doctorName,
+    designation,
+    signatureImg: misDocSigTempImage,
+    status,
+    createdDate: idx >= 0 && misDocSignaturesList[idx] ? misDocSignaturesList[idx].createdDate : formatMisUserTimestamp()
+  };
+
+  if (idx >= 0 && misDocSignaturesList[idx]) {
+    misDocSignaturesList[idx] = record;
+  } else {
+    misDocSignaturesList.unshift(record);
+    misDocSignaturesList.forEach((item, i) => item.id = i + 1);
+  }
+
+  persistMisDocSignatures();
+  closeMisDocSigForm();
+  renderMisDocSigTable();
+};
+
+window.deleteMisDocSigRecord = function(idx) {
+  if (!misDocSignaturesList[idx]) return;
+  if (!confirm(`Delete signature for "${misDocSignaturesList[idx].doctorName}"?`)) return;
+  misDocSignaturesList.splice(idx, 1);
+  misDocSignaturesList.forEach((item, i) => item.id = i + 1);
+  persistMisDocSignatures();
+  renderMisDocSigTable();
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
