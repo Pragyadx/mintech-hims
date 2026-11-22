@@ -5950,7 +5950,200 @@
             </div>
         </div>
     </div>
-    <div id="lab-mis-subview-my-users" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">My Users</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure My Users.</p></div></div>
+    <!-- 2. MIS: My Users (List + Add/Edit User Details) -->
+    <div id="lab-mis-subview-my-users" class="lab-mis-subview" style="display: none;">
+        <!-- PANEL A: MY ALL USERS LIST TABLE -->
+        <div id="mis-my-users-list-panel" style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 17px; font-weight: 600; color: #1c2826;">My All Users List</h3>
+                    <span style="font-size: 12px; color: #576561;">Manage hospital lab owners, employees, technicians, and role access</span>
+                </div>
+                <button type="button" onclick="openMisUserForm(-1)" style="background: #134e4a; color: #ffffff; border: none; border-radius: 5px; padding: 8px 15px; font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-plus"></i> Add New User
+                </button>
+            </div>
+
+            <!-- Toolbar: Show Entries & Search -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; background: #f3f2ed; padding: 7px 12px; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #1c2826;">
+                    <span>Show</span>
+                    <select id="mis-user-page-size" onchange="changeMisUserPageSize()" style="padding: 4px 8px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; font-size: 12.5px; min-width: 72px; cursor: pointer;">
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>Entries</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px; background: #f3f2ed; padding: 7px 12px; border-radius: 5px; font-size: 12.5px; font-weight: 600; color: #1c2826;">
+                    <label for="mis-user-search" style="margin: 0;">Search:</label>
+                    <input type="text" id="mis-user-search" oninput="onMisUserSearch()" placeholder="" style="padding: 5px 10px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; font-size: 12.5px; width: 210px;">
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; color: #1c2826;">
+                    <thead>
+                        <tr style="border-bottom: 1.5px solid #cbd5e1; background: #ffffff; text-align: left;">
+                            <th onclick="sortMisUsersTable('id')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">ID <span style="color: #134e4a; font-size: 10px;">&#9660;</span></th>
+                            <th onclick="sortMisUsersTable('userRole')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">User Type <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisUsersTable('firstName')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">First Name <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisUsersTable('lastName')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Last Name <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisUsersTable('mobile')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Mobile Number <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisUsersTable('email')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Email ID <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisUsersTable('address')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Address <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th onclick="sortMisUsersTable('createdDate')" style="padding: 10px 8px; font-weight: 700; cursor: pointer; white-space: nowrap;">Created Date <span style="color: #94a3b8; font-size: 10px;">&#8693;</span></th>
+                            <th style="padding: 10px 8px; font-weight: 700; white-space: nowrap;">Status</th>
+                            <th style="padding: 10px 8px; font-weight: 700; white-space: nowrap;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mis-my-users-tbody">
+                        <tr>
+                            <td colspan="10" style="padding: 14px 10px; text-align: center; color: #576561; border-bottom: 1px solid #cbd5e1;">No data available in table</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: 14px; font-size: 12.5px; color: #475569;">
+                <div id="mis-user-info">Showing 0 to 0 of 0 entries</div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <button type="button" onclick="changeMisUserPage(-1)" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; color: #64748b; cursor: pointer;">Previous</button>
+                    <span id="mis-user-page-num" style="display: none; background: #134e4a; color: #ffffff; border-radius: 4px; padding: 4px 10px; font-weight: 600;">1</span>
+                    <button type="button" onclick="changeMisUserPage(1)" style="background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 10px; font-size: 12.5px; color: #64748b; cursor: pointer;">Next</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL B: ADD / EDIT USER DETAILS FORM -->
+        <div id="mis-my-users-form-panel" style="display: none; background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px 24px; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; margin-bottom: 18px; border-bottom: 1px solid #e8e6df;">
+                <h3 id="mis-user-form-heading" style="margin: 0; font-size: 17px; font-weight: 600; color: #1c2826;">Add / Edit User Details</h3>
+                <button type="button" onclick="closeMisUserForm()" style="background: #f3f2ed; color: #1c2826; border: 1px solid #d6d3c9; border-radius: 5px; padding: 6px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Users List
+                </button>
+            </div>
+
+            <input type="hidden" id="mis-user-edit-idx" value="-1">
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px 28px; font-size: 12.5px; margin-bottom: 22px;">
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">First Name<span style="color: #dc2626;">*</span></label>
+                    <input type="text" id="mis-user-first-name" placeholder="First Name" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Last Name<span style="color: #dc2626;">*</span></label>
+                    <input type="text" id="mis-user-last-name" placeholder="Last Name" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Mobile Number<span style="color: #dc2626;">*</span></label>
+                    <input type="text" id="mis-user-mobile" maxlength="10" placeholder="Mobile Number" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Email ID<span style="color: #dc2626;">*</span></label>
+                    <input type="email" id="mis-user-email" placeholder="Email ID" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">PAN</label>
+                    <input type="text" id="mis-user-pan" maxlength="10" placeholder="PAN" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; text-transform: uppercase; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Address</label>
+                    <input type="text" id="mis-user-address" placeholder="Address" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Zipcode</label>
+                    <input type="text" id="mis-user-zipcode" placeholder="Zipcode" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">State</label>
+                    <select id="mis-user-state" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; width: 100%; box-sizing: border-box;">
+                        <option value="">Select</option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Bank Name</label>
+                    <input type="text" id="mis-user-bank" placeholder="Bank Name" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">IFSC Code</label>
+                    <input type="text" id="mis-user-ifsc" placeholder="IFSC Code" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; text-transform: uppercase; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Account Number</label>
+                    <input type="text" id="mis-user-account" placeholder="Account Number" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Password</label>
+                    <input type="password" id="mis-user-password" placeholder="Password" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; width: 100%; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">User Role<span style="color: #dc2626;">*</span></label>
+                    <select id="mis-user-role" style="padding: 7px 10px; border: 1px solid #d6d3c9; border-radius: 4px; background: #ffffff; width: 100%; box-sizing: border-box;">
+                        <option value="">Select Role</option>
+                        <option value="Owner">Owner</option>
+                        <option value="Employee">Employee</option>
+                        <option value="Lab Technician">Lab Technician</option>
+                        <option value="Pathologist">Pathologist</option>
+                        <option value="Receptionist">Receptionist</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Profile Image</label>
+                    <div>
+                        <input type="file" id="mis-user-photo-file" accept="image/*" onchange="handleMisUserPhotoUpload(this)" style="font-size: 12px;">
+                        <span id="mis-user-photo-status" style="display: block; font-size: 11px; color: #0f766e; margin-top: 2px;"></span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px;">
+                    <label style="font-weight: 700; color: #1c2826; text-align: right;">Account Status</label>
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <label style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                            <input type="radio" name="mis-user-status-radio" value="Active" checked style="accent-color: #134e4a;"> Active
+                        </label>
+                        <label style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                            <input type="radio" name="mis-user-status-radio" value="Disable" style="accent-color: #134e4a;"> Disable
+                        </label>
+                        <label style="display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
+                            <input type="radio" name="mis-user-status-radio" value="Delete" style="accent-color: #dc2626;"> Delete
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; padding-top: 10px; border-top: 1px solid #e8e6df;">
+                <button type="button" id="mis-user-submit-btn" onclick="saveMisUserRecord()" style="background: #134e4a; color: #ffffff; border: none; border-radius: 5px; padding: 9px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Save User</button>
+                <button type="button" onclick="closeMisUserForm()" style="background: #ffffff; color: #1c2826; border: 1px solid #d6d3c9; border-radius: 5px; padding: 9px 16px; font-size: 13px; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
     <div id="lab-mis-subview-doctor-signature" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Doctor's Signature</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Doctor's Signature.</p></div></div>
     <div id="lab-mis-subview-all-templates" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">All Templates</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure All Templates.</p></div></div>
     <div id="lab-mis-subview-report-templates" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Report Templates</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Report Templates.</p></div></div>
@@ -18816,9 +19009,12 @@ window.openLabMisSection = function(sectionKey) {
   const activeView = document.getElementById('lab-mis-subview-' + sectionKey);
   if (activeView) activeView.style.display = 'block';
   if (sectionKey === 'my-lab-list') {
-    closeMisLabForm();
-    renderMisLabsTable();
-  }
+  closeMisLabForm();
+  renderMisLabsTable();
+} else if (sectionKey === 'my-users') {
+  closeMisUserForm();
+  renderMisUsersTable();
+}
 };
 let misLabsList = JSON.parse(localStorage.getItem('arvion_mis_my_labs') || '[]');
 let misLabsState = {
@@ -19094,6 +19290,255 @@ window.deleteMisLabRecord = function(idx) {
   misLabsList.forEach((item, i) => item.id = i + 1);
   persistMisLabs();
   renderMisLabsTable();
+};
+let misUsersList = JSON.parse(localStorage.getItem('arvion_mis_my_users') || '[]');
+let misUsersState = {
+  page: 1,
+  pageSize: 10,
+  search: '',
+  sortKey: 'id',
+  sortAsc: false
+};
+let misUserTempPhoto = '';
+
+function persistMisUsers() {
+  localStorage.setItem('arvion_mis_my_users', JSON.stringify(misUsersList));
+}
+
+function formatMisUserTimestamp() {
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  let hh = d.getHours();
+  const min = String(d.getMinutes()).padStart(2, '0');
+  const ampm = hh >= 12 ? 'pm' : 'am';
+  hh = hh % 12 || 12;
+  return `${dd}-${mm}-${yyyy} ${String(hh).padStart(2, '0')}:${min} ${ampm}`;
+}
+
+window.handleMisUserPhotoUpload = function(inputEl) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    misUserTempPhoto = e.target.result;
+    const st = document.getElementById('mis-user-photo-status');
+    if (st) st.textContent = 'Uploaded: ' + file.name;
+  };
+  reader.readAsDataURL(file);
+};
+
+window.changeMisUserPageSize = function() {
+  misUsersState.pageSize = Number(document.getElementById('mis-user-page-size')?.value || 10);
+  misUsersState.page = 1;
+  renderMisUsersTable();
+};
+
+window.onMisUserSearch = function() {
+  misUsersState.search = (document.getElementById('mis-user-search')?.value || '').toLowerCase().trim();
+  misUsersState.page = 1;
+  renderMisUsersTable();
+};
+
+window.sortMisUsersTable = function(key) {
+  if (misUsersState.sortKey === key) {
+    misUsersState.sortAsc = !misUsersState.sortAsc;
+  } else {
+    misUsersState.sortKey = key;
+    misUsersState.sortAsc = true;
+  }
+  renderMisUsersTable();
+};
+
+window.changeMisUserPage = function(delta) {
+  misUsersState.page = Math.max(1, misUsersState.page + delta);
+  renderMisUsersTable();
+};
+
+window.toggleMisUserStatus = function(idx) {
+  if (!misUsersList[idx]) return;
+  misUsersList[idx].status = misUsersList[idx].status === 'Active' ? 'Disable' : 'Active';
+  persistMisUsers();
+  renderMisUsersTable();
+};
+
+window.renderMisUsersTable = function() {
+  const tbody = document.getElementById('mis-my-users-tbody');
+  const infoEl = document.getElementById('mis-user-info');
+  const pageNumEl = document.getElementById('mis-user-page-num');
+  if (!tbody) return;
+
+  let filtered = misUsersList.map((item, idx) => ({ ...item, _idx: idx })).filter(row => {
+    if (!misUsersState.search) return true;
+    const hay = [row.id, row.userRole, row.firstName, row.lastName, row.mobile, row.email, row.address, row.createdDate].join(' ').toLowerCase();
+    return hay.includes(misUsersState.search);
+  });
+
+  const k = misUsersState.sortKey;
+  const dir = misUsersState.sortAsc ? 1 : -1;
+  filtered.sort((a, b) => String(a[k] ?? '').localeCompare(String(b[k] ?? ''), undefined, { numeric: true }) * dir);
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / misUsersState.pageSize));
+  if (misUsersState.page > totalPages) misUsersState.page = totalPages;
+
+  if (total === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" style="padding: 14px 10px; text-align: center; color: #576561; border-bottom: 1px solid #cbd5e1;">No data available in table</td></tr>';
+    if (infoEl) infoEl.textContent = 'Showing 0 to 0 of 0 entries';
+    if (pageNumEl) pageNumEl.style.display = 'none';
+    return;
+  }
+
+  const startIdx = (misUsersState.page - 1) * misUsersState.pageSize;
+  const slice = filtered.slice(startIdx, startIdx + misUsersState.pageSize);
+
+  tbody.innerHTML = slice.map(row => {
+    const isActive = row.status === 'Active';
+    return `
+      <tr style="border-bottom: 1px solid #e2e8f0;">
+        <td style="padding: 9px 8px;">${row.id}</td>
+        <td style="padding: 9px 8px;">${row.userRole || 'Employee'}</td>
+        <td style="padding: 9px 8px; font-weight: 600; color: #134e4a;">${row.firstName}</td>
+        <td style="padding: 9px 8px;">${row.lastName}</td>
+        <td style="padding: 9px 8px;">${row.mobile}</td>
+        <td style="padding: 9px 8px;">${row.email}</td>
+        <td style="padding: 9px 8px; max-width: 240px;">${row.address || '-'}</td>
+        <td style="padding: 9px 8px; white-space: nowrap;">${row.createdDate || '-'}</td>
+        <td style="padding: 9px 8px;">
+          <button type="button" onclick="toggleMisUserStatus(${row._idx})" title="${isActive ? 'Active (Click to disable)' : 'Disabled (Click to activate)'}" style="background: ${isActive ? '#134e4a' : '#94a3b8'}; color: #ffffff; border: none; border-radius: 4px; width: 28px; height: 22px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;">
+            <i class="fa-solid ${isActive ? 'fa-check' : 'fa-ban'}" style="font-size: 11px;"></i>
+          </button>
+        </td>
+        <td style="padding: 9px 8px; white-space: nowrap;">
+          <button type="button" onclick="openMisUserForm(${row._idx})" title="View / Edit User" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #134e4a; border-radius: 4px; padding: 3px 8px; cursor: pointer; margin-right: 4px;"><i class="fa-solid fa-eye"></i></button>
+          <button type="button" onclick="deleteMisUserRecord(${row._idx})" title="Delete User" style="background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 4px; padding: 3px 8px; cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  if (infoEl) infoEl.textContent = `Showing ${startIdx + 1} to ${startIdx + slice.length} of ${total} entries`;
+  if (pageNumEl) {
+    pageNumEl.style.display = 'inline-block';
+    pageNumEl.textContent = String(misUsersState.page);
+  }
+};
+
+window.openMisUserForm = function(idx = -1) {
+  const listPanel = document.getElementById('mis-my-users-list-panel');
+  const formPanel = document.getElementById('mis-my-users-form-panel');
+  if (!listPanel || !formPanel) return;
+
+  listPanel.style.display = 'none';
+  formPanel.style.display = 'block';
+  document.getElementById('mis-user-edit-idx').value = idx;
+
+  if (idx >= 0 && misUsersList[idx]) {
+    const u = misUsersList[idx];
+    document.getElementById('mis-user-form-heading').textContent = 'Edit User Details';
+    document.getElementById('mis-user-submit-btn').textContent = 'Update';
+    document.getElementById('mis-user-first-name').value = u.firstName || '';
+    document.getElementById('mis-user-last-name').value = u.lastName || '';
+    document.getElementById('mis-user-mobile').value = u.mobile || '';
+    document.getElementById('mis-user-email').value = u.email || '';
+    document.getElementById('mis-user-pan').value = u.pan || '';
+    document.getElementById('mis-user-address').value = u.address || '';
+    document.getElementById('mis-user-zipcode').value = u.zipcode || '';
+    document.getElementById('mis-user-state').value = u.state || '';
+    document.getElementById('mis-user-bank').value = u.bankName || '';
+    document.getElementById('mis-user-ifsc').value = u.ifsc || '';
+    document.getElementById('mis-user-account').value = u.accountNo || '';
+    document.getElementById('mis-user-password').value = u.password || '';
+    document.getElementById('mis-user-role').value = u.userRole || '';
+    misUserTempPhoto = u.photo || '';
+    const stRadio = document.querySelector(`input[name="mis-user-status-radio"][value="${u.status || 'Active'}"]`);
+    if (stRadio) stRadio.checked = true;
+  } else {
+    document.getElementById('mis-user-form-heading').textContent = 'Add / Edit User Details';
+    document.getElementById('mis-user-submit-btn').textContent = 'Save User';
+    ['mis-user-first-name', 'mis-user-last-name', 'mis-user-mobile', 'mis-user-email', 'mis-user-pan', 'mis-user-address', 'mis-user-zipcode', 'mis-user-bank', 'mis-user-ifsc', 'mis-user-account', 'mis-user-password'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('mis-user-state').value = '';
+    document.getElementById('mis-user-role').value = '';
+    misUserTempPhoto = '';
+    const activeRadio = document.querySelector('input[name="mis-user-status-radio"][value="Active"]');
+    if (activeRadio) activeRadio.checked = true;
+  }
+
+  const st = document.getElementById('mis-user-photo-status');
+  if (st) st.textContent = misUserTempPhoto ? 'Profile photo saved' : '';
+};
+
+window.closeMisUserForm = function() {
+  const listPanel = document.getElementById('mis-my-users-list-panel');
+  const formPanel = document.getElementById('mis-my-users-form-panel');
+  if (listPanel) listPanel.style.display = 'block';
+  if (formPanel) formPanel.style.display = 'none';
+};
+
+window.saveMisUserRecord = function() {
+  const idx = Number(document.getElementById('mis-user-edit-idx').value);
+  const firstName = document.getElementById('mis-user-first-name').value.trim();
+  const lastName = document.getElementById('mis-user-last-name').value.trim();
+  const mobile = document.getElementById('mis-user-mobile').value.trim();
+  const email = document.getElementById('mis-user-email').value.trim();
+  const userRole = document.getElementById('mis-user-role').value;
+  const selectedStatus = document.querySelector('input[name="mis-user-status-radio"]:checked')?.value || 'Active';
+
+  if (idx >= 0 && selectedStatus === 'Delete') {
+    deleteMisUserRecord(idx);
+    closeMisUserForm();
+    return;
+  }
+
+  if (!firstName) { alert('Please enter First Name.'); return; }
+  if (!lastName) { alert('Please enter Last Name.'); return; }
+  if (!mobile || mobile.length < 10) { alert('Please enter a valid 10-digit Mobile Number.'); return; }
+  if (!email) { alert('Please enter Email ID.'); return; }
+  if (!userRole) { alert('Please select User Role.'); return; }
+
+  const record = {
+    id: idx >= 0 && misUsersList[idx] ? misUsersList[idx].id : misUsersList.length + 1,
+    firstName,
+    lastName,
+    mobile,
+    email,
+    pan: document.getElementById('mis-user-pan').value.trim().toUpperCase(),
+    address: document.getElementById('mis-user-address').value.trim(),
+    zipcode: document.getElementById('mis-user-zipcode').value.trim(),
+    state: document.getElementById('mis-user-state').value,
+    bankName: document.getElementById('mis-user-bank').value.trim(),
+    ifsc: document.getElementById('mis-user-ifsc').value.trim().toUpperCase(),
+    accountNo: document.getElementById('mis-user-account').value.trim(),
+    password: document.getElementById('mis-user-password').value,
+    userRole,
+    photo: misUserTempPhoto,
+    status: selectedStatus === 'Delete' ? 'Disable' : selectedStatus,
+    createdDate: idx >= 0 && misUsersList[idx] ? misUsersList[idx].createdDate : formatMisUserTimestamp()
+  };
+
+  if (idx >= 0 && misUsersList[idx]) {
+    misUsersList[idx] = record;
+  } else {
+    misUsersList.unshift(record);
+    misUsersList.forEach((item, i) => item.id = i + 1);
+  }
+
+  persistMisUsers();
+  closeMisUserForm();
+  renderMisUsersTable();
+};
+
+window.deleteMisUserRecord = function(idx) {
+  if (!misUsersList[idx]) return;
+  if (!confirm(`Delete user "${misUsersList[idx].firstName} ${misUsersList[idx].lastName}"?`)) return;
+  misUsersList.splice(idx, 1);
+  misUsersList.forEach((item, i) => item.id = i + 1);
+  persistMisUsers();
+  renderMisUsersTable();
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
