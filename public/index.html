@@ -6637,7 +6637,54 @@
             </div>
         </div>
     </div>
-    <div id="lab-mis-subview-change-email" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Change Email</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Change Email.</p></div></div>
+    <!-- 10. MIS: Change Email -->
+    <div id="lab-mis-subview-change-email" class="lab-mis-subview" style="display: none;">
+        <div style="max-width: 520px; margin: 24px auto;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
+                <h3 style="margin: 0; font-size: 19px; font-weight: 500; color: #1c2826;">Change Email</h3>
+                <span id="mis-ce-current-badge" style="font-size: 12px; color: #0f766e; font-weight: 600;"></span>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 6px; padding: 24px 26px 20px 26px; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);">
+                <div style="display: flex; flex-direction: column; gap: 16px; font-size: 13px;">
+                    <!-- Step 1: Password Verification -->
+                    <div style="display: grid; grid-template-columns: 145px 1fr; align-items: center; gap: 14px;">
+                        <label for="mis-ce-password" style="font-weight: 700; color: #1c2826; text-align: right; line-height: 1.3;">Enter your Password<span style="color: #dc2626;">*</span></label>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="mis-ce-password" placeholder="Old Password" style="width: 100%; padding: 8px 34px 8px 11px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 13px; color: #1c2826; box-sizing: border-box;">
+                            <button type="button" onclick="toggleMisPasswordVisibility('mis-ce-password', this)" title="Show / Hide Password" style="position: absolute; right: 8px; background: transparent; border: none; color: #64748b; cursor: pointer; padding: 2px 4px;">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Unlocked New Email Section (Appears after Verify) -->
+                    <div id="mis-ce-new-email-section" style="display: none; padding-top: 14px; border-top: 1px dashed #d6d3c9; flex-direction: column; gap: 14px;">
+                        <div style="display: grid; grid-template-columns: 145px 1fr; align-items: center; gap: 14px;">
+                            <label for="mis-ce-new-email" style="font-weight: 700; color: #1c2826; text-align: right;">New Email ID<span style="color: #dc2626;">*</span></label>
+                            <input type="email" id="mis-ce-new-email" placeholder="Enter new email address" style="width: 100%; padding: 8px 11px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 13px; color: #1c2826; box-sizing: border-box;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 145px 1fr; align-items: center; gap: 14px;">
+                            <label for="mis-ce-confirm-email" style="font-weight: 700; color: #1c2826; text-align: right;">Confirm Email<span style="color: #dc2626;">*</span></label>
+                            <input type="email" id="mis-ce-confirm-email" placeholder="Re-enter new email address" style="width: 100%; padding: 8px 11px; border: 1px solid #d6d3c9; border-radius: 4px; font-size: 13px; color: #1c2826; box-sizing: border-box;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inline Feedback Message -->
+                <div id="mis-ce-feedback" style="display: none; margin-top: 14px; padding: 8px 12px; border-radius: 4px; font-size: 12.5px; font-weight: 600;"></div>
+
+                <!-- Footer Buttons: Reset (Left) & Verify / Update Email (Right) -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 22px; padding-top: 14px; border-top: 1px solid #e8e6df;">
+                    <button type="button" onclick="resetMisChangeEmailForm()" style="background: #e5e7eb; color: #374151; border: 1px solid #d1d5db; border-radius: 4px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer;">Reset</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" id="mis-ce-verify-btn" onclick="verifyMisChangeEmail()" style="background: #134e4a; color: #ffffff; border: none; border-radius: 4px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Verify</button>
+                        <button type="button" id="mis-ce-save-btn" onclick="saveMisNewEmail()" style="display: none; background: #0f766e; color: #ffffff; border: none; border-radius: 4px; padding: 8px 20px; font-size: 13px; font-weight: 600; cursor: pointer;">Update Email</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="lab-mis-subview-add-coordinator" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">Add Coordinator</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure Add Coordinator.</p></div></div>
     <div id="lab-mis-subview-pdf-setting" class="lab-mis-subview" style="display: none;"><div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 18px 20px;"><h3 style="margin: 0 0 4px 0; font-size: 17px; color: #1c2826;">PDF Setting</h3><p style="margin: 0; font-size: 12.5px; color: #576561;">Ready to configure PDF Setting.</p></div></div>
 </section>
@@ -19513,6 +19560,8 @@ window.openLabMisSection = function(sectionKey) {
   resetMisChangePasswordForm();
 } else if (sectionKey === 'change-mobile') {
   resetMisChangeMobileForm();
+} else if (sectionKey === 'change-email') {
+  resetMisChangeEmailForm();
 }
 };
 let misLabsList = JSON.parse(localStorage.getItem('arvion_mis_my_labs') || '[]');
@@ -20863,6 +20912,90 @@ window.saveMisNewMobileNumber = function() {
 
   resetMisChangeMobileForm();
   showMisCmFeedback(`Mobile number updated to ${newMobile} successfully.`, false);
+}; window.resetMisChangeEmailForm = function() {
+  ['mis-ce-password', 'mis-ce-new-email', 'mis-ce-confirm-email'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  const pwdEl = document.getElementById('mis-ce-password');
+  if (pwdEl) pwdEl.type = 'password';
+
+  const newSec = document.getElementById('mis-ce-new-email-section');
+  const verifyBtn = document.getElementById('mis-ce-verify-btn');
+  const saveBtn = document.getElementById('mis-ce-save-btn');
+  if (newSec) newSec.style.display = 'none';
+  if (verifyBtn) verifyBtn.style.display = 'inline-block';
+  if (saveBtn) saveBtn.style.display = 'none';
+
+  const fb = document.getElementById('mis-ce-feedback');
+  if (fb) {
+    fb.style.display = 'none';
+    fb.textContent = '';
+  }
+
+  const secData = JSON.parse(localStorage.getItem('arvion_mis_account_security') || '{}');
+  const badge = document.getElementById('mis-ce-current-badge');
+  if (badge) {
+    badge.textContent = secData.email ? `Current Email: ${secData.email}` : '';
+  }
+};
+
+function showMisCeFeedback(msg, isError) {
+  const fb = document.getElementById('mis-ce-feedback');
+  if (!fb) { alert(msg); return; }
+  fb.style.display = 'block';
+  fb.textContent = msg;
+  fb.style.background = isError ? '#fef2f2' : '#f0fdf4';
+  fb.style.color = isError ? '#b91c1c' : '#134e4a';
+  fb.style.border = isError ? '1px solid #fecaca' : '1px solid #bbf7d0';
+}
+
+window.verifyMisChangeEmail = function() {
+  const password = (document.getElementById('mis-ce-password')?.value || '').trim();
+  const secData = JSON.parse(localStorage.getItem('arvion_mis_account_security') || '{}');
+
+  if (!password) {
+    showMisCeFeedback('Please enter your Password to verify.', true);
+    return;
+  }
+
+  if (secData.password && secData.password !== password) {
+    showMisCeFeedback('Password verification failed. Please check your password.', true);
+    return;
+  }
+
+  const newSec = document.getElementById('mis-ce-new-email-section');
+  const verifyBtn = document.getElementById('mis-ce-verify-btn');
+  const saveBtn = document.getElementById('mis-ce-save-btn');
+  if (newSec) newSec.style.display = 'flex';
+  if (verifyBtn) verifyBtn.style.display = 'none';
+  if (saveBtn) saveBtn.style.display = 'inline-block';
+
+  showMisCeFeedback('Identity verified. Enter and confirm your new email address below.', false);
+};
+
+window.saveMisNewEmail = function() {
+  const newEmail = (document.getElementById('mis-ce-new-email')?.value || '').trim();
+  const confirmEmail = (document.getElementById('mis-ce-confirm-email')?.value || '').trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(newEmail)) {
+    showMisCeFeedback('Please enter a valid New Email ID.', true);
+    return;
+  }
+  if (newEmail.toLowerCase() !== confirmEmail.toLowerCase()) {
+    showMisCeFeedback('New Email ID and Confirm Email do not match.', true);
+    return;
+  }
+
+  const secData = JSON.parse(localStorage.getItem('arvion_mis_account_security') || '{}');
+  secData.email = newEmail;
+  secData.emailUpdatedAt = new Date().toISOString();
+  localStorage.setItem('arvion_mis_account_security', JSON.stringify(secData));
+
+  resetMisChangeEmailForm();
+  showMisCeFeedback(`Email updated to ${newEmail} successfully.`, false);
 };
 </script>
 <!-- MODAL: CREATE ABHA -->
