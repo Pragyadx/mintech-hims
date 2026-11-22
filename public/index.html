@@ -4844,244 +4844,6 @@
             </div>
         </div>
 
-        <!-- ========================================== -->
-<!-- MODAL: NEW / EDIT LAB BOOKING & INVOICE    -->
-<!-- ========================================== -->
-<div id="modal-lab-booking" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.58); z-index: 9999; align-items: center; justify-content: center; padding: 14px;">
-    <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 1060px; max-height: 92vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 24px 38px -8px rgba(0,0,0,0.25);">
-        
-        <!-- Modal Header (Arvion Deep Teal) -->
-        <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
-            <h4 id="modal-lab-booking-title" style="margin: 0; font-size: 16px; font-weight: 700;">New Lab Booking</h4>
-            <button type="button" onclick="closeLabBookingModal()" style="background: transparent; border: none; color: #ffffff; font-size: 20px; cursor: pointer; line-height: 1;">&times;</button>
-        </div>
-
-        <!-- Scrollable Two-Column Body -->
-        <div style="padding: 18px 20px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; background: #fafaf8;">
-            <input type="hidden" id="lb-edit-idx" value="-1">
-
-            <!-- LEFT COLUMN: PATIENT & BOOKING -->
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-                
-                <!-- PATIENT CARD -->
-                <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px;">
-                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #134e4a; margin-bottom: 12px; text-transform: uppercase;">Patient</div>
-
-                    <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; margin-bottom: 10px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Mobile number <span style="color: #dc2626;">*</span></label>
-                            <input type="tel" id="lb-mobile" oninput="lookupExistingLabPatient(this.value)" placeholder="10-digit mobile" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                            <div style="font-size: 11px; color: #576561; margin-top: 3px;">Enter the mobile number to find an existing patient.</div>
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Token no</label>
-                            <input type="text" id="lb-token" placeholder="Optional" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; margin-bottom: 10px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Patient name <span style="color: #dc2626;">*</span></label>
-                            <input type="text" id="lb-patient-name" placeholder="First and last name" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Gender <span style="color: #dc2626;">*</span></label>
-                            <select id="lb-gender" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
-                                <option value="">Select Gender*</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Date of birth</label>
-                            <input type="date" id="lb-dob" onchange="autoCalcAgeFromDob(this.value)" style="width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Age <span style="color: #dc2626;">*</span></label>
-                            <input type="number" id="lb-age" min="0" max="130" placeholder="Years" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Weight (kg)</label>
-                            <input type="number" id="lb-weight" step="0.1" placeholder="kg" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 12px; margin-bottom: 10px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Height (cm)</label>
-                            <input type="number" id="lb-height" placeholder="cm" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Email</label>
-                            <input type="email" id="lb-email" placeholder="Optional" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 10px;">
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Aadhar / Government ID</label>
-                        <input type="text" id="lb-aadhar" placeholder="Optional" style="width: 60%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                    </div>
-
-                    <div>
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Address</label>
-                        <input type="text" id="lb-address" placeholder="Optional" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                    </div>
-                </div>
-
-                <!-- BOOKING CARD -->
-                <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px;">
-                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #134e4a; margin-bottom: 12px; text-transform: uppercase;">Booking</div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;">
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Report date & time <span style="color: #dc2626;">*</span></label>
-                            <input type="datetime-local" id="lb-report-datetime" style="width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;">
-                        </div>
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <label style="font-size: 12px; font-weight: 600; color: #1c2826;">Billing type</label>
-                                <button type="button" onclick="addCustomBookingOption('lb-billing-type', 'arvion_lab_billing_types', 'Billing Type')" title="Add custom billing type" style="background: #e6f4f1; color: #134e4a; border: none; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 700; cursor: pointer;">+ Add</button>
-                            </div>
-                            <select id="lb-billing-type" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
-                                <option value="">Select billing type</option>
-                                <option value="OPD Billing Receipt">OPD Billing Receipt</option>
-                                <option value="IPD Billing Receipt">IPD Billing Receipt</option>
-                                <option value="Others Billing Receipt">Others Billing Receipt</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 10px;">
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Reference doctor</label>
-                        <input type="text" id="lb-ref-doctor" list="ref-share-doctors-datalist" placeholder="Optional (type or select doctor)" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                    </div>
-
-                    <div>
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Booking note (test names) <span style="color: #dc2626;">*</span></label>
-                        <input type="text" id="lb-booking-note" placeholder="Filled automatically from the selected tests" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #fafaf8;">
-                    </div>
-                </div>
-            </div>
-
-            <!-- RIGHT COLUMN: TESTS, GROUPS & PACKAGES + PAYMENT -->
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-                
-                <!-- TESTS, GROUPS & PACKAGES CARD -->
-                <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px;">
-                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #134e4a; margin-bottom: 12px; text-transform: uppercase;">Tests, Groups & Packages</div>
-
-                    <div style="margin-bottom: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <label style="font-size: 12px; font-weight: 600; color: #1c2826;">Price scheme <span style="color: #dc2626;">*</span></label>
-                            <button type="button" onclick="addCustomBookingOption('lb-price-scheme', 'arvion_lab_price_schemes', 'Price Scheme')" title="Add hospital price scheme" style="background: #e6f4f1; color: #134e4a; border: none; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; cursor: pointer;">+ Add Scheme</button>
-                        </div>
-                        <select id="lb-price-scheme" onchange="recalculateLabBookingTotals()" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
-                            <option value="Cash (Default)">Cash (Default)</option>
-                            <option value="Standard (Default)">Standard (Default)</option>
-                            <option value="ECHS">ECHS</option>
-                            <option value="MAA YOJANA">MAA YOJANA</option>
-                            <option value="PRG">PRG</option>
-                            <option value="RGHS">RGHS</option>
-                        </select>
-                    </div>
-
-                    <div style="position: relative; margin-bottom: 12px;">
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Search test / group / package <span style="color: #dc2626;">*</span></label>
-                        <div style="display: flex; gap: 6px;">
-                            <input type="text" id="lb-test-search" oninput="searchBookingCatalogItems(this.value)" onfocus="searchBookingCatalogItems(this.value)" placeholder="Start typing a name or add custom test..." style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                            <button type="button" onclick="promptCustomBookingTest()" title="Add custom test item directly" style="background: #e6f4f1; color: #134e4a; border: 1px solid #99f6e4; padding: 0 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">+ Custom</button>
-                        </div>
-                        <div id="lb-test-search-results" style="display: none; position: absolute; left: 0; right: 0; top: 100%; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; max-height: 190px; overflow-y: auto; z-index: 50; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.12);"></div>
-                    </div>
-
-                    <!-- Selected Tests List -->
-                    <div id="lb-selected-tests-box" style="border: 1px solid #e8e6df; border-radius: 6px; padding: 12px; min-height: 72px; background: #fafaf8;">
-                        <div style="text-align: center; color: #576561; font-size: 12px; padding: 14px 0;">No test added yet. Search above and click a result to add it.</div>
-                    </div>
-                </div>
-
-                <!-- PAYMENT CARD -->
-                <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px;">
-                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #134e4a; margin-bottom: 12px; text-transform: uppercase;">Payment</div>
-
-                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 13px; color: #1c2826;">Total price</span>
-                            <input type="number" id="lb-total-price" readonly value="0.00" style="width: 130px; text-align: right; padding: 6px 10px; border: 1px solid #e8e6df; border-radius: 5px; background: #f1f5f9; font-size: 13px; font-weight: 600;">
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 13px; color: #1c2826;">Total discount</span>
-                            <input type="number" id="lb-total-discount" oninput="onBookingDiscountEdit()" value="0.00" min="0" step="0.01" style="width: 130px; text-align: right; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px;">
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 13px; color: #1c2826;">Sub total <span style="font-size: 11px; color: #576561;">(edit to give an extra discount)</span></span>
-                            <input type="number" id="lb-sub-total" oninput="onBookingSubtotalEdit()" value="0.00" min="0" step="0.01" style="width: 130px; text-align: right; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; font-weight: 600;">
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <span style="font-size: 13px; color: #1c2826;">GST</span>
-                                <input type="number" id="lb-gst-pct" oninput="recalculateLabBookingTotals(true)" value="0" min="0" max="100" step="0.5" style="width: 56px; text-align: right; padding: 5px 6px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 12px;">
-                                <span style="font-size: 12px; color: #576561;">%</span>
-                            </div>
-                            <input type="number" id="lb-gst-amt" readonly value="0.00" style="width: 130px; text-align: right; padding: 6px 10px; border: 1px solid #e8e6df; border-radius: 5px; background: #f1f5f9; font-size: 13px;">
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid #e8e6df;">
-                            <span style="font-size: 15px; font-weight: 700; color: #1c2826;">Payable amount</span>
-                            <input type="number" id="lb-payable-amt" readonly value="0.00" style="width: 130px; text-align: right; padding: 7px 10px; border: 1px solid #0f766e; border-radius: 5px; background: #e6f4f1; color: #134e4a; font-size: 14px; font-weight: 800;">
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; margin-bottom: 10px; align-items: end;">
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                <label style="font-size: 12px; font-weight: 600; color: #1c2826;">Payment mode</label>
-                                <button type="button" onclick="addCustomBookingOption('lb-payment-mode', 'arvion_lab_payment_modes', 'Payment Mode')" title="Add custom payment mode" style="background: #e6f4f1; color: #134e4a; border: none; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 700; cursor: pointer;">+ Add</button>
-                            </div>
-                            <select id="lb-payment-mode" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
-                                <option value="Cash">Cash</option>
-                                <option value="Credit Card">Credit Card</option>
-                                <option value="Debit Card">Debit Card</option>
-                                <option value="Online">Online</option>
-                                <option value="Wallet">Wallet</option>
-                                <option value="Credit">Credit</option>
-                                <option value="BPL">BPL</option>
-                                <option value="RGHS">RGHS</option>
-                                <option value="CGHS">CGHS</option>
-                                <option value="ECHS">ECHS</option>
-                                <option value="MAA YOJANA">MAA YOJANA</option>
-                                <option value="UPI">UPI</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Payment status</label>
-                            <input type="hidden" id="lb-payment-status" value="Unpaid">
-                            <div style="display: inline-flex; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; width: 100%;">
-                                <button type="button" id="lb-status-unpaid-btn" onclick="setBookingPaymentStatus('Unpaid')" style="flex: 1; padding: 7px 10px; border: none; background: #134e4a; color: #ffffff; font-size: 12px; font-weight: 700; cursor: pointer;">Unpaid</button>
-                                <button type="button" id="lb-status-paid-btn" onclick="setBookingPaymentStatus('Paid')" style="flex: 1; padding: 7px 10px; border: none; background: #ffffff; color: #576561; font-size: 12px; font-weight: 700; cursor: pointer;">Paid</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Remarks</label>
-                        <input type="text" id="lb-remarks" placeholder="Optional" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Footer -->
-        <div style="background: #ffffff; border-top: 1px solid #e8e6df; padding: 12px 20px; display: flex; justify-content: flex-end; gap: 10px;">
-            <button type="button" onclick="closeLabBookingModal()" style="background: #ffffff; color: #1c2826; border: 1px solid #cbd5e1; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
-            <button type="button" onclick="submitLabBookingForm()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Submit</button>
-        </div>
-    </div>
-</div>
-
         <!-- 2. Report Listing -->
         <div id="lab-patient-subview-reports" class="lab-patient-subview" style="display: none;">
             <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
@@ -18472,6 +18234,242 @@ window.submitLabBookingForm = function() {
                 <button type="submit" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Save Patient & Add Test</button>
             </div>
         </form>
+    </div>
+</div>
+<!-- MODAL: NEW / EDIT LAB BOOKING & INVOICE    -->
+<!-- ========================================== -->
+<div id="modal-lab-booking" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.58); z-index: 9999; align-items: center; justify-content: center; padding: 14px;">
+    <div style="background: #ffffff; border-radius: 10px; width: 100%; max-width: 1060px; max-height: 92vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 24px 38px -8px rgba(0,0,0,0.25);">
+        
+        <!-- Modal Header (Arvion Deep Teal) -->
+        <div style="background: #134e4a; color: #ffffff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+            <h4 id="modal-lab-booking-title" style="margin: 0; font-size: 16px; font-weight: 700;">New Lab Booking</h4>
+            <button type="button" onclick="closeLabBookingModal()" style="background: transparent; border: none; color: #ffffff; font-size: 20px; cursor: pointer; line-height: 1;">&times;</button>
+        </div>
+
+        <!-- Scrollable Two-Column Body -->
+        <div style="padding: 18px 20px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; background: #fafaf8;">
+            <input type="hidden" id="lb-edit-idx" value="-1">
+
+            <!-- LEFT COLUMN: PATIENT & BOOKING -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                
+                <!-- PATIENT CARD -->
+                <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px;">
+                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #134e4a; margin-bottom: 12px; text-transform: uppercase;">Patient</div>
+
+                    <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; margin-bottom: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Mobile number <span style="color: #dc2626;">*</span></label>
+                            <input type="tel" id="lb-mobile" oninput="lookupExistingLabPatient(this.value)" placeholder="10-digit mobile" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                            <div style="font-size: 11px; color: #576561; margin-top: 3px;">Enter the mobile number to find an existing patient.</div>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Token no</label>
+                            <input type="text" id="lb-token" placeholder="Optional" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 12px; margin-bottom: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Patient name <span style="color: #dc2626;">*</span></label>
+                            <input type="text" id="lb-patient-name" placeholder="First and last name" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Gender <span style="color: #dc2626;">*</span></label>
+                            <select id="lb-gender" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
+                                <option value="">Select Gender*</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Date of birth</label>
+                            <input type="date" id="lb-dob" onchange="autoCalcAgeFromDob(this.value)" style="width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Age <span style="color: #dc2626;">*</span></label>
+                            <input type="number" id="lb-age" min="0" max="130" placeholder="Years" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Weight (kg)</label>
+                            <input type="number" id="lb-weight" step="0.1" placeholder="kg" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 12px; margin-bottom: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Height (cm)</label>
+                            <input type="number" id="lb-height" placeholder="cm" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Email</label>
+                            <input type="email" id="lb-email" placeholder="Optional" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Aadhar / Government ID</label>
+                        <input type="text" id="lb-aadhar" placeholder="Optional" style="width: 60%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Address</label>
+                        <input type="text" id="lb-address" placeholder="Optional" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+                </div>
+
+                <!-- BOOKING CARD -->
+                <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px;">
+                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #134e4a; margin-bottom: 12px; text-transform: uppercase;">Booking</div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Report date & time <span style="color: #dc2626;">*</span></label>
+                            <input type="datetime-local" id="lb-report-datetime" style="width: 100%; box-sizing: border-box; padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px;">
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 12px; font-weight: 600; color: #1c2826;">Billing type</label>
+                                <button type="button" onclick="addCustomBookingOption('lb-billing-type', 'arvion_lab_billing_types', 'Billing Type')" title="Add custom billing type" style="background: #e6f4f1; color: #134e4a; border: none; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 700; cursor: pointer;">+ Add</button>
+                            </div>
+                            <select id="lb-billing-type" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
+                                <option value="">Select billing type</option>
+                                <option value="OPD Billing Receipt">OPD Billing Receipt</option>
+                                <option value="IPD Billing Receipt">IPD Billing Receipt</option>
+                                <option value="Others Billing Receipt">Others Billing Receipt</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 10px;">
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Reference doctor</label>
+                        <input type="text" id="lb-ref-doctor" list="ref-share-doctors-datalist" placeholder="Optional (type or select doctor)" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Booking note (test names) <span style="color: #dc2626;">*</span></label>
+                        <input type="text" id="lb-booking-note" placeholder="Filled automatically from the selected tests" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #fafaf8;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: TESTS, GROUPS & PACKAGES + PAYMENT -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                
+                <!-- TESTS, GROUPS & PACKAGES CARD -->
+                <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px;">
+                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #134e4a; margin-bottom: 12px; text-transform: uppercase;">Tests, Groups & Packages</div>
+
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <label style="font-size: 12px; font-weight: 600; color: #1c2826;">Price scheme <span style="color: #dc2626;">*</span></label>
+                            <button type="button" onclick="addCustomBookingOption('lb-price-scheme', 'arvion_lab_price_schemes', 'Price Scheme')" title="Add hospital price scheme" style="background: #e6f4f1; color: #134e4a; border: none; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; cursor: pointer;">+ Add Scheme</button>
+                        </div>
+                        <select id="lb-price-scheme" onchange="recalculateLabBookingTotals()" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
+                            <option value="Cash (Default)">Cash (Default)</option>
+                            <option value="Standard (Default)">Standard (Default)</option>
+                            <option value="ECHS">ECHS</option>
+                            <option value="MAA YOJANA">MAA YOJANA</option>
+                            <option value="PRG">PRG</option>
+                            <option value="RGHS">RGHS</option>
+                        </select>
+                    </div>
+
+                    <div style="position: relative; margin-bottom: 12px;">
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Search test / group / package <span style="color: #dc2626;">*</span></label>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" id="lb-test-search" oninput="searchBookingCatalogItems(this.value)" onfocus="searchBookingCatalogItems(this.value)" placeholder="Start typing a name or add custom test..." style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                            <button type="button" onclick="promptCustomBookingTest()" title="Add custom test item directly" style="background: #e6f4f1; color: #134e4a; border: 1px solid #99f6e4; padding: 0 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">+ Custom</button>
+                        </div>
+                        <div id="lb-test-search-results" style="display: none; position: absolute; left: 0; right: 0; top: 100%; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; max-height: 190px; overflow-y: auto; z-index: 50; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.12);"></div>
+                    </div>
+
+                    <!-- Selected Tests List -->
+                    <div id="lb-selected-tests-box" style="border: 1px solid #e8e6df; border-radius: 6px; padding: 12px; min-height: 72px; background: #fafaf8;">
+                        <div style="text-align: center; color: #576561; font-size: 12px; padding: 14px 0;">No test added yet. Search above and click a result to add it.</div>
+                    </div>
+                </div>
+
+                <!-- PAYMENT CARD -->
+                <div style="background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 16px;">
+                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: #134e4a; margin-bottom: 12px; text-transform: uppercase;">Payment</div>
+
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 13px; color: #1c2826;">Total price</span>
+                            <input type="number" id="lb-total-price" readonly value="0.00" style="width: 130px; text-align: right; padding: 6px 10px; border: 1px solid #e8e6df; border-radius: 5px; background: #f1f5f9; font-size: 13px; font-weight: 600;">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 13px; color: #1c2826;">Total discount</span>
+                            <input type="number" id="lb-total-discount" oninput="onBookingDiscountEdit()" value="0.00" min="0" step="0.01" style="width: 130px; text-align: right; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px;">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 13px; color: #1c2826;">Sub total <span style="font-size: 11px; color: #576561;">(edit to give an extra discount)</span></span>
+                            <input type="number" id="lb-sub-total" oninput="onBookingSubtotalEdit()" value="0.00" min="0" step="0.01" style="width: 130px; text-align: right; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; font-weight: 600;">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="font-size: 13px; color: #1c2826;">GST</span>
+                                <input type="number" id="lb-gst-pct" oninput="recalculateLabBookingTotals(true)" value="0" min="0" max="100" step="0.5" style="width: 56px; text-align: right; padding: 5px 6px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 12px;">
+                                <span style="font-size: 12px; color: #576561;">%</span>
+                            </div>
+                            <input type="number" id="lb-gst-amt" readonly value="0.00" style="width: 130px; text-align: right; padding: 6px 10px; border: 1px solid #e8e6df; border-radius: 5px; background: #f1f5f9; font-size: 13px;">
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid #e8e6df;">
+                            <span style="font-size: 15px; font-weight: 700; color: #1c2826;">Payable amount</span>
+                            <input type="number" id="lb-payable-amt" readonly value="0.00" style="width: 130px; text-align: right; padding: 7px 10px; border: 1px solid #0f766e; border-radius: 5px; background: #e6f4f1; color: #134e4a; font-size: 14px; font-weight: 800;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; margin-bottom: 10px; align-items: end;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <label style="font-size: 12px; font-weight: 600; color: #1c2826;">Payment mode</label>
+                                <button type="button" onclick="addCustomBookingOption('lb-payment-mode', 'arvion_lab_payment_modes', 'Payment Mode')" title="Add custom payment mode" style="background: #e6f4f1; color: #134e4a; border: none; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 700; cursor: pointer;">+ Add</button>
+                            </div>
+                            <select id="lb-payment-mode" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: #ffffff;">
+                                <option value="Cash">Cash</option>
+                                <option value="Credit Card">Credit Card</option>
+                                <option value="Debit Card">Debit Card</option>
+                                <option value="Online">Online</option>
+                                <option value="Wallet">Wallet</option>
+                                <option value="Credit">Credit</option>
+                                <option value="BPL">BPL</option>
+                                <option value="RGHS">RGHS</option>
+                                <option value="CGHS">CGHS</option>
+                                <option value="ECHS">ECHS</option>
+                                <option value="MAA YOJANA">MAA YOJANA</option>
+                                <option value="UPI">UPI</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Payment status</label>
+                            <input type="hidden" id="lb-payment-status" value="Unpaid">
+                            <div style="display: inline-flex; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; width: 100%;">
+                                <button type="button" id="lb-status-unpaid-btn" onclick="setBookingPaymentStatus('Unpaid')" style="flex: 1; padding: 7px 10px; border: none; background: #134e4a; color: #ffffff; font-size: 12px; font-weight: 700; cursor: pointer;">Unpaid</button>
+                                <button type="button" id="lb-status-paid-btn" onclick="setBookingPaymentStatus('Paid')" style="flex: 1; padding: 7px 10px; border: none; background: #ffffff; color: #576561; font-size: 12px; font-weight: 700; cursor: pointer;">Paid</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 600; color: #1c2826; margin-bottom: 4px;">Remarks</label>
+                        <input type="text" id="lb-remarks" placeholder="Optional" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div style="background: #ffffff; border-top: 1px solid #e8e6df; padding: 12px 20px; display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" onclick="closeLabBookingModal()" style="background: #ffffff; color: #1c2826; border: 1px solid #cbd5e1; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Cancel</button>
+            <button type="button" onclick="submitLabBookingForm()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 22px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">Submit</button>
+        </div>
     </div>
 </div>
 </body>
