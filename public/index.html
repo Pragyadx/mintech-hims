@@ -5607,9 +5607,95 @@
         </div>
 
         <!-- 1. Invoice -->
-        <div id="lab-accounting-subview-invoice" class="lab-accounting-subview" style="display: block; background: #ffffff; border: 1px solid #e8e6df; border-radius: 8px; padding: 20px;">
-            <h4 style="margin-top: 0; color: #134e4a;">Invoice</h4>
-            <p style="font-size: 13px; color: #576561;">Diagnostic billing invoices, GST breakdown, and receipt records.</p>
+        <div id="lab-accounting-subview-invoice" class="lab-accounting-subview" style="display: block;">
+            <div style="background: #ffffff; border: 1px solid #e8e6df; border-top: 3px solid #134e4a; border-radius: 8px; padding: 20px;">
+                
+                <!-- Top Action & Date Filter Bar -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+                    <button type="button" onclick="openLabBookingModal(-1)" style="background: #134e4a; color: #ffffff; border: none; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-plus"></i> New Booking
+                    </button>
+
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <input type="date" id="inv-start-date" title="Start Date" style="padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; color: #1c2826;">
+                        <input type="date" id="inv-end-date" title="End Date" style="padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; color: #1c2826;">
+                        <button type="button" onclick="renderLabInvoicesTable()" style="background: #0f766e; color: #ffffff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                            Show
+                        </button>
+                        <select id="inv-period-filter" onchange="applyInvoicePeriodPreset(this.value)" style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; color: #1c2826; background: #ffffff;">
+                            <option value="all">All Dates</option>
+                            <option value="today">Today</option>
+                            <option value="week">Last 7 Days</option>
+                            <option value="month">This Month</option>
+                        </select>
+                        <button type="button" onclick="exportLabInvoicesCSV()" style="background: #134e4a; color: #ffffff; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                            <i class="fa-solid fa-file-export"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Show Entries & Search Bar -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: #fafaf8; padding: 12px 14px; border: 1px solid #e8e6df; border-radius: 6px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <span>Show</span>
+                        <select id="inv-page-size" onchange="changeLabInvPageSize(this.value)" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; background: #ffffff;">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span>entries</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1c2826;">
+                        <label for="inv-search-input">Search:</label>
+                        <input type="text" id="inv-search-input" oninput="filterLabInvTable(this.value)" placeholder="Search patient, test, or booking ID..." style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 13px; width: 240px;">
+                    </div>
+                </div>
+
+                <!-- Invoices Table -->
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #e8e6df; color: #576561; background: #fafaf8;">
+                                <th style="padding: 10px;">Date</th>
+                                <th style="padding: 10px;">Patient Name</th>
+                                <th style="padding: 10px;">Test Name</th>
+                                <th style="padding: 10px; text-align: right;">Price (₹)</th>
+                                <th style="padding: 10px; text-align: right;">Discount (₹)</th>
+                                <th style="padding: 10px; text-align: right;">GST (₹)</th>
+                                <th style="padding: 10px; text-align: right;">Total Price (₹)</th>
+                                <th style="padding: 10px; text-align: center;">Action</th>
+                                <th style="padding: 10px; text-align: center;">Linking</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lab-invoices-tbody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 32px; color: #576561;">No data available in table</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: #fafaf8; border-top: 2px solid #134e4a; font-weight: 700; color: #1c2826;">
+                                <td colspan="3" style="padding: 12px 10px; text-align: right;">Total Amount:</td>
+                                <td id="inv-sum-price" style="padding: 12px 10px; text-align: right; color: #1c2826;">₹0.00</td>
+                                <td id="inv-sum-discount" style="padding: 12px 10px; text-align: right; color: #b91c1c;">₹0.00</td>
+                                <td id="inv-sum-gst" style="padding: 12px 10px; text-align: right; color: #576561;">₹0.00</td>
+                                <td id="inv-sum-total" style="padding: 12px 10px; text-align: right; color: #134e4a; font-size: 14px;">₹0.00</td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Pagination Footer -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8e6df; font-size: 13px; color: #576561;">
+                    <div id="inv-showing-info">Showing 0 to 0 of 0 entries</div>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button type="button" onclick="changeLabInvPage(-1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Previous</button>
+                        <span id="inv-page-indicator" style="padding: 6px 12px; background: #134e4a; color: #ffffff; border-radius: 5px; font-weight: 600;">1</span>
+                        <button type="button" onclick="changeLabInvPage(1)" style="padding: 6px 12px; border: 1px solid #cbd5e1; background: #ffffff; color: #1c2826; border-radius: 5px; cursor: pointer;">Next</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- 2. Accounting -->
@@ -16688,6 +16774,214 @@ window.exportTotalShareCSV = function() {
   const a = document.createElement('a');
   a.href = url;
   a.download = `ArvionHIMS_Total_Share_Ledger_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+// =========================================================
+// LAB INVOICE LISTING, FILTERING, EDITING & EXPORT ENGINE
+// =========================================================
+let invTableState = { page: 1, pageSize: 10, search: '' };
+
+window.loadLabInvoicesView = function() {
+  hospitalLabBookings = JSON.parse(localStorage.getItem('arvion_lab_bookings') || '[]');
+  renderLabInvoicesTable();
+};
+
+window.applyInvoicePeriodPreset = function(preset) {
+  const startEl = document.getElementById('inv-start-date');
+  const endEl = document.getElementById('inv-end-date');
+  if (!startEl || !endEl) return;
+
+  const today = new Date();
+  const fmt = d => d.toISOString().slice(0, 10);
+
+  if (preset === 'today') {
+    startEl.value = fmt(today);
+    endEl.value = fmt(today);
+  } else if (preset === 'week') {
+    const past = new Date();
+    past.setDate(today.getDate() - 7);
+    startEl.value = fmt(past);
+    endEl.value = fmt(today);
+  } else if (preset === 'month') {
+    const first = new Date(today.getFullYear(), today.getMonth(), 1);
+    startEl.value = fmt(first);
+    endEl.value = fmt(today);
+  } else {
+    startEl.value = '';
+    endEl.value = '';
+  }
+  invTableState.page = 1;
+  renderLabInvoicesTable();
+};
+
+window.changeLabInvPageSize = function(val) {
+  invTableState.pageSize = Number(val) || 10;
+  invTableState.page = 1;
+  renderLabInvoicesTable();
+};
+
+window.filterLabInvTable = function(q) {
+  invTableState.search = (q || '').toLowerCase().trim();
+  invTableState.page = 1;
+  renderLabInvoicesTable();
+};
+
+window.changeLabInvPage = function(delta) {
+  invTableState.page += delta;
+  if (invTableState.page < 1) invTableState.page = 1;
+  renderLabInvoicesTable();
+};
+
+window.renderLabInvoicesTable = function() {
+  const tbody = document.getElementById('lab-invoices-tbody');
+  const info = document.getElementById('inv-showing-info');
+  const pageInd = document.getElementById('inv-page-indicator');
+  if (!tbody) return;
+
+  const q = invTableState.search;
+  const startDate = document.getElementById('inv-start-date')?.value || '';
+  const endDate = document.getElementById('inv-end-date')?.value || '';
+
+  const filtered = hospitalLabBookings.filter(b => {
+    if (b.status === 'Cancelled') return false;
+    const bDate = (b.reportDate || '').slice(0, 10);
+    if (startDate && bDate && bDate < startDate) return false;
+    if (endDate && bDate && bDate > endDate) return false;
+    if (!q) return true;
+    return (
+      String(b.bookingId || '').toLowerCase().includes(q) ||
+      (b.patientName || '').toLowerCase().includes(q) ||
+      (b.note || '').toLowerCase().includes(q)
+    );
+  });
+
+  // Calculate Totals across filtered invoices
+  let sumPrice = 0;
+  let sumDiscount = 0;
+  let sumGst = 0;
+  let sumTotal = 0;
+
+  filtered.forEach(b => {
+    const base = Number(b.totalPrice ?? b.subTotal ?? 0);
+    const sub = Number(b.subTotal ?? base);
+    const disc = Math.max(0, base - sub);
+    const gst = Number(b.gstAmt || 0);
+    const payable = Number(b.payableAmount ?? (sub + gst));
+    sumPrice += base;
+    sumDiscount += disc;
+    sumGst += gst;
+    sumTotal += payable;
+  });
+
+  const elSumP = document.getElementById('inv-sum-price');
+  const elSumD = document.getElementById('inv-sum-discount');
+  const elSumG = document.getElementById('inv-sum-gst');
+  const elSumT = document.getElementById('inv-sum-total');
+  if (elSumP) elSumP.textContent = `₹${sumPrice.toFixed(2)}`;
+  if (elSumD) elSumD.textContent = `₹${sumDiscount.toFixed(2)}`;
+  if (elSumG) elSumG.textContent = `₹${sumGst.toFixed(2)}`;
+  if (elSumT) elSumT.textContent = `₹${sumTotal.toFixed(2)}`;
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / invTableState.pageSize));
+  if (invTableState.page > totalPages) invTableState.page = totalPages;
+
+  const startIdx = (invTableState.page - 1) * invTableState.pageSize;
+  const pageItems = filtered.slice(startIdx, startIdx + invTableState.pageSize);
+
+  if (pageInd) pageInd.textContent = `${invTableState.page} / ${totalPages}`;
+  if (info) {
+    info.textContent = total === 0
+      ? 'Showing 0 to 0 of 0 entries'
+      : `Showing ${startIdx + 1} to ${Math.min(startIdx + invTableState.pageSize, total)} of ${total} entries`;
+  }
+
+  if (pageItems.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 32px; color: #576561;">No data available in table</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = pageItems.map(b => {
+    const globalIdx = hospitalLabBookings.indexOf(b);
+    const base = Number(b.totalPrice ?? b.subTotal ?? 0);
+    const sub = Number(b.subTotal ?? base);
+    const disc = Math.max(0, base - sub);
+    const gst = Number(b.gstAmt || 0);
+    const payable = Number(b.payableAmount ?? (sub + gst));
+    const isPaid = b.paymentStatus === 'Paid';
+    const isLinked = Boolean(b.idNo);
+
+    return `
+      <tr style="border-bottom: 1px solid #e8e6df;">
+        <td style="padding: 10px; color: #1c2826;">${(b.reportDate || '').slice(0, 10)}</td>
+        <td style="padding: 10px; font-weight: 700; color: #1c2826;">
+          ${b.patientName}
+          <div style="font-size: 11px; color: #576561; font-weight: 400;">#${b.bookingId} • ${b.paymentMode || 'Cash'}</div>
+        </td>
+        <td style="padding: 10px; color: #1c2826; max-width: 220px;">${b.note || '-'}</td>
+        <td style="padding: 10px; text-align: right; color: #1c2826;">₹${base.toFixed(2)}</td>
+        <td style="padding: 10px; text-align: right; color: #b91c1c;">₹${disc.toFixed(2)}</td>
+        <td style="padding: 10px; text-align: right; color: #576561;">₹${gst.toFixed(2)}</td>
+        <td style="padding: 10px; text-align: right; font-weight: 700; color: #134e4a;">₹${payable.toFixed(2)}</td>
+        <td style="padding: 10px; text-align: center; white-space: nowrap;">
+          <button type="button" onclick="toggleInvoicePaidStatus(${globalIdx})" title="Click to toggle Paid / Unpaid" style="background: ${isPaid ? '#dcfce7' : '#fef3c7'}; color: ${isPaid ? '#15803d' : '#92400e'}; border: none; padding: 4px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer; margin-right: 4px;">
+            ${isPaid ? 'Paid' : 'Unpaid'}
+          </button>
+          <button type="button" onclick="printBookingReceipt(${globalIdx})" title="Print Invoice" style="background: #e6f4f1; color: #134e4a; border: none; padding: 5px 8px; border-radius: 5px; cursor: pointer; margin-right: 3px;">
+            <i class="fa-solid fa-print"></i>
+          </button>
+          <button type="button" onclick="openLabBookingModal(${globalIdx})" title="Edit Invoice" style="background: #f1f5f9; color: #1c2826; border: 1px solid #cbd5e1; padding: 5px 8px; border-radius: 5px; cursor: pointer;">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </button>
+        </td>
+        <td style="padding: 10px; text-align: center;">
+          <button type="button" onclick="linkPatientAbhaId(${globalIdx}); renderLabInvoicesTable();" title="${isLinked ? 'ABHA: ' + b.idNo : 'Link ABHA ID'}" style="background: ${isLinked ? '#134e4a' : '#e8e6df'}; color: ${isLinked ? '#ffffff' : '#1c2826'}; border: none; padding: 5px 9px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer;">
+            <i class="fa-solid fa-link"></i> ${isLinked ? 'Linked' : 'Link'}
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+};
+
+window.toggleInvoicePaidStatus = function(idx) {
+  const b = hospitalLabBookings[idx];
+  if (!b) return;
+  b.paymentStatus = b.paymentStatus === 'Paid' ? 'Unpaid' : 'Paid';
+  persistLabBookings();
+  renderLabInvoicesTable();
+};
+
+window.exportLabInvoicesCSV = function() {
+  const headers = ['Booking ID', 'Date', 'Patient Name', 'Tests', 'Price (INR)', 'Discount (INR)', 'GST (INR)', 'Total Price (INR)', 'Payment Status', 'Payment Mode', 'ABHA ID'];
+  const rows = hospitalLabBookings.filter(b => b.status !== 'Cancelled').map(b => {
+    const base = Number(b.totalPrice ?? b.subTotal ?? 0);
+    const sub = Number(b.subTotal ?? base);
+    const disc = Math.max(0, base - sub);
+    const gst = Number(b.gstAmt || 0);
+    const payable = Number(b.payableAmount ?? (sub + gst));
+    return [
+      b.bookingId,
+      `"${(b.reportDate || '').slice(0, 10)}"`,
+      `"${(b.patientName || '').replace(/"/g, '""')}"`,
+      `"${(b.note || '').replace(/"/g, '""')}"`,
+      base.toFixed(2),
+      disc.toFixed(2),
+      gst.toFixed(2),
+      payable.toFixed(2),
+      `"${b.paymentStatus || 'Unpaid'}"`,
+      `"${b.paymentMode || 'Cash'}"`,
+      `"${b.idNo || ''}"`
+    ].join(',');
+  });
+
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ArvionHIMS_Lab_Invoices_${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 };
